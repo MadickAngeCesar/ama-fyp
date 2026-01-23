@@ -1,0 +1,48 @@
+flowchart TD
+	%% Architecture diagram for ASSS (AI-powered Student Support System)
+	subgraph Client
+		A["Next.js Web App\n(shadcn/ui)"]
+	end
+
+	subgraph Auth
+		CL["Clerk\n(OIDC auth)"]
+	end
+
+	subgraph Server
+		B["Next.js Server\n(Route handlers, Orchestration)"]
+		W["Background Worker\n(async jobs, webhooks, billing)"]
+	end
+
+	subgraph Services
+		PR["Prisma\n(type-safe DB client)"]
+		SDB["Supabase Postgres\n(Database)"]
+		SST["Supabase Storage\n(attachments, previews)"]
+		RT["Supabase Realtime\n(WebSockets)"]
+		GEM["Gemini AI\n(chat + generative UI)"]
+	end
+
+	A -- "Auth flow / tokens" --> CL
+	A -- "API requests / SSR" --> B
+	B -- "DB queries (via Prisma)" --> PR
+	PR -- "connects to" --> SDB
+	B -- "Realtime subscriptions" --> RT
+	A -- "Realtime updates" --> RT
+	B -- "store / retrieve attachments" --> SST
+	B -- "call AI endpoints" --> GEM
+	GEM -- "AI responses / UI prototypes" --> B
+	W -- "background processing (escalation, billing)" --> B
+	CL -- "user metadata (clerkId)" --> B
+	SDB -- "stores app data, audit logs" --> PR
+
+	classDef infra fill:#f3f6ff,stroke:#bcd,stroke-width:1px;
+	class A,B,W infra;
+
+	%% Deployment hint
+	subgraph Hosting
+		VERCEL["Vercel / Next.js Hosting\n(Edge / Serverless)"]
+	end
+	A --> VERCEL
+	VERCEL --> B
+	VERCEL --> GEM
+	VERCEL --> SDB
+

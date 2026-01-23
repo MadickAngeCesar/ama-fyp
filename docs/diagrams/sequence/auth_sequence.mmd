@@ -1,0 +1,66 @@
+%% Authentication sequence using Clerk (OIDC / Session management)
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+	actor User
+	participant Web as Web App
+	participant API as Next.js API
+	participant Clerk as Clerk
+	participant DB as Supabase Postgres
+	participant Cache as Session Cache
+
+	%% Sign Up (email) Flow
+	rect rgb(230, 242, 255)
+		Note over User,Web: Sign Up via Clerk
+		User->>Web: Enter email & password
+		Web->>Clerk: Redirect to Clerk sign-up (OIDC)
+		Clerk-->>User: Clerk-hosted signup UI / verification
+		User->>Clerk: Complete signup (email verification)
+		Clerk-->>API: Callback (session, clerkUser)
+		API->>DB: Create or sync user record (store clerkId)
+		API->>Cache: Store server session mapping
+		API-->>Web: Set httpOnly session cookie
+		Web-->>User: Redirect to onboarding/dashboard
+	end
+
+	%% Sign In (password / OAuth) Flow
+	rect rgb(232, 245, 233)
+		Note over User,Web: Sign In via Clerk
+		User->>Web: Click Sign in (email/pw or OAuth)
+		Web->>Clerk: Redirect to Clerk sign-in / OAuth provider
+		Clerk-->>User: Provider consent / sign-in UI
+		User->>Clerk: Authorize
+		Clerk-->>API: Callback with session + clerkUser
+		API->>DB: Ensure user exists / sync metadata
+		API->>Cache: Store session mapping
+		API-->>Web: Set session cookie
+		Web-->>User: Redirect to dashboard
+	end
+
+	%% Token Refresh / Session Validation
+	rect rgb(255, 243, 224)
+		Note over Web,API: Session validation and refresh
+		Web->>API: Request protected resource (cookie/session)
+		API->>Clerk: Verify session / getUser
+		alt Clerk session valid
+			Clerk-->>API: User metadata (clerkId)
+			API->>DB: (optional) refresh local cache
+			API-->>Web: 200 OK + payload
+		else Clerk session invalid
+			Clerk-->>API: session invalid
+			API-->>Web: 401 Unauthorized
+		end
+	end
+
+	%% Logout Flow
+	rect rgb(224, 242, 241)
+		Note over User,Web: Logout
+		User->>Web: Click logout
+		Web->>API: POST /api/auth/logout
+		API->>Clerk: Revoke session / signOut
+		API->>Cache: Invalidate local session mapping
+		API->>DB: Log logout event
+		API-->>Web: 200 OK
+		Web->>Web: Clear client-side state
+		Web-->>User: Redirect to login
+	end
+

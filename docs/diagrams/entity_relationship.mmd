@@ -1,0 +1,97 @@
+
+%% Entity-Relationship Diagram for ASSS (derived from SRS / Prisma schema)
+erDiagram
+	%% Entities and fields
+	USER {
+		String id PK
+		String clerkId UNIQUE
+		String email UNIQUE
+		String name
+		String role
+		DateTime createdAt
+		DateTime updatedAt
+	}
+
+	COMPLAINT {
+		String id PK
+		String userId FK
+		String category
+		String description
+		String status
+		String response
+		String attachment
+		String assigneeId FK
+		DateTime createdAt
+		DateTime updatedAt
+	}
+
+	SUGGESTION {
+		String id PK
+		String userId FK
+		String title
+		String description
+		String status
+		Int upvotes
+		DateTime createdAt
+		DateTime updatedAt
+	}
+
+	UPVOTE {
+		String id PK
+		String userId FK
+		String suggestionId FK
+		DateTime createdAt
+	}
+
+	AUDITLOG {
+		String id PK
+		String actorId
+		String action
+		String entity
+		String entityId
+		String detail
+		DateTime createdAt
+	}
+
+	CHATSESSION {
+		String id PK
+		String userId FK
+		String status
+		String title
+		DateTime lastActivity
+		DateTime createdAt
+	}
+
+	MESSAGE {
+		String id PK
+		String sessionId FK
+		String sender
+		String content
+		DateTime createdAt
+	}
+
+	UIPROTOTYPE {
+		String id PK
+		String sessionId FK
+		String jsonSchema
+		Float costEstimate
+		String previewUrl
+		DateTime createdAt
+	}
+
+	%% Relationships
+	USER ||--o{ COMPLAINT : "submits"
+	USER ||--o{ SUGGESTION : "creates"
+	USER ||--o{ UPVOTE : "makes"
+	SUGGESTION ||--o{ UPVOTE : "has"
+	USER ||--o{ CHATSESSION : "owns"
+	CHATSESSION ||--o{ MESSAGE : "contains"
+	CHATSESSION ||--o{ UIPROTOTYPE : "may_generate"
+	COMPLAINT }o--|| USER : "assignee"
+	AUDITLOG }o--|| USER : "actor"
+	COMPLAINT ||--o{ AUDITLOG : "audited_by"
+
+	%% Notes
+	%% - PK = primary key, FK = foreign key
+	%% - Types are illustrative (match Prisma schema types in SRS)
+

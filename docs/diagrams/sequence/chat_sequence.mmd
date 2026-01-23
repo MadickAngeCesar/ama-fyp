@@ -1,0 +1,36 @@
+%% Chat interaction sequence diagram (Student Inquiries / Gemini AI)
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+    actor User
+    participant Client as Web App (Client)
+    participant Server as Next.js API
+    participant DB as Database (Prisma/Supabase)
+    participant Gemini as Gemini AI
+    participant Worker as Background Worker
+
+    %% Normal chat message flow
+    User->>Client: Send message in chat UI
+    Client->>Server: POST /api/chat {sessionId, message}
+    Server->>Clerk: Verify session / getUser
+    Clerk-->>Server: clerkUser
+    Server->>DB: Fetch recent non-PII context (tickets, FAQs)
+    Server->>Gemini: Call chat completion (prompt + context)
+    activate Gemini
+    Gemini-->>Server: AI response (+actions, uiPrototype?)
+    deactivate Gemini
+    Server->>DB: Persist Message and update ChatSession.lastActivity
+    Server-->>Client: Return AI reply and optional UI prototype
+    Client-->>User: Display reply
+
+    %% Escalation flow: convert chat to complaint
+    User->>Client: Request escalation (create complaint)
+    Client->>Server: POST /api/chat/{id}/escalate {autoFill:true}
+    Server->>Clerk: Verify session / getUser
+    Clerk-->>Server: clerkUser
+    Server->>DB: Create Complaint (prefilled from chat, user=clerkId)
+    Server->>Worker: Enqueue follow-up job (notify staff, attach context)
+    Server-->>Client: 201 Created (complaintId)
+    Worker->>Server: (background) notify staff / send email
+
+    %% Rate limiting and cost-control
+    Note over Server,Gemini: Server enforces per-user rate limits and batching

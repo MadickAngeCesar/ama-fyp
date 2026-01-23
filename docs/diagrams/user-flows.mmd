@@ -1,0 +1,44 @@
+%% User Flow Diagram for ASSS (AI-powered Student Support System)
+%%{init: {'theme':'base'}}%%
+flowchart TD
+	Start([Start])
+	SignUp["Sign Up / Sign In (Clerk)"]
+	Dashboard["Student Dashboard"]
+	SubmitComplaint["Submit Complaint"]
+	AttachFile["Attach File (optional)"]
+	TrackStatus["Track Complaint Status"]
+	SubmitSuggestion["Submit Suggestion"]
+	Upvote["Upvote Suggestion"]
+	ChatAI["Chat with AI (Gemini)"]
+	Escalate["Escalate Chat to Complaint"]
+	ReceiveNotif["Receive Notification"]
+	StaffDash["Staff Dashboard"]
+	Respond["Respond to Complaint"]
+	ChangeStatus["Change Complaint Status"]
+	Assign["Assign/Claim Complaint"]
+	Moderate["Moderate Suggestions"]
+	AdminDash["Admin Dashboard"]
+	ManageUsers["Manage Users/Roles"]
+	ConfigureCat["Configure Categories"]
+	ViewAudit["View Audit Logs"]
+	End([End])
+
+	Start --> SignUp --> Dashboard
+	Dashboard --> SubmitComplaint --> AttachFile --> TrackStatus
+	Dashboard --> SubmitSuggestion --> Upvote
+	Dashboard --> ChatAI -->|"AI resolves"| Dashboard
+	ChatAI -->|"Escalate"| Escalate --> SubmitComplaint
+	ReceiveNotif --> Dashboard
+	SignUp --> StaffDash
+	StaffDash --> Respond --> ChangeStatus
+	StaffDash --> Assign
+	StaffDash --> Moderate
+	SignUp --> AdminDash
+	AdminDash --> ManageUsers
+	AdminDash --> ConfigureCat
+	AdminDash --> ViewAudit
+	TrackStatus --> End
+	Upvote --> End
+	ChangeStatus --> End
+	Moderate --> End
+	ViewAudit --> End

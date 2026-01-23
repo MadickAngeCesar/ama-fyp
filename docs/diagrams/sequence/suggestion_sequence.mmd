@@ -1,0 +1,48 @@
+%% Suggestion module sequence diagram
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+	participant Student as Student
+	participant Browser as Web App
+	participant API as Next.js API
+	participant Clerk as Clerk
+	participant DB as Database (Prisma/Supabase)
+	participant Gemini as Gemini AI
+	participant Notif as Notification Service
+	participant Admin as Admin Dashboard
+
+	%% Student submits suggestion
+	Student->>Browser: Fill suggestion form & submit
+	Browser->>API: POST /api/suggestions {content, userId, meta}
+	API->>Clerk: Verify session / get user profile
+	API->>DB: Insert suggestion (status: received)
+
+	%% Enrich using Gemini AI
+	API->>Gemini: Request enhancement / summary / classification
+	activate Gemini
+	Gemini-->>API: Enhanced text, tags, priority
+	deactivate Gemini
+
+	API->>DB: Update suggestion with AI result & metadata
+
+	%% Notify admin
+	API->>Notif: Create admin notification (webhook/email)
+	API-->>Browser: 200 OK (suggestion accepted)
+
+	Notif->>Admin: Deliver notification (email/in-app)
+	Admin->>Admin: Review suggestion
+
+	alt Admin replies or updates status
+		Admin->>API: POST /api/suggestions/{id}/action {status, response}
+		API->>DB: Save admin response & status
+		API->>Notif: Notify student of response
+		Notif->>Student: Deliver response (email/push/in-app)
+	else Admin flags for follow-up
+		Admin->>DB: Add moderation note / escalate
+	end
+
+	%% Optional alternate flows
+	alt Gemini fails or rate-limited
+		API-->>DB: Keep original suggestion (status: pending-ai)
+		API->>Notif: Alert admin that AI enrichment failed
+	end
+

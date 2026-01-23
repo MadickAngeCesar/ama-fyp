@@ -1,0 +1,48 @@
+%% Use Case Diagram for AI-powered Student Support System (ASSS)
+%% Actors: Student, Staff, Admin, Clerk, Supabase, Gemini AI
+%% Use cases: Authentication, Submit Complaint, Track Complaint, Submit Suggestion, Upvote Suggestion, Chatbot Interaction, Staff Dashboard, Real-time Notifications, Audit Logging, Search & Filter, Student Inquiries
+
+%% Mermaid use case diagram syntax
+%% See: https://mermaid.js.org/syntax/use-case-diagram.html
+
+%% Note: Mermaid's use case diagram is experimental. We'll use flowchart for clarity.
+flowchart TD
+    %% Actors
+    Student((Student))
+    Staff((Staff))
+    Admin((Admin))
+    Clerk[(Clerk Auth)]
+    Supabase[(Supabase DB/Realtime/Storage)]
+    Gemini[(Gemini AI)]
+
+    %% Student use cases
+    Student -- Authenticates --> Clerk
+    Student -- "Submit Complaint" --> Supabase
+    Student -- "Track Complaint Status" --> Supabase
+    Student -- "Submit Suggestion" --> Supabase
+    Student -- "Upvote Suggestion" --> Supabase
+    Student -- "Chatbot Interaction" --> Gemini
+    Student -- "Student Inquiries" --> Gemini
+    Student -- "Student Inquiries" --> Supabase
+
+    %% Staff/Admin use cases
+    Staff -- "Staff Dashboard" --> Supabase
+    Staff -- "Respond to Complaint" --> Supabase
+    Staff -- "Change Complaint Status" --> Supabase
+    Staff -- "Search & Filter" --> Supabase
+    Staff -- "Audit Logging" --> Supabase
+    Staff -- "Real-time Notifications" --> Supabase
+    Admin -- "Configure Categories/Roles" --> Supabase
+    Admin -- "Moderate Suggestions" --> Supabase
+    Admin -- "Audit Logging" --> Supabase
+
+    %% System interactions
+    Supabase -- "Realtime Updates" --> Student
+    Supabase -- "Realtime Updates" --> Staff
+    Supabase -- "Audit Events" --> Admin
+    Gemini -- "AI Response" --> Student
+    Clerk -- "User Metadata" --> Supabase
+
+    %% External system boundaries
+    classDef actor fill:#f9f,stroke:#333,stroke-width:2px;
+    class Student,Staff,Admin actor;

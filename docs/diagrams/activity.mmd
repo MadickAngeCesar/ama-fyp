@@ -1,0 +1,16 @@
+%% Activity Diagram: Student Submits Complaint
+%% Covers: Authentication, Complaint creation, Attachment upload, Notification
+
+stateDiagram-v2
+    [*] --> Login
+    Login --> Dashboard: Authenticated
+    Dashboard --> OpenComplaintForm
+    OpenComplaintForm --> FillComplaintDetails
+    FillComplaintDetails --> AttachFile
+    AttachFile --> UploadAttachment: Yes
+    AttachFile --> Submit: No
+    UploadAttachment --> Submit
+    Submit --> SaveToDB
+    SaveToDB --> NotifyStaff
+    NotifyStaff --> ShowConfirmation
+    ShowConfirmation --> [*]

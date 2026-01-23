@@ -1,0 +1,54 @@
+%% Complaint submission sequence diagram (Clerk auth, Supabase storage, Prisma)
+%%{init: {'theme':'base'}}%%
+sequenceDiagram
+    participant Student as Student
+    participant Client as Web App
+    participant API as Next.js API
+    participant Clerk as Clerk
+    participant DB as Database (Prisma/Supabase)
+    participant Storage as Supabase Storage
+    participant Worker as Background Worker
+    participant Notif as Notification Service
+    participant RT as Supabase Realtime
+
+    %% Student creates a complaint with optional attachment
+    Student->>Client: Fill complaint form & attach file(s)
+    Client->>API: POST /api/complaints {form + file metadata}
+    API->>Clerk: Verify session / getUser
+    Clerk-->>API: clerkUser (clerkId, email)
+
+    %% Handle attachments (server or signed URL flow)
+    alt client uploads via signed url
+        API->>Storage: Request signed upload URL
+        Storage-->>API: signedUrl
+        API-->>Client: signedUrl
+        Client->>Storage: PUT file to signedUrl
+        Storage-->>Client: 200 OK
+        Client->>API: POST /api/complaints/complete {filePath, form}
+    else server receives upload
+        API->>Storage: Upload file to Supabase Storage
+        Storage-->>API: filePath
+    end
+
+    %% Persist complaint
+    API->>DB: Insert Complaint (userId=clerkId, attachment=filePath, status=PENDING)
+    DB-->>API: complaintId
+
+    %% Asynchronous processing
+    API->>Worker: Enqueue job (generate thumbnail, OCR, virus-scan)
+    API->>Notif: Notify staff (email/in-app)
+    API->>RT: Broadcast new complaint event
+    API-->>Client: 201 Created {complaintId}
+
+    %% Background worker actions
+    Worker->>Storage: Generate preview / thumbnail
+    Worker->>DB: Update complaint with previewPath / metadata
+    Worker->>DB: Insert AuditLog (actor=system or clerkId)
+    Worker-->>Notif: Send follow-up notifications if needed
+
+    %% Admin reviews
+    Notif->>Admin: Deliver notification
+    Admin->>API: POST /api/complaints/{id}/action {status, response}
+    API->>DB: Save staff response & status
+    API->>RT: Broadcast update to student
+    API->>Notif: Notify student about update

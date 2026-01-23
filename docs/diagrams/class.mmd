@@ -1,0 +1,111 @@
+%% Class Diagram: Main Entities for ASSS
+%% Based on Prisma schema in SRS Appendix A
+
+classDiagram
+    class User {
+        +String id
+        +String clerkId
+        +String email
+        +String name
+        +Role role
+        +DateTime createdAt
+        +DateTime updatedAt
+        +createComplaint(category, description, attachment): Complaint
+        +submitSuggestion(title, description): Suggestion
+        +upvoteSuggestion(suggestionId): Upvote
+        +startChatSession(title): ChatSession
+    }
+    class Complaint {
+        +String id
+        +String userId
+        +String category
+        +String description
+        +ComplaintStatus status
+        +String response
+        +String attachment
+        +String assigneeId
+        +DateTime createdAt
+        +DateTime updatedAt
+        +assignTo(staffId): void
+        +updateStatus(status): void
+        +addResponse(response): void
+    }
+    class Suggestion {
+        +String id
+        +String userId
+        +String title
+        +String description
+        +SuggestionStatus status
+        +Int upvotes
+        +DateTime createdAt
+        +DateTime updatedAt
+        +approve(): void
+        +reject(): void
+        +incrementUpvote(): void
+    }
+    class Upvote {
+        +String id
+        +String userId
+        +String suggestionId
+        +DateTime createdAt
+    }
+    class AuditLog {
+        +String id
+        +String actorId
+        +String action
+        +String entity
+        +String entityId
+        +String detail
+        +DateTime createdAt
+        +logEvent(action, entity, entityId, detail): void
+    }
+    class ChatSession {
+        +String id
+        +String userId
+        +ChatStatus status
+        +String title
+        +DateTime lastActivity
+        +DateTime createdAt
+        +addMessage(sender, content, metadata): Message
+        +close(): void
+    }
+    class Message {
+        +String id
+        +String sessionId
+        +MessageSender sender
+        +String content
+        +Json metadata
+        +DateTime createdAt
+    }
+    class UIPrototype {
+        +String id
+        +String sessionId
+        +String promptHash
+        +Json schemaJson
+        +String previewPath
+        +Int costCents
+        +DateTime createdAt
+        +generatePreview(): String
+    }
+    %% Enums
+    class Role
+    class ComplaintStatus
+    class SuggestionStatus
+    class ChatStatus
+    class MessageSender
+
+    %% Relationships
+    User "1" --o "*" Complaint : creates
+    User "1" --o "*" Suggestion : creates
+    User "1" --o "*" Upvote : votes
+    User "1" --o "*" ChatSession : has
+    Complaint "*" --o "1" User : belongsTo
+    Complaint "*" --o "1" User : assignee
+    Suggestion "*" --o "1" User : belongsTo
+    Upvote "*" --o "1" User : by
+    Upvote "*" --o "1" Suggestion : for
+    AuditLog "*" --o "1" User : actor
+    ChatSession "*" --o "1" User : belongsTo
+    ChatSession "1" --o "*" Message : has
+    Message "*" --o "1" ChatSession : in
+    UIPrototype "*" --o "1" ChatSession : for
