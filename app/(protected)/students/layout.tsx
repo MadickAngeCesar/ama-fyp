@@ -1,4 +1,6 @@
-import StudentSidebar from "@/components/layout/student-sidebar"
+
+import StudentSidebar from "@/components/layout/students/sidebar"
+import StudentHeader from "@/components/layout/students/header"
 
 /**
  * Dashboard layout for student area.
@@ -10,11 +12,16 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex h-screen">
-      <aside className="hidden md:block">
+    <div className="flex h-screen w-full bg-background">
+      {/* Sidebar: fixed width, full height */}
+      <aside className="hidden md:flex h-full w-72 shrink-0">
         <StudentSidebar />
       </aside>
-      <main className="flex-1 overflow-auto bg-background p-6">{children}</main>
+      {/* Main area: header + content, fills remaining space */}
+      <div className="flex min-w-0 flex-1 flex-col h-full">
+        <StudentHeader />
+        <main className="flex-1 min-h-0 overflow-auto p-6">{children}</main>
+      </div>
     </div>
   )
 }

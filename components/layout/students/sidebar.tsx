@@ -107,7 +107,7 @@ export default function StudentSidebar({
         )}
         data-role="student-sidebar"
       >
-        <SidebarHeader className="px-6 py-4">
+        <SidebarHeader className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
               <span className="text-sm font-semibold text-primary-foreground">AF</span>
@@ -171,7 +171,7 @@ export default function StudentSidebar({
 
         <div className="mx-4 my-2 h-px bg-border/40" />
 
-        <SidebarFooter className="mt-auto px-4 py-4">
+        <SidebarFooter className="mt-auto px-4 py-4 border-t border-gray-200">
           <div className="flex items-center gap-3">
             <Avatar>
               {user?.image ? (
