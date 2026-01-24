@@ -13,18 +13,132 @@ datasource db {
   provider = "postgresql"
 }
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User?   @relation(fields: [authorId], references: [id])
-  authorId  Int?
+model User {
+  id           String   @id @default(cuid())
+  clerkId      String   @unique
+  email        String   @unique
+  name         String?
+  role         Role     @default(STUDENT)
+  complaints   Complaint[]
+  suggestions  Suggestion[]
+  upvotes      Upvote[]
+  chatSessions ChatSession[]
+  auditLogs    AuditLog[]
+  assignedComplaints Complaint[] @relation("Assignee")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
+model Complaint {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  category    String
+  description String
+  status      ComplaintStatus @default(PENDING)
+  response    String?
+  attachment  String?
+  assigneeId  String?
+  assignee    User?    @relation("Assignee", fields: [assigneeId], references: [id])
+  auditLogs   AuditLog[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Suggestion {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  title       String
+  description String
+  status      SuggestionStatus @default(PENDING)
+  upvotes     Upvote[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Upvote {
+  id           String @id @default(cuid())
+  userId       String
+  user         User   @relation(fields: [userId], references: [id])
+  suggestionId String
+  suggestion   Suggestion @relation(fields: [suggestionId], references: [id])
+  createdAt    DateTime @default(now())
+  @@unique([userId, suggestionId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  actor     User?    @relation(fields: [actorId], references: [id])
+  action    String
+  entity    String
+  entityId  String
+  detail    String?
+  createdAt DateTime @default(now())
+
+  complaints Complaint[]
+}
+
+model ChatSession {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  status      ChatStatus @default(OPEN)
+  title       String?
+  lastActivity DateTime @updatedAt
+  messages    Message[]
+  uiPrototypes UIPrototype[]
+  createdAt   DateTime @default(now())
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  sessionId   String
+  session     ChatSession @relation(fields: [sessionId], references: [id])
+  sender      MessageSender
+  content     String
+  metadata    Json?
+  createdAt   DateTime @default(now())
+}
+
+model UIPrototype {
+  id          String   @id @default(cuid())
+  sessionId   String?
+  session     ChatSession? @relation(fields: [sessionId], references: [id])
+  promptHash  String
+  schemaJson  Json
+  previewPath String?
+  costCents   Int?
+  createdAt   DateTime @default(now())
+}
+
+enum Role {
+  STUDENT
+  STAFF
+  ADMIN
+}
+
+enum ComplaintStatus {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum SuggestionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ChatStatus {
+  OPEN
+  CLOSED
+}
+
+enum MessageSender {
+  USER
+  AI
+  STAFF
 }

@@ -41,7 +41,7 @@ export default function SignInPage() {
 
   return (
     <main className="min-h-screen bg-[#0B0F14] text-[#E6EAF2]">
-      <header className="max-w-6xl sticky top-0 bg-[#0B0F14] z-50 mx-auto px-3 py-3 flex items-center justify-between">
+      <header className="max-w-6xl sticky top-0 bg-[#0B0F14] z-50 mx-auto px-3 py-3 flex flex-row items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-[#4F7DFF] flex items-center justify-center text-white font-semibold">
             A

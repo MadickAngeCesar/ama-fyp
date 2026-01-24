@@ -32,6 +32,16 @@ export const users = [
     createdAt: new Date('2026-01-01'),
     updatedAt: new Date('2026-01-01'),
   },
+  {
+    id: 'user-4',
+    email: 'madick@example.com',
+    password: 'password123',
+    name: 'Admin User',
+    role: 'ADMIN' as const,
+    clerkId: 'clerk-admin-1',
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date('2026-01-01'),
+  },
 ]
 
 export const complaints = [
