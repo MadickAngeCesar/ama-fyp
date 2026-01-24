@@ -71,6 +71,7 @@ export const complaints = [
   },
 ]
 
+// Add categories
 export const suggestions = [
   {
     id: 'suggestion-1',

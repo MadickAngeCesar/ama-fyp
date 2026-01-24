@@ -27,6 +27,7 @@ export default function StudentSettingsSheet({ className }: { className?: string
   const [open, setOpen] = React.useState(false)
   const [language, setLanguage] = React.useState<"en" | "fr">("en")
   const [dark, setDark] = React.useState(false)
+  const [user, setUser] = React.useState<{ name?: string; email?: string; image?: string } | null>(null)
 
   React.useEffect(() => {
     const storedLang = typeof window !== "undefined" && localStorage.getItem("prefLanguage")
@@ -34,18 +35,30 @@ export default function StudentSettingsSheet({ className }: { className?: string
     if (storedLang === "fr") setLanguage("fr")
     if (storedTheme === "dark") setDark(true)
     if (storedTheme === "light") setDark(false)
+    try {
+      const name = localStorage.getItem("userName")
+      const email = localStorage.getItem("userEmail")
+      const image = localStorage.getItem("userImage")
+      if (name || email || image) setUser({ name: name ?? undefined, email: email ?? undefined, image: image ?? undefined })
+    } catch (e) {
+        console.error("Failed to load user info", e)
+    }
   }, [])
 
   React.useEffect(() => {
     try {
       localStorage.setItem("prefLanguage", language)
-    } catch (e) {}
+    } catch (e) {
+        console.error("Failed to save language preference", e)
+    }
   }, [language])
 
   React.useEffect(() => {
     try {
       localStorage.setItem("prefTheme", dark ? "dark" : "light")
-    } catch (e) {}
+    } catch (e) {
+        console.error("Failed to save theme preference", e)
+    }
 
     if (typeof document !== "undefined") {
       const root = document.documentElement
@@ -66,6 +79,30 @@ export default function StudentSettingsSheet({ className }: { className?: string
           <SheetTitle>Settings</SheetTitle>
           <SheetDescription>Adjust language and theme preferences.</SheetDescription>
         </SheetHeader>
+
+        {/* Mobile-only user details + logout */}
+        <div className="px-4 md:hidden">
+          <div className="flex items-center gap-3 py-4">
+            <div className="h-10 w-10 rounded-md bg-primary flex items-center justify-center">
+              <span className="text-sm font-semibold text-primary-foreground">{(user?.name ?? "?")[0]}</span>
+            </div>
+            <div className="flex-1">
+              <div className="font-medium">{user?.name ?? "Guest"}</div>
+              <div className="text-xs text-muted-foreground">{user?.email ?? "Student"}</div>
+            </div>
+            <div>
+              <Button variant="ghost" onClick={() => {
+                try {
+                  localStorage.removeItem("userName"); localStorage.removeItem("userEmail"); localStorage.removeItem("userImage")
+                } catch (e) {
+                    console.error("Failed to clear user info", e)
+                }
+                // simple logout: reload page
+                if (typeof window !== "undefined") window.location.reload()
+              }}>Logout</Button>
+            </div>
+          </div>
+        </div>
 
         <div className="p-4 pt-0">
           <div className="mb-4">

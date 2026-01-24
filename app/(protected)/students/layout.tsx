@@ -1,6 +1,6 @@
-
 import StudentSidebar from "@/components/layout/students/sidebar"
 import StudentHeader from "@/components/layout/students/header"
+import MobileNavigation from "@/components/layout/students/mobile-navigation"
 
 /**
  * Dashboard layout for student area.
@@ -21,6 +21,7 @@ export default function DashboardLayout({
       <div className="flex min-w-0 flex-1 flex-col h-full">
         <StudentHeader />
         <main className="flex-1 min-h-0 overflow-auto p-6">{children}</main>
+        <MobileNavigation />
       </div>
     </div>
   )
