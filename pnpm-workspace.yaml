@@ -1,9 +1,18 @@
 packages:
-  - "apps/*"
-  - "packages/*"
+  - apps/*
+  - packages/*
+
 catalogs:
   prisma:
     prisma: latest
+
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
+
+onlyBuiltDependencies:
+  - '@clerk/shared'
+  - '@prisma/engines'
+  - cypress
+  - esbuild
+  - prisma
