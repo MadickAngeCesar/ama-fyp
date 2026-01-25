@@ -7,7 +7,7 @@ import ComplaintList from "@/components/complaints/ComplaintList";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverTitle } from "@/components/ui/popover";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 export default function Page() {
   const initial = (placeholderComplaints || []).map((c) => {
@@ -74,19 +74,19 @@ export default function Page() {
               <CardTitle>New complaint</CardTitle>
             </CardHeader>
             <CardContent>
-              <Popover>
-                <PopoverTrigger asChild>
+              <Dialog>
+                <DialogTrigger asChild>
                   <Button size="lg" className="w-full">Create complaint</Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[min(720px,90vw)]">
-                  <PopoverHeader>
-                    <PopoverTitle className="text-lg">Create a complaint</PopoverTitle>
-                  </PopoverHeader>
-                  <div className="mt-2 p-2">
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle className="text-lg">Create a complaint</DialogTitle>
+                  </DialogHeader>
+                  <div className="mt-4">
                     <ComplaintForm onSubmit={(p) => { handleCreate(p); }} />
                   </div>
-                </PopoverContent>
-              </Popover>
+                </DialogContent>
+              </Dialog>
             </CardContent>
           </Card>
         </aside>

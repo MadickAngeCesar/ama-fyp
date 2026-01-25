@@ -7,8 +7,8 @@ import { suggestions as placeholderSuggestions, users as placeholderUsers } from
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverTitle } from "@/components/ui/popover";
-import MySuggestionsPopover from "@/components/suggestions/MySuggestionsPopover";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import MySuggestionsContent from "@/components/suggestions/MySuggestionsPopover";
 
 export default function Page() {
 
@@ -84,48 +84,54 @@ export default function Page() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 gap-3">
-                <Popover>
-                  <PopoverTrigger asChild>
+                <Dialog>
+                  <DialogTrigger asChild>
                     <Button size="lg" className="w-full">Add suggestion</Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[min(640px,90vw)]">
-                    <PopoverHeader>
-                      <PopoverTitle className="text-lg">Share an idea</PopoverTitle>
-                    </PopoverHeader>
-                    <div className="mt-2">
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl">
+                    <DialogHeader>
+                      <DialogTitle className="text-lg">Share an idea</DialogTitle>
+                    </DialogHeader>
+                    <div className="mt-4">
                       <SuggestionForm onSubmit={(p) => { handleSubmit(p); }} />
                     </div>
-                  </PopoverContent>
-                </Popover>
+                  </DialogContent>
+                </Dialog>
 
-                <Popover>
-                  <PopoverTrigger asChild>
+                <Dialog>
+                  <DialogTrigger asChild>
                     <Button variant="outline" size="lg" className="w-full">My suggestions</Button>
-                  </PopoverTrigger>
-                  {/* Determine current user (student) from placeholderUsers and pass their suggestions */}
-                  <MySuggestionsPopover
-                    suggestions={(placeholderSuggestions || [])
-                      .filter((ps) => ps.userId === (placeholderUsers || [])[0]?.id)
-                      .map((s) => ({
-                        id: s.id,
-                        title: s.title,
-                        description: s.description,
-                        authorName: (placeholderUsers || []).find((u) => u.id === s.userId)?.name,
-                        upvotes: s.upvotes ?? 0,
-                        createdAt: s.createdAt instanceof Date ? s.createdAt.toISOString() : String(s.createdAt),
-                      }))}
-                    onOpen={(id) => {
-                      // bring selected suggestion to top for demo
-                      setSuggestions((list) => {
-                        const idx = list.findIndex((x) => x.id === id);
-                        if (idx === -1) return list;
-                        const copy = [...list];
-                        const [sel] = copy.splice(idx, 1);
-                        return [sel, ...copy];
-                      });
-                    }}
-                  />
-                </Popover>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl">
+                    <DialogHeader>
+                      <DialogTitle>My Suggestions</DialogTitle>
+                    </DialogHeader>
+                    <div className="mt-4">
+                      <MySuggestionsContent
+                        suggestions={(placeholderSuggestions || [])
+                          .filter((ps) => ps.userId === (placeholderUsers || [])[0]?.id)
+                          .map((s) => ({
+                            id: s.id,
+                            title: s.title,
+                            description: s.description,
+                            authorName: (placeholderUsers || []).find((u) => u.id === s.userId)?.name,
+                            upvotes: s.upvotes ?? 0,
+                            createdAt: s.createdAt instanceof Date ? s.createdAt.toISOString() : String(s.createdAt),
+                          }))}
+                        onOpen={(id) => {
+                          // bring selected suggestion to top for demo
+                          setSuggestions((list) => {
+                            const idx = list.findIndex((x) => x.id === id);
+                            if (idx === -1) return list;
+                            const copy = [...list];
+                            const [sel] = copy.splice(idx, 1);
+                            return [sel, ...copy];
+                          });
+                        }}
+                      />
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
             </CardContent>
           </Card>
