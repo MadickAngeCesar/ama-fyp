@@ -1,9 +1,10 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Home, MessageCircle, FileText, Lightbulb, LogOut } from "lucide-react"
+import * as React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Home, MessageCircle, FileText, Lightbulb, LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import {
   SidebarProvider,
@@ -14,15 +15,11 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
-import {
-  Avatar,
-  AvatarImage,
-  AvatarFallback,
-} from "@/components/ui/avatar"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 /**
  * Props for Sidebar
@@ -30,17 +27,17 @@ import { cn } from "@/lib/utils"
 export type SidebarProps = {
   /** Current authenticated user (optional) */
   user?: {
-    name?: string
-    email?: string
-    image?: string
-  }
+    name?: string;
+    email?: string;
+    image?: string;
+  };
   /** Currently active path used to mark active nav item */
-  active?: string
+  active?: string;
   /** Additional className for outer container */
-  className?: string
+  className?: string;
   /** Portal name to display in sidebar header */
-  portal: string
-}
+  portal: string;
+};
 
 /**
  * Sidebar
@@ -50,7 +47,12 @@ export type SidebarProps = {
  * - Content: navigation menu
  * - Footer: user avatar and name
  */
-export type SidebarNavItem = { label: string; href: string; icon?: string, portal?: string }
+export type SidebarNavItem = {
+  label: string;
+  href: string;
+  icon?: string;
+  portal?: string;
+};
 
 export default function DesktopSidebar({
   user,
@@ -59,9 +61,12 @@ export default function DesktopSidebar({
   primaryItems: primaryItemsProp,
   secondaryItems: secondaryItemsProp,
   portal,
-}: SidebarProps & { primaryItems?: SidebarNavItem[]; secondaryItems?: SidebarNavItem[] }) {
-  const pathname = usePathname() ?? "/"
-  const current = active ?? pathname
+}: SidebarProps & {
+  primaryItems?: SidebarNavItem[];
+  secondaryItems?: SidebarNavItem[];
+}) {
+  const pathname = usePathname() ?? "/";
+  const current = active ?? pathname;
 
   const primaryItems = React.useMemo(
     () =>
@@ -69,44 +74,56 @@ export default function DesktopSidebar({
         { label: "Dashboard", href: "/students", icon: "home" },
         { label: "Chat", href: "/students/chat", icon: "chat" },
       ],
-    [primaryItemsProp]
-  )
+    [primaryItemsProp],
+  );
 
   const secondaryItems = React.useMemo(
     () =>
       secondaryItemsProp ?? [
         { label: "Complaints", href: "/students/complaint", icon: "complaint" },
-        { label: "Suggestions", href: "/students/suggestion", icon: "suggestion" },
+        {
+          label: "Suggestions",
+          href: "/students/suggestion",
+          icon: "suggestion",
+        },
       ],
-    [secondaryItemsProp]
-  )
+    [secondaryItemsProp],
+  );
 
-  const iconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
+  const iconMap: Record<
+    string,
+    React.ComponentType<React.SVGProps<SVGSVGElement>>
+  > = {
     home: Home,
     chat: MessageCircle,
     complaint: FileText,
     suggestion: Lightbulb,
-  }
+  };
 
-  const allItems = React.useMemo(() => [...primaryItems, ...secondaryItems], [primaryItems, secondaryItems])
+  const allItems = React.useMemo(
+    () => [...primaryItems, ...secondaryItems],
+    [primaryItems, secondaryItems],
+  );
 
   const activeHref = React.useMemo(() => {
     // Find the most specific matching href
-    let bestMatch = ""
+    let bestMatch = "";
     for (const item of allItems) {
       if (current === item.href || current.startsWith(item.href + "/")) {
         if (item.href.length > bestMatch.length) {
-          bestMatch = item.href
+          bestMatch = item.href;
         }
       }
     }
-    return bestMatch
-  }, [current, allItems])
+    return bestMatch;
+  }, [current, allItems]);
 
-  const isActive = (href: string) => href === activeHref
+  const isActive = (href: string) => href === activeHref;
 
-  const [, setMounted] = React.useState(false)
-  React.useEffect(() => setMounted(true), [])
+  const [, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+
+  const router = useRouter();
 
   // Do not return a placeholder; always render the sidebar tree for SSR/CSR consistency
 
@@ -116,25 +133,31 @@ export default function DesktopSidebar({
         aria-label={`${portal} navigation`}
         className={cn(
           "flex h-full w-72 flex-col bg-surface text-text-primary border-r border-border",
-          className
+          className,
         )}
         data-role="student-sidebar"
       >
         <SidebarHeader className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-              <span className="text-sm font-semibold text-primary-foreground">AF</span>
+              <span className="text-sm font-semibold text-primary-foreground">
+                AF
+              </span>
             </div>
             <div>
               <div className="text-base font-semibold">AMA FYP</div>
-              <div className="text-xs text-muted-foreground">{portal} Portal</div>
+              <div className="text-xs text-muted-foreground">
+                {portal} Portal
+              </div>
             </div>
           </div>
         </SidebarHeader>
 
         <SidebarContent className="px-3 py-2">
           <SidebarMenu>
-            <div className="mb-2 px-1 text-xs font-medium text-muted-foreground">Main</div>
+            <div className="mb-2 px-1 text-xs font-medium text-muted-foreground">
+              Main
+            </div>
             {primaryItems.map((it) => (
               <SidebarMenuItem key={it.href}>
                 <SidebarMenuButton asChild isActive={isActive(it.href)}>
@@ -144,13 +167,13 @@ export default function DesktopSidebar({
                       "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm",
                       isActive(it.href)
                         ? "bg-primary/10 text-primary"
-                        : "hover:bg-surface-muted"
+                        : "hover:bg-surface-muted",
                     )}
                     aria-current={isActive(it.href) ? "page" : undefined}
                   >
                     {(() => {
-                      const Icon = iconMap[it.icon ?? "home"] ?? Home
-                      return <Icon className="size-4" />
+                      const Icon = iconMap[it.icon ?? "home"] ?? Home;
+                      return <Icon className="size-4" />;
                     })()}
                     <span className="truncate">{it.label}</span>
                   </Link>
@@ -160,7 +183,9 @@ export default function DesktopSidebar({
 
             <div className="my-3 mx-1 h-px bg-border/30" />
 
-            <div className="mb-2 px-1 text-xs font-medium text-muted-foreground">Explore</div>
+            <div className="mb-2 px-1 text-xs font-medium text-muted-foreground">
+              Explore
+            </div>
             {secondaryItems.map((it) => (
               <SidebarMenuItem key={it.href}>
                 <SidebarMenuButton asChild isActive={isActive(it.href)}>
@@ -170,13 +195,13 @@ export default function DesktopSidebar({
                       "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm",
                       isActive(it.href)
                         ? "bg-primary/10 text-primary"
-                        : "hover:bg-surface-muted"
+                        : "hover:bg-surface-muted",
                     )}
                     aria-current={isActive(it.href) ? "page" : undefined}
                   >
                     {(() => {
-                      const Icon = iconMap[it.icon ?? "home"] ?? Home
-                      return <Icon className="size-4" />
+                      const Icon = iconMap[it.icon ?? "home"] ?? Home;
+                      return <Icon className="size-4" />;
                     })()}
                     <span className="truncate">{it.label}</span>
                   </Link>
@@ -198,13 +223,17 @@ export default function DesktopSidebar({
             <div className="flex-1">
               <div className="text-sm font-medium">{user?.name ?? "Guest"}</div>
               {user?.email ? (
-                <div className="text-xs text-muted-foreground truncate">{user.email}</div>
+                <div className="text-xs text-muted-foreground truncate">
+                  {user.email}
+                </div>
               ) : (
                 <div className="text-xs text-muted-foreground">Student</div>
               )}
             </div>
+
             <button
-              className="-mr-2 rounded-md p-2 text-muted-foreground hover:text-primary hover:bg-surface-muted"
+              onClick={() => router.push('/signin')}
+              className="-mr-2 rounded-md p-2 text-muted-foreground hover:text-primary hover:bg-surface-muted cursor-pointer"
               aria-label="Sign out"
               title="Sign out"
             >
@@ -214,5 +243,5 @@ export default function DesktopSidebar({
         </SidebarFooter>
       </Sidebar>
     </SidebarProvider>
-  )
+  );
 }
