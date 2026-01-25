@@ -58,37 +58,15 @@ export default function DesktopSidebar({
   user,
   active,
   className,
-  primaryItems: primaryItemsProp,
-  secondaryItems: secondaryItemsProp,
+  primaryItems,
+  secondaryItems,
   portal,
 }: SidebarProps & {
-  primaryItems?: SidebarNavItem[];
-  secondaryItems?: SidebarNavItem[];
+  primaryItems: SidebarNavItem[];
+  secondaryItems: SidebarNavItem[];
 }) {
   const pathname = usePathname() ?? "/";
   const current = active ?? pathname;
-
-  const primaryItems = React.useMemo(
-    () =>
-      primaryItemsProp ?? [
-        { label: "Dashboard", href: "/students", icon: "home" },
-        { label: "Chat", href: "/students/chat", icon: "chat" },
-      ],
-    [primaryItemsProp],
-  );
-
-  const secondaryItems = React.useMemo(
-    () =>
-      secondaryItemsProp ?? [
-        { label: "Complaints", href: "/students/complaint", icon: "complaint" },
-        {
-          label: "Suggestions",
-          href: "/students/suggestion",
-          icon: "suggestion",
-        },
-      ],
-    [secondaryItemsProp],
-  );
 
   const iconMap: Record<
     string,
