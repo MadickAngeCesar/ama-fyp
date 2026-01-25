@@ -1,6 +1,8 @@
+"use client";
 import DesktopSidebar from "@/components/layout/desktop-sidebar"
 import Header from "@/components/layout/header"
 import MobileNavigation from "@/components/layout/mobile-navigation"
+import { useTranslation } from "react-i18next"
 
 /**
  * Dashboard layout for staff area.
@@ -11,21 +13,23 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
+  const { t } = useTranslation()
+
   const primaryItems = [
-    { label: "Dashboard", href: "/staff", icon: "dashboard" },
-    { label: "Chat", href: "/staff/chat", icon: "chat" },
+    { label: t('nav.dashboard'), href: "/staff", icon: "dashboard" },
+    { label: t('nav.chat'), href: "/staff/chat", icon: "chat" },
   ]
 
   const secondaryItems = [
-    { label: "Complaints", href: "/staff/complaint", icon: "complaint" },
-    { label: "Suggestions", href: "/staff/suggestion", icon: "suggestion" },
+    { label: t('nav.complaint'), href: "/staff/complaint", icon: "complaint" },
+    { label: t('nav.suggestion'), href: "/staff/suggestion", icon: "suggestion" },
   ]
 
   const mobileItems = [
-    { label: "Home", href: "/staff", icon: "home" },
-    { label: "Chat", href: "/staff/chat", icon: "chat" },
-    { label: "Complaints", href: "/staff/complaint", icon: "complaint" },
-    { label: "Suggestions", href: "/staff/suggestion", icon: "suggestion" },
+    { label: t('nav.home'), href: "/staff", icon: "home" },
+    { label: t('nav.chat'), href: "/staff/chat", icon: "chat" },
+    { label: t('nav.complaint'), href: "/staff/complaint", icon: "complaint" },
+    { label: t('nav.suggestion'), href: "/staff/suggestion", icon: "suggestion" },
   ]
   return (
     <div className="flex h-screen w-full bg-background">
@@ -35,7 +39,7 @@ export default function DashboardLayout({
       </aside>
       {/* Main area: header + content, fills remaining space */}
       <div className="flex min-w-0 flex-1 flex-col h-full">
-        <Header title="Staff Dashboard" portal="Staff" />
+        <Header title={t('staff.dashboard.title')} portal="Staff" />
         <main className="flex-1 min-h-0 overflow-auto p-6">{children}</main>
         <MobileNavigation items={mobileItems} />
       </div>

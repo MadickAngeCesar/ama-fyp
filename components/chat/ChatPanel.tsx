@@ -64,8 +64,8 @@ export default function ChatPanel() {
   return (
     <Card className="flex flex-col h-full">
       <CardHeader className="border-b bg-muted/50">
-        <CardTitle className="text-lg font-semibold tracking-tight">{t('chat.title')}</CardTitle>
-        <p className="text-sm text-muted-foreground">{t('chat.description')}</p>
+        <CardTitle className="text-lg font-semibold tracking-tight">{t('staff.chat.title')}</CardTitle>
+        <p className="text-sm text-muted-foreground">{t('staff.chat.description')}</p>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
         <ChatMessageList messages={messages} loading={loading} error={error} />

@@ -105,23 +105,23 @@ export default function StaffSuggestionTable({ suggestions, onUpdateSuggestion }
                           <div className="space-y-3">
                             <p className="text-sm text-muted-foreground">{suggestion.description}</p>
                             <div className="space-y-2">
-                              <h4 className="font-semibold text-sm">Responses:</h4>
+                              <h4 className="font-semibold text-sm">{t('staff.suggestions.responses')}:</h4>
                               {suggestion.responses?.map((resp) => (
                                 <div key={resp.id} className="border p-2 rounded text-sm">
                                   <p>{resp.content}</p>
-                                  <p className="text-xs text-muted-foreground">By {resp.authorName} on {new Date(resp.createdAt).toLocaleString()}</p>
+                                  <p className="text-xs text-muted-foreground">{t('staff.suggestions.by')} {resp.authorName} {t('staff.suggestions.on')} {new Date(resp.createdAt).toLocaleString()}</p>
                                 </div>
-                              )) || <p className="text-sm text-muted-foreground">No responses yet.</p>}
+                              )) || <p className="text-sm text-muted-foreground">{t('staff.suggestions.noResponses')}</p>}
                             </div>
                             <div className="space-y-2">
                               <Textarea
-                                placeholder="Add a response..."
+                                placeholder={t('staff.suggestions.addResponse')}
                                 value={responseText}
                                 onChange={(e) => setResponseText(e.target.value)}
                                 className="min-h-20"
                               />
                               <Button size="sm" onClick={() => handleRespond(suggestion)} className="w-full">
-                                Respond
+                                {t('staff.suggestions.respond')}
                               </Button>
                             </div>
                           </div>
@@ -182,23 +182,23 @@ export default function StaffSuggestionTable({ suggestions, onUpdateSuggestion }
                       <div className="space-y-3">
                         <p className="text-sm text-muted-foreground">{suggestion.description}</p>
                         <div className="space-y-2">
-                          <h4 className="font-semibold text-sm">Responses:</h4>
+                          <h4 className="font-semibold text-sm">{t('staff.suggestions.responses')}:</h4>
                           {suggestion.responses?.map((resp) => (
                             <div key={resp.id} className="border p-2 rounded text-sm">
                               <p>{resp.content}</p>
-                              <p className="text-xs text-muted-foreground">By {resp.authorName} on {new Date(resp.createdAt).toLocaleString()}</p>
+                              <p className="text-xs text-muted-foreground">{t('staff.suggestions.by')} {resp.authorName} {t('staff.suggestions.on')} {new Date(resp.createdAt).toLocaleString()}</p>
                             </div>
-                          )) || <p className="text-sm text-muted-foreground">No responses yet.</p>}
+                          )) || <p className="text-sm text-muted-foreground">{t('staff.suggestions.noResponses')}</p>}
                         </div>
                         <div className="space-y-2">
                           <Textarea
-                            placeholder="Add a response..."
+                            placeholder={t('staff.suggestions.addResponse')}
                             value={responseText}
                             onChange={(e) => setResponseText(e.target.value)}
                             className="min-h-16"
                           />
                           <Button size="sm" onClick={() => handleRespond(suggestion)} className="w-full">
-                            Respond
+                            {t('staff.suggestions.respond')}
                           </Button>
                         </div>
                       </div>

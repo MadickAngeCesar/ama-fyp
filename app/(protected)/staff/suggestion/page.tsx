@@ -8,8 +8,10 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search, Filter, Lightbulb, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function Page() {
+  const { t } = useTranslation();
 
   // Ensure initial suggestions are static/serialized to avoid hydration mismatch
   const initial = useMemo(() => {
@@ -85,13 +87,13 @@ export default function Page() {
             <Lightbulb className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">Manage Suggestions</h1>
-            <p className="text-sm text-muted-foreground">Review, respond, and manage student suggestions.</p>
+            <h1 className="text-2xl font-bold">{t('staff.suggestions.manage')}</h1>
+            <p className="text-sm text-muted-foreground">{t('staff.suggestions.review')}</p>
           </div>
         </div>
         <Button variant="outline" size="sm">
           <Filter className="h-4 w-4 mr-2" />
-          Export
+          {t('staff.suggestions.export')}
         </Button>
       </header>
 
@@ -103,7 +105,7 @@ export default function Page() {
               <Lightbulb className="h-4 w-4 text-muted-foreground" />
               <div>
                 <p className="text-lg font-bold">{stats.total}</p>
-                <p className="text-xs text-muted-foreground">Total</p>
+                <p className="text-xs text-muted-foreground">{t('staff.suggestions.total')}</p>
               </div>
             </div>
           </CardContent>
@@ -114,7 +116,7 @@ export default function Page() {
               <Clock className="h-4 w-4 text-yellow-500" />
               <div>
                 <p className="text-lg font-bold">{stats.pending}</p>
-                <p className="text-xs text-muted-foreground">Pending</p>
+                <p className="text-xs text-muted-foreground">{t('staff.suggestions.pending')}</p>
               </div>
             </div>
           </CardContent>
@@ -125,7 +127,7 @@ export default function Page() {
               <AlertCircle className="h-4 w-4 text-blue-500" />
               <div>
                 <p className="text-lg font-bold">{stats.inProgress}</p>
-                <p className="text-xs text-muted-foreground">In Progress</p>
+                <p className="text-xs text-muted-foreground">{t('staff.suggestions.inProgress')}</p>
               </div>
             </div>
           </CardContent>
@@ -136,7 +138,7 @@ export default function Page() {
               <CheckCircle className="h-4 w-4 text-green-500" />
               <div>
                 <p className="text-lg font-bold">{stats.resolved}</p>
-                <p className="text-xs text-muted-foreground">Resolved</p>
+                <p className="text-xs text-muted-foreground">{t('staff.suggestions.resolved')}</p>
               </div>
             </div>
           </CardContent>
@@ -147,7 +149,7 @@ export default function Page() {
               <XCircle className="h-4 w-4 text-gray-500" />
               <div>
                 <p className="text-lg font-bold">{stats.closed}</p>
-                <p className="text-xs text-muted-foreground">Closed</p>
+                <p className="text-xs text-muted-foreground">{t('staff.suggestions.closed')}</p>
               </div>
             </div>
           </CardContent>
@@ -160,50 +162,50 @@ export default function Page() {
             <CardHeader className="p-0">
               <CardTitle className="flex items-center gap-2 text-base">
                 <Filter className="h-4 w-4" />
-                Filters
+                {t('staff.suggestions.filters')}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0 space-y-3">
               <div>
                 <label className="text-sm font-medium flex items-center gap-2 mb-1">
                   <Search className="h-3 w-3" />
-                  Search
+                  {t('staff.suggestions.search')}
                 </label>
                 <Input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search suggestions..."
+                  placeholder={t('staff.suggestions.searchSuggestions')}
                 />
               </div>
               <div className="flex flex-row justify-between">
                 {/* Status Filter */}
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Status</label>
+                  <label className="text-sm font-medium mb-1 block">{t('staff.suggestions.status')}</label>
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
                     <SelectTrigger className="h-8">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="in_progress">In Progress</SelectItem>
-                      <SelectItem value="resolved">Resolved</SelectItem>
-                      <SelectItem value="closed">Closed</SelectItem>
+                      <SelectItem value="all">{t('staff.suggestions.all')}</SelectItem>
+                      <SelectItem value="pending">{t('staff.suggestions.pending')}</SelectItem>
+                      <SelectItem value="in_progress">{t('staff.suggestions.inProgress')}</SelectItem>
+                      <SelectItem value="resolved">{t('staff.suggestions.resolved')}</SelectItem>
+                      <SelectItem value="closed">{t('staff.suggestions.closed')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 {/* Category Filter */}
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Category</label>
+                  <label className="text-sm font-medium mb-1 block">{t('staff.suggestions.category')}</label>
                   <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                     <SelectTrigger className="h-8">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="General">General</SelectItem>
-                      <SelectItem value="Facilities">Facilities</SelectItem>
-                      <SelectItem value="IT">IT</SelectItem>
+                      <SelectItem value="all">{t('staff.suggestions.all')}</SelectItem>
+                      <SelectItem value="General">{t('staff.suggestions.general')}</SelectItem>
+                      <SelectItem value="Facilities">{t('staff.suggestions.facilities')}</SelectItem>
+                      <SelectItem value="IT">{t('staff.suggestions.it')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -211,28 +213,28 @@ export default function Page() {
               <div className="flex flex-row justify-between">
                 {/* Sort By */}
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Sort By</label>
+                  <label className="text-sm font-medium mb-1 block">{t('staff.suggestions.sortBy')}</label>
                   <Select value={sortBy} onValueChange={setSortBy}>
                     <SelectTrigger className="h-8">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="none">None</SelectItem>
-                      <SelectItem value="votes">Votes</SelectItem>
-                      <SelectItem value="date">Date</SelectItem>
+                      <SelectItem value="none">{t('staff.suggestions.none')}</SelectItem>
+                      <SelectItem value="votes">{t('staff.suggestions.votes')}</SelectItem>
+                      <SelectItem value="date">{t('staff.suggestions.date')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 {/* Sort Order */}
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Order</label>
+                  <label className="text-sm font-medium mb-1 block">{t('staff.suggestions.order')}</label>
                   <Select value={sortOrder} onValueChange={setSortOrder}>
                     <SelectTrigger className="h-8">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="asc">Asc</SelectItem>
-                      <SelectItem value="desc">Desc</SelectItem>
+                      <SelectItem value="asc">{t('staff.suggestions.asc')}</SelectItem>
+                      <SelectItem value="desc">{t('staff.suggestions.desc')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -244,7 +246,7 @@ export default function Page() {
                 setSortBy("none");
                 setSortOrder("desc");
               }}>
-                Clear Filters
+                {t('staff.suggestions.clearFilters')}
               </Button>
             </CardContent>
           </Card>

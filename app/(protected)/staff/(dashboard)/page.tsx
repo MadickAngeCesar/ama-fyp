@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, Clock, Lightbulb, MessageSquare, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
 /**
  * Staff dashboard page providing overview of complaints, suggestions, and chat sessions.
  */
 export default function Page() {
+  const { t } = useTranslation();
   // Calculate staff-relevant stats
   const totalComplaints = complaints.length;
   const pendingComplaints = complaints.filter(c => c.status === 'PENDING').length;
@@ -43,15 +45,15 @@ export default function Page() {
     <div className="max-w-6xl mx-auto py-8 space-y-8">
       <header className="flex items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold">Staff Dashboard</h1>
-          <p className="text-sm text-muted-foreground">Monitor and manage student complaints, suggestions, and support sessions.</p>
+          <h1 className="text-3xl font-bold">{t('staff.dashboard.title')}</h1>
+          <p className="text-sm text-muted-foreground">{t('staff.dashboard.description')}</p>
         </div>
         <div className="hidden sm:flex gap-2">
           <Button variant="outline" asChild>
-            <Link href="/staff/complaint">View All Complaints</Link>
+            <Link href="/staff/complaint">{t('staff.dashboard.viewAllComplaints')}</Link>
           </Button>
           <Button asChild>
-            <Link href="/staff/suggestion">View All Suggestions</Link>
+            <Link href="/staff/suggestion">{t('staff.dashboard.viewAllSuggestions')}</Link>
           </Button>
         </div>
       </header>
@@ -60,7 +62,7 @@ export default function Page() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Complaints</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('staff.dashboard.pendingComplaints')}</CardTitle>
             <AlertTriangle className="h-4 w-4 text-yellow-500" />
           </CardHeader>
           <CardContent>
@@ -73,7 +75,7 @@ export default function Page() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">In Progress</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('staff.dashboard.inProgress')}</CardTitle>
             <Clock className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
@@ -86,7 +88,7 @@ export default function Page() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Suggestions</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('staff.dashboard.pendingSuggestions')}</CardTitle>
             <Lightbulb className="h-4 w-4 text-orange-500" />
           </CardHeader>
           <CardContent>
@@ -99,7 +101,7 @@ export default function Page() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Chats</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('staff.dashboard.activeChats')}</CardTitle>
             <MessageSquare className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
@@ -117,7 +119,7 @@ export default function Page() {
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <TrendingUp className="h-5 w-5" />
-              Resolution Rate
+              {t('staff.dashboard.resolutionRate')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -132,7 +134,7 @@ export default function Page() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Total Complaints</CardTitle>
+            <CardTitle className="text-lg">{t('staff.dashboard.totalComplaints')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{totalComplaints}</div>
@@ -144,7 +146,7 @@ export default function Page() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Total Suggestions</CardTitle>
+            <CardTitle className="text-lg">{t('staff.dashboard.totalSuggestions')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{totalSuggestions}</div>
@@ -161,7 +163,7 @@ export default function Page() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-yellow-500" />
-              Pending Complaints
+              {t('staff.dashboard.recentPendingComplaints')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -171,18 +173,18 @@ export default function Page() {
                 return (
                   <div key={c.id} className="flex items-center justify-between p-3 border rounded-lg">
                     <div className="flex-1">
-                      <div className="text-sm font-medium">{c.category || 'General'}</div>
+                      <div className="text-sm font-medium">{c.category || t('staff.dashboard.general')}</div>
                       <div className="text-xs text-muted-foreground line-clamp-2">{c.description}</div>
                       <div className="text-xs text-muted-foreground mt-1">
-                        By {user?.name || 'Anonymous'} • {new Date(c.createdAt).toLocaleDateString()}
+                        {t('staff.dashboard.by')} {user?.name || t('staff.complaints.anonymous')} • {new Date(c.createdAt).toLocaleDateString()}
                       </div>
                     </div>
-                    <Badge variant="secondary" className="ml-2">Pending</Badge>
+                    <Badge variant="secondary" className="ml-2">{t('staff.dashboard.pending')}</Badge>
                   </div>
                 );
               })
             ) : (
-              <p className="text-sm text-muted-foreground">No pending complaints</p>
+              <p className="text-sm text-muted-foreground">{t('staff.dashboard.noPendingComplaints')}</p>
             )}
           </CardContent>
         </Card>
@@ -191,7 +193,7 @@ export default function Page() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Lightbulb className="h-5 w-5 text-orange-500" />
-              Pending Suggestions
+              {t('staff.dashboard.recentPendingSuggestions')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -204,15 +206,15 @@ export default function Page() {
                       <div className="text-sm font-medium">{s.title}</div>
                       <div className="text-xs text-muted-foreground line-clamp-2">{s.description}</div>
                       <div className="text-xs text-muted-foreground mt-1">
-                        By {user?.name || 'Anonymous'} • {s.upvotes} upvotes
+                        {t('staff.dashboard.by')} {user?.name || t('staff.complaints.anonymous')} • {s.upvotes} {t('staff.dashboard.upvotes')}
                       </div>
                     </div>
-                    <Badge variant="outline" className="ml-2">Pending</Badge>
+                    <Badge variant="outline" className="ml-2">{t('staff.dashboard.pending')}</Badge>
                   </div>
                 );
               })
             ) : (
-              <p className="text-sm text-muted-foreground">No pending suggestions</p>
+              <p className="text-sm text-muted-foreground">{t('staff.dashboard.noPendingSuggestions')}</p>
             )}
           </CardContent>
         </Card>
@@ -221,7 +223,7 @@ export default function Page() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5 text-green-500" />
-              Active Chat Sessions
+              {t('staff.dashboard.activeChatSessions')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -231,14 +233,14 @@ export default function Page() {
                   <div className="flex-1">
                     <div className="text-sm font-medium">{chat.title}</div>
                     <div className="text-xs text-muted-foreground">
-                      Last active: {new Date(chat.lastActivity).toLocaleDateString()}
+                      {t('staff.dashboard.lastActive')}: {new Date(chat.lastActivity).toLocaleDateString()}
                     </div>
                   </div>
                   <Badge variant="default" className="ml-2">Active</Badge>
                 </div>
               ))
             ) : (
-              <p className="text-sm text-muted-foreground">No active chat sessions</p>
+              <p className="text-sm text-muted-foreground">{t('staff.dashboard.noActiveChats')}</p>
             )}
           </CardContent>
         </Card>
@@ -247,31 +249,31 @@ export default function Page() {
       {/* Quick Actions */}
       <Card>
         <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
+          <CardTitle>{t('staff.dashboard.quickActions')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-4">
             <Button asChild>
               <Link href="/staff/complaint">
                 <AlertTriangle className="h-4 w-4 mr-2" />
-                Manage Complaints
+                {t('staff.dashboard.manageComplaints')}
               </Link>
             </Button>
             <Button variant="outline" asChild>
               <Link href="/staff/suggestion">
                 <Lightbulb className="h-4 w-4 mr-2" />
-                Review Suggestions
+                {t('staff.dashboard.reviewSuggestions')}
               </Link>
             </Button>
             <Button variant="outline" asChild>
               <Link href="/staff/chat">
                 <MessageSquare className="h-4 w-4 mr-2" />
-                View Chat Sessions
+                {t('staff.dashboard.viewChatSessions')}
               </Link>
             </Button>
             <Button variant="outline">
               <TrendingUp className="h-4 w-4 mr-2" />
-              View Reports
+              {t('staff.dashboard.viewReports')}
             </Button>
           </div>
         </CardContent>

@@ -102,34 +102,34 @@ export default function StaffComplaintTable({ complaints, onUpdateComplaint }: S
                         </DialogTrigger>
                         <DialogContent>
                           <DialogHeader>
-                            <DialogTitle>Complaint Details</DialogTitle>
+                            <DialogTitle>{t('staff.complaints.complaintDetails')}</DialogTitle>
                           </DialogHeader>
                           <div className="space-y-4">
                             <div>
-                              <h4 className="font-medium">Category</h4>
+                              <h4 className="font-medium">{t('staff.complaints.categoryLabel')}</h4>
                               <p>{complaint.category || "General"}</p>
                             </div>
                             <div>
-                              <h4 className="font-medium">Description</h4>
+                              <h4 className="font-medium">{t('staff.complaints.descriptionLabel')}</h4>
                               <p>{complaint.description}</p>
                             </div>
                             <div>
-                              <h4 className="font-medium">Status</h4>
+                              <h4 className="font-medium">{t('staff.complaints.statusLabel')}</h4>
                               <Badge variant={complaint.status === "RESOLVED" ? "default" : "secondary"}>
                                 {complaint.status || "PENDING"}
                               </Badge>
                             </div>
                             <div>
-                              <h4 className="font-medium">Reporter</h4>
-                              <p>{complaint.reporterName || "Anonymous"}</p>
+                              <h4 className="font-medium">{t('staff.complaints.reporter')}</h4>
+                              <p>{complaint.reporterName || t('staff.complaints.anonymous')}</p>
                             </div>
                             <div>
-                              <h4 className="font-medium">Created</h4>
+                              <h4 className="font-medium">{t('staff.complaints.created')}</h4>
                               <p>{new Date(complaint.createdAt).toLocaleDateString()}</p>
                             </div>
                             {(complaint.responses || []).length > 0 && (
                               <div>
-                                <h4 className="font-medium">Responses</h4>
+                                <h4 className="font-medium">{t('staff.complaints.responses')}</h4>
                                 <div className="space-y-2">
                                   {(complaint.responses || []).map((response) => (
                                     <div key={response.id} className="p-2 bg-muted rounded">
@@ -153,15 +153,15 @@ export default function StaffComplaintTable({ complaints, onUpdateComplaint }: S
                         </DialogTrigger>
                         <DialogContent>
                           <DialogHeader>
-                            <DialogTitle>Respond to Complaint</DialogTitle>
+                            <DialogTitle>{t('staff.complaints.respondToComplaint')}</DialogTitle>
                           </DialogHeader>
                           <div className="space-y-4">
                             <Textarea
-                              placeholder="Enter your response..."
+                              placeholder={t('staff.complaints.enterResponse')}
                               value={responseText}
                               onChange={(e) => setResponseText(e.target.value)}
                             />
-                            <Button onClick={() => handleRespond(complaint)}>Send Response</Button>
+                            <Button onClick={() => handleRespond(complaint)}>{t('staff.complaints.sendResponse')}</Button>
                           </div>
                         </DialogContent>
                       </Dialog>
@@ -218,34 +218,34 @@ export default function StaffComplaintTable({ complaints, onUpdateComplaint }: S
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <DialogTitle>Complaint Details</DialogTitle>
+                        <DialogTitle>{t('staff.complaints.complaintDetails')}</DialogTitle>
                       </DialogHeader>
                       <div className="space-y-4">
                         <div>
-                          <h4 className="font-medium">Category</h4>
+                          <h4 className="font-medium">{t('staff.complaints.categoryLabel')}</h4>
                           <p>{complaint.category || "General"}</p>
                         </div>
                         <div>
-                          <h4 className="font-medium">Description</h4>
+                          <h4 className="font-medium">{t('staff.complaints.descriptionLabel')}</h4>
                           <p>{complaint.description}</p>
                         </div>
                         <div>
-                          <h4 className="font-medium">Status</h4>
+                          <h4 className="font-medium">{t('staff.complaints.statusLabel')}</h4>
                           <Badge variant={complaint.status === "RESOLVED" ? "default" : "secondary"}>
                             {complaint.status || "PENDING"}
                           </Badge>
                         </div>
                         <div>
-                          <h4 className="font-medium">Reporter</h4>
-                          <p>{complaint.reporterName || "Anonymous"}</p>
+                          <h4 className="font-medium">{t('staff.complaints.reporter')}</h4>
+                          <p>{complaint.reporterName || t('staff.complaints.anonymous')}</p>
                         </div>
                         <div>
-                          <h4 className="font-medium">Created</h4>
+                          <h4 className="font-medium">{t('staff.complaints.created')}</h4>
                           <p>{new Date(complaint.createdAt).toLocaleDateString()}</p>
                         </div>
                         {(complaint.responses || []).length > 0 && (
                           <div>
-                            <h4 className="font-medium">Responses</h4>
+                            <h4 className="font-medium">{t('staff.complaints.responses')}</h4>
                             <div className="space-y-2">
                               {(complaint.responses || []).map((response) => (
                                 <div key={response.id} className="p-2 bg-muted rounded">
@@ -269,15 +269,15 @@ export default function StaffComplaintTable({ complaints, onUpdateComplaint }: S
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <DialogTitle>Respond to Complaint</DialogTitle>
+                        <DialogTitle>{t('staff.complaints.respondToComplaint')}</DialogTitle>
                       </DialogHeader>
                       <div className="space-y-4">
                         <Textarea
-                          placeholder="Enter your response..."
+                          placeholder={t('staff.complaints.enterResponse')}
                           value={responseText}
                           onChange={(e) => setResponseText(e.target.value)}
                         />
-                        <Button onClick={() => handleRespond(complaint)}>Send Response</Button>
+                        <Button onClick={() => handleRespond(complaint)}>{t('staff.complaints.sendResponse')}</Button>
                       </div>
                     </DialogContent>
                   </Dialog>

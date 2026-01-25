@@ -8,12 +8,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertTriangle, CheckCircle, Clock, Filter, Search, XCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 /**
  * Staff complaint management page.
  * Allows staff to view, filter, sort, and manage complaints.
  */
 export default function Page() {
+  const { t } = useTranslation();
   // Ensure initial complaints are static/serialized to avoid hydration mismatch
   const initial = useMemo(() => {
     return (placeholderComplaints || []).map((c) => {
@@ -78,13 +80,13 @@ export default function Page() {
             <AlertTriangle className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">Manage Complaints</h1>
-            <p className="text-sm text-muted-foreground">Review, respond, and manage student complaints.</p>
+            <h1 className="text-2xl font-bold">{t('staff.complaints.manage')}</h1>
+            <p className="text-sm text-muted-foreground">{t('staff.complaints.review')}</p>
           </div>
         </div>
         <Button variant="outline" size="sm">
           <Filter className="h-4 w-4 mr-2" />
-          Export
+          {t('staff.complaints.export')}
         </Button>
       </header>
 
@@ -96,7 +98,7 @@ export default function Page() {
               <AlertTriangle className="h-4 w-4 text-muted-foreground" />
               <div>
                 <p className="text-lg font-bold">{stats.total}</p>
-                <p className="text-xs text-muted-foreground">Total</p>
+                <p className="text-xs text-muted-foreground">{t('staff.complaints.total')}</p>
               </div>
             </div>
           </CardContent>
@@ -107,7 +109,7 @@ export default function Page() {
               <Clock className="h-4 w-4 text-yellow-500" />
               <div>
                 <p className="text-lg font-bold">{stats.pending}</p>
-                <p className="text-xs text-muted-foreground">Pending</p>
+                <p className="text-xs text-muted-foreground">{t('staff.complaints.pending')}</p>
               </div>
             </div>
           </CardContent>
@@ -118,7 +120,7 @@ export default function Page() {
               <AlertTriangle className="h-4 w-4 text-blue-500" />
               <div>
                 <p className="text-lg font-bold">{stats.inProgress}</p>
-                <p className="text-xs text-muted-foreground">In Progress</p>
+                <p className="text-xs text-muted-foreground">{t('staff.complaints.inProgress')}</p>
               </div>
             </div>
           </CardContent>
@@ -129,7 +131,7 @@ export default function Page() {
               <CheckCircle className="h-4 w-4 text-green-500" />
               <div>
                 <p className="text-lg font-bold">{stats.resolved}</p>
-                <p className="text-xs text-muted-foreground">Resolved</p>
+                <p className="text-xs text-muted-foreground">{t('staff.complaints.resolved')}</p>
               </div>
             </div>
           </CardContent>
@@ -140,7 +142,7 @@ export default function Page() {
               <XCircle className="h-4 w-4 text-gray-500" />
               <div>
                 <p className="text-lg font-bold">{stats.closed}</p>
-                <p className="text-xs text-muted-foreground">Closed</p>
+                <p className="text-xs text-muted-foreground">{t('staff.complaints.closed')}</p>
               </div>
             </div>
           </CardContent>
@@ -153,51 +155,51 @@ export default function Page() {
             <CardHeader className="p-0">
               <CardTitle className="flex items-center gap-2 text-base">
                 <Filter className="h-4 w-4" />
-                Filters
+                {t('staff.complaints.filters')}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0 space-y-3">
               <div>
                 <label className="text-sm font-medium flex items-center gap-2 mb-1">
                   <Search className="h-3 w-3" />
-                  Search
+                  {t('staff.complaints.search')}
                 </label>
                 <Input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search complaints..."
+                  placeholder={t('staff.complaints.searchComplaints')}
                 />
               </div>
               <div className="flex flex-row justify-between">
                 {/* Status Filter */}
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Status</label>
+                  <label className="text-sm font-medium mb-1 block">{t('staff.complaints.status')}</label>
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
                     <SelectTrigger className="w-20">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="PENDING">Pending</SelectItem>
-                      <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-                      <SelectItem value="RESOLVED">Resolved</SelectItem>
-                      <SelectItem value="CLOSED">Closed</SelectItem>
+                      <SelectItem value="all">{t('staff.complaints.all')}</SelectItem>
+                      <SelectItem value="PENDING">{t('staff.complaints.pending')}</SelectItem>
+                      <SelectItem value="IN_PROGRESS">{t('staff.complaints.inProgress')}</SelectItem>
+                      <SelectItem value="RESOLVED">{t('staff.complaints.resolved')}</SelectItem>
+                      <SelectItem value="CLOSED">{t('staff.complaints.closed')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 {/* Category Filter */}
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Category</label>
+                  <label className="text-sm font-medium mb-1 block">{t('staff.complaints.category')}</label>
                   <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                     <SelectTrigger className="w-20">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="Academic">Academic</SelectItem>
-                      <SelectItem value="Facilities">Facilities</SelectItem>
-                      <SelectItem value="IT">IT</SelectItem>
-                      <SelectItem value="Other">Other</SelectItem>
+                      <SelectItem value="all">{t('staff.complaints.all')}</SelectItem>
+                      <SelectItem value="Academic">{t('staff.complaints.academic')}</SelectItem>
+                      <SelectItem value="Facilities">{t('staff.complaints.facilities')}</SelectItem>
+                      <SelectItem value="IT">{t('staff.complaints.it')}</SelectItem>
+                      <SelectItem value="Other">{t('staff.complaints.other')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -205,26 +207,26 @@ export default function Page() {
               <div className="flex flex-row justify-between">
                 {/* Sort By */}
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Sort By</label>
+                  <label className="text-sm font-medium mb-1 block">{t('staff.complaints.sortBy')}</label>
                   <Select value={sortBy} onValueChange={setSortBy}>
                     <SelectTrigger className="w-20">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="date">Date</SelectItem>
+                      <SelectItem value="date">{t('staff.complaints.date')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 {/* Sort Order */}
                 <div>
-                  <label className="text-sm font-medium mb-1 block">Order</label>
+                  <label className="text-sm font-medium mb-1 block">{t('staff.complaints.order')}</label>
                   <Select value={sortOrder} onValueChange={setSortOrder}>
                     <SelectTrigger className="w-20">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="desc">Latest</SelectItem>
-                      <SelectItem value="asc">Oldest</SelectItem>
+                      <SelectItem value="desc">{t('staff.complaints.latest')}</SelectItem>
+                      <SelectItem value="asc">{t('staff.complaints.oldest')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -236,7 +238,7 @@ export default function Page() {
                 setSortBy("date");
                 setSortOrder("desc");
               }}>
-                Clear Filters
+                {t('staff.complaints.clearFilters')}
               </Button>
             </CardContent>
           </Card>
