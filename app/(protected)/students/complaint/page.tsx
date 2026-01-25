@@ -92,7 +92,7 @@ export default function Page() {
         </aside>
 
         <main className="lg:col-span-3">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+          <div className="flex flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <div className="flex-1">
               <Input className="h-12 text-base" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search complaints, reporters or categories" />
             </div>

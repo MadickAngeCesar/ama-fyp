@@ -42,8 +42,8 @@ export default function MobileNavigation() {
   const isActive = (href: string) => normalize(href) === activeHref
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 hidden">
-      <div className="mx-auto max-w-5xl px-safe flex items-center justify-between gap-2 rounded-t-lg border-t border-border bg-surface p-2">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+      <div className="mx-auto max-w-5xl px-safe flex items-center justify-between gap-2 border-t bg-surface p-2">
         {items.map((it) => (
           <Link
             key={it.href}
@@ -54,7 +54,7 @@ export default function MobileNavigation() {
             )}
             aria-current={isActive(it.href) ? "page" : undefined}
           >
-            <it.Icon className="size-5" />
+            <it.Icon className="w-5 h-5" />
             <span className="truncate text-[11px]">{it.label}</span>
           </Link>
         ))}

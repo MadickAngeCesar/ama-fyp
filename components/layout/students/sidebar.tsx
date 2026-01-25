@@ -119,8 +119,6 @@ export default function StudentSidebar({
           </div>
         </SidebarHeader>
 
-        <div className="mx-4 my-2 h-px bg-border/40" />
-
         <SidebarContent className="px-3 py-2">
           <SidebarMenu>
             <div className="mb-2 px-1 text-xs font-medium text-muted-foreground">Main</div>
@@ -168,8 +166,6 @@ export default function StudentSidebar({
             ))}
           </SidebarMenu>
         </SidebarContent>
-
-        <div className="mx-4 my-2 h-px bg-border/40" />
 
         <SidebarFooter className="mt-auto px-4 py-4 border-t border-gray-200">
           <div className="flex items-center gap-3">

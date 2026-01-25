@@ -11,17 +11,26 @@ import { Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverTitle } 
 import MySuggestionsPopover from "@/components/suggestions/MySuggestionsPopover";
 
 export default function Page() {
-  const initial = (placeholderSuggestions || []).map((s) => {
-    const user = (placeholderUsers || []).find((u) => u.id === s.userId);
-    return {
-      id: s.id,
-      title: s.title,
-      description: s.description,
-      authorName: user?.name,
-      upvotes: s.upvotes ?? 0,
-      createdAt: s.createdAt instanceof Date ? s.createdAt.toISOString() : String(s.createdAt),
-    } as Suggestion;
-  });
+
+  // Ensure initial suggestions are static/serialized to avoid hydration mismatch
+  const initial = useMemo(() => {
+    return (placeholderSuggestions || []).map((s) => {
+      const user = (placeholderUsers || []).find((u) => u.id === s.userId);
+      return {
+        id: String(s.id),
+        title: s.title,
+        description: s.description,
+        authorName: user?.name,
+        upvotes: s.upvotes ?? 0,
+        createdAt:
+          typeof s.createdAt === "string"
+            ? s.createdAt
+            : s.createdAt instanceof Date
+            ? s.createdAt.toISOString()
+            : String(s.createdAt),
+      } as Suggestion;
+    });
+  }, []);
 
   const [suggestions, setSuggestions] = useState<Suggestion[]>(initial);
 
@@ -29,9 +38,11 @@ export default function Page() {
   const [sort, setSort] = useState<"new" | "top">("new");
 
   const handleSubmit = (payload: Omit<Suggestion, "id" | "createdAt" | "upvotes">) => {
+    // Only generate new Date/id on client event
+    const now = new Date();
     const newOne: Suggestion = {
-      id: String(Date.now()),
-      createdAt: new Date().toISOString(),
+      id: now.getTime().toString(),
+      createdAt: now.toISOString(),
       upvotes: 0,
       ...payload,
     };
@@ -69,10 +80,10 @@ export default function Page() {
         <aside className="lg:col-span-1">
           <Card>
             <CardHeader>
-              <CardTitle className="items-center justify-center">Actions & Filters</CardTitle>
+              <CardTitle className="items-center justify-center ">Actions & Filters</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3">
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button size="lg" className="w-full">Add suggestion</Button>

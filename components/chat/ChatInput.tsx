@@ -1,34 +1,48 @@
 "use client";
-import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+/**
+ * ChatInput component
+ * Renders a text input and send button for chat messages.
+ *
+ * @component
+ * @param props.onSend - Callback when a message is sent
+ * @param props.disabled - Whether the input is disabled
+ */
+import { useState } from "react";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
-type Props = {
+interface ChatInputProps {
   onSend: (message: string) => void;
   disabled?: boolean;
-};
+}
 
-export default function ChatInput({ onSend, disabled }: Props) {
-  const [message, setMessage] = useState("");
+export default function ChatInput({ onSend, disabled }: ChatInputProps) {
+  const [value, setValue] = useState("");
 
+  /**
+   * Handles sending the message and clearing the input.
+   * @param e - Form event
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim()) {
-      onSend(message.trim());
-      setMessage("");
-    }
+    if (!value.trim()) return;
+    onSend(value);
+    setValue("");
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2 p-4 border-t">
+    <form onSubmit={handleSubmit} className="flex gap-2">
       <Input
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
+        type="text"
         placeholder="Type your message..."
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
         disabled={disabled}
         className="flex-1"
+        aria-label="Chat message input"
+        autoComplete="off"
       />
-      <Button type="submit" disabled={disabled || !message.trim()}>
+      <Button type="submit" disabled={disabled || !value.trim()} aria-label="Send message">
         Send
       </Button>
     </form>
