@@ -12,18 +12,28 @@ import { cn } from "@/lib/utils"
  * Bottom navigation bar for small screens. Shows primary navigation actions
  * and highlights the active route.
  */
-export default function MobileNavigation() {
+export type MobileNavItem = { label: string; href: string; icon?: string }
+
+export default function MobileNavigation({ items: propItems }: { items?: MobileNavItem[] }) {
   const pathname = usePathname() ?? "/"
 
   const items = React.useMemo(
-    () => [
-      { label: "Home", href: "/students", Icon: Home },
-      { label: "Chat", href: "/students/chat", Icon: MessageCircle },
-      { label: "Complaints", href: "/students/complaint", Icon: FileText },
-      { label: "Suggestions", href: "/students/suggestion", Icon: Lightbulb },
-    ],
-    []
+    () =>
+      propItems ?? [
+        { label: "Home", href: "/students", icon: "home" },
+        { label: "Chat", href: "/students/chat", icon: "chat" },
+        { label: "Complaints", href: "/students/complaint", icon: "complaint" },
+        { label: "Suggestions", href: "/students/suggestion", icon: "suggestion" },
+      ],
+    [propItems]
   )
+
+  const iconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
+    home: Home,
+    chat: MessageCircle,
+    complaint: FileText,
+    suggestion: Lightbulb,
+  }
 
   const normalize = (p = "") => p.split("?")[0].replace(/\/+$/, "")
   const current = normalize(pathname)
@@ -43,18 +53,25 @@ export default function MobileNavigation() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
-      <div className="mx-auto max-w-5xl px-safe flex items-center justify-between gap-2 border-t bg-popover p-2">
+      <div className="mx-auto max-w-5xl px-safe flex items-center justify-between gap-2 border-t bg-popover shadow-lg p-2">
         {items.map((it) => (
           <Link
             key={it.href}
             href={it.href}
             className={cn(
-              "flex flex-col items-center justify-center gap-1 rounded-md px-3 py-2 text-xs",
-              isActive(it.href) ? "text-primary" : "text-muted-foreground hover:text-primary"
+              "flex flex-col items-center justify-center gap-1 rounded-md px-3 py-2 text-xs transition-colors",
+              isActive(it.href)
+                ? "text-primary"
+                : "text-muted-foreground hover:text-primary hover:bg-popover/10"
             )}
             aria-current={isActive(it.href) ? "page" : undefined}
           >
-            <it.Icon className="w-5 h-5" />
+            {
+              (() => {
+                const Icon = iconMap[it.icon ?? "home"] ?? Home
+                return <Icon className="w-5 h-5" />
+              })()
+            }
             <span className="truncate text-[11px]">{it.label}</span>
           </Link>
         ))}

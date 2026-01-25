@@ -17,13 +17,13 @@ import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
 
 /**
- * StudentSettingsSheet
+ * SettingsSheet
  *
  * A settings sheet for students that allows toggling language and theme.
  * Persists preferences to localStorage and applies theme by toggling `dark` class
  * on `document.documentElement`.
  */
-export default function StudentSettingsSheet({ className }: { className?: string }) {
+export default function SettingsSheet({ className }: { className?: string }) {
   const [open, setOpen] = React.useState(false)
   const [language, setLanguage] = React.useState<"en" | "fr">("en")
   const [dark, setDark] = React.useState(false)

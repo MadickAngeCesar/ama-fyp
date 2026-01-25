@@ -25,9 +25,9 @@ import {
 import { cn } from "@/lib/utils"
 
 /**
- * Props for StudentSidebar
+ * Props for Sidebar
  */
-export type StudentSidebarProps = {
+export type SidebarProps = {
   /** Current authenticated user (optional) */
   user?: {
     name?: string
@@ -38,44 +38,57 @@ export type StudentSidebarProps = {
   active?: string
   /** Additional className for outer container */
   className?: string
+  /** Portal name to display in sidebar header */
+  portal: string
 }
 
 /**
- * StudentSidebar
+ * Sidebar
  *
  * Renders a three-section sidebar using the shadcn-style Sidebar primitives:
  * - Header: app logo/name
  * - Content: navigation menu
  * - Footer: user avatar and name
  */
-export default function StudentSidebar({
+export type SidebarNavItem = { label: string; href: string; icon?: string, portal?: string }
+
+export default function DesktopSidebar({
   user,
   active,
   className,
-}: StudentSidebarProps) {
+  primaryItems: primaryItemsProp,
+  secondaryItems: secondaryItemsProp,
+  portal,
+}: SidebarProps & { primaryItems?: SidebarNavItem[]; secondaryItems?: SidebarNavItem[] }) {
   const pathname = usePathname() ?? "/"
   const current = active ?? pathname
 
   const primaryItems = React.useMemo(
-    () => [
-      { label: "Dashboard", href: "/students", Icon: Home },
-      { label: "Chat", href: "/students/chat", Icon: MessageCircle },
-    ],
-    []
+    () =>
+      primaryItemsProp ?? [
+        { label: "Dashboard", href: "/students", icon: "home" },
+        { label: "Chat", href: "/students/chat", icon: "chat" },
+      ],
+    [primaryItemsProp]
   )
 
   const secondaryItems = React.useMemo(
-    () => [
-      { label: "Complaints", href: "/students/complaint", Icon: FileText },
-      { label: "Suggestions", href: "/students/suggestion", Icon: Lightbulb },
-    ],
-    []
+    () =>
+      secondaryItemsProp ?? [
+        { label: "Complaints", href: "/students/complaint", icon: "complaint" },
+        { label: "Suggestions", href: "/students/suggestion", icon: "suggestion" },
+      ],
+    [secondaryItemsProp]
   )
 
-  const allItems = React.useMemo(
-    () => [...primaryItems, ...secondaryItems],
-    [primaryItems, secondaryItems]
-  )
+  const iconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
+    home: Home,
+    chat: MessageCircle,
+    complaint: FileText,
+    suggestion: Lightbulb,
+  }
+
+  const allItems = React.useMemo(() => [...primaryItems, ...secondaryItems], [primaryItems, secondaryItems])
 
   const activeHref = React.useMemo(() => {
     // Find the most specific matching href
@@ -100,7 +113,7 @@ export default function StudentSidebar({
   return (
     <SidebarProvider>
       <Sidebar
-        aria-label="Student navigation"
+        aria-label={`${portal} navigation`}
         className={cn(
           "flex h-full w-72 flex-col bg-surface text-text-primary border-r border-border",
           className
@@ -114,7 +127,7 @@ export default function StudentSidebar({
             </div>
             <div>
               <div className="text-base font-semibold">AMA FYP</div>
-              <div className="text-xs text-muted-foreground">Student Portal</div>
+              <div className="text-xs text-muted-foreground">{portal} Portal</div>
             </div>
           </div>
         </SidebarHeader>
@@ -135,7 +148,10 @@ export default function StudentSidebar({
                     )}
                     aria-current={isActive(it.href) ? "page" : undefined}
                   >
-                    <it.Icon className="size-4" />
+                    {(() => {
+                      const Icon = iconMap[it.icon ?? "home"] ?? Home
+                      return <Icon className="size-4" />
+                    })()}
                     <span className="truncate">{it.label}</span>
                   </Link>
                 </SidebarMenuButton>
@@ -158,7 +174,10 @@ export default function StudentSidebar({
                     )}
                     aria-current={isActive(it.href) ? "page" : undefined}
                   >
-                    <it.Icon className="size-4" />
+                    {(() => {
+                      const Icon = iconMap[it.icon ?? "home"] ?? Home
+                      return <Icon className="size-4" />
+                    })()}
                     <span className="truncate">{it.label}</span>
                   </Link>
                 </SidebarMenuButton>

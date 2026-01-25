@@ -24,18 +24,18 @@ type Notification = {
 }
 
 /**
- * StudentNotificationsSheet
+ * NotificationsSheet
  *
  * Displays a sheet with a short list of notifications. Notifications are
  * persisted to localStorage for demo purposes and can be marked read or cleared.
  */
-export default function StudentNotificationsSheet({ className }: { className?: string }) {
+export default function NotificationsSheet({ className }: { className?: string }) {
   const [open, setOpen] = React.useState(false)
   const [items, setItems] = React.useState<Notification[]>([])
 
   React.useEffect(() => {
     try {
-      const raw = localStorage.getItem("studentNotifications")
+      const raw = localStorage.getItem("Notifications")
       if (raw) setItems(JSON.parse(raw))
       else {
         const seed: Notification[] = [
@@ -52,7 +52,7 @@ export default function StudentNotificationsSheet({ className }: { className?: s
 
   React.useEffect(() => {
     try {
-      localStorage.setItem("studentNotifications", JSON.stringify(items))
+      localStorage.setItem("Notifications", JSON.stringify(items))
     } catch (e) {
         console.error("Failed to save notifications", e)
     }

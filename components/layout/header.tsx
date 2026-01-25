@@ -1,12 +1,12 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import StudentSettingsSheet from "@/components/layout/students/setting"
-import StudentNotificationsSheet from "@/components/layout/students/notifications"
+import SettingsSheet from "@/components/layout/setting"
+import NotificationsSheet from "@/components/layout/notifications"
 
 /**
- * Props for StudentHeader
+ * Props for Header
  */
-export type StudentHeaderProps = {
+export type HeaderProps = {
 	/** Page title */
 	title?: string
 	/** Current user (optional) */
@@ -16,14 +16,16 @@ export type StudentHeaderProps = {
 	}
 	/** Optional className */
 	className?: string
+	/** Portal name to display in mobile view */
+	portal: string
 }
 
 /**
- * StudentHeader
+ * Header
  *
  * Renders a top header bar for student pages with title, notification icon, and user avatar.
  */
-export default function StudentHeader({ title = "Student Dashboard", className }: StudentHeaderProps) {
+export default function Header({ title = "Student Dashboard", portal , className }: HeaderProps) {
 	return (
 		<header
 			className={cn(
@@ -39,12 +41,12 @@ export default function StudentHeader({ title = "Student Dashboard", className }
 				</div>
 				<div>
 					<div className="text-sm font-semibold">AMA FYP</div>
-					<div className="text-xs text-muted-foreground">Student Portal</div>
+					<div className="text-xs text-muted-foreground">{portal} Portal</div>
 				</div>
 			</div>
 			<div className="flex items-center gap-4">
-				<StudentNotificationsSheet />
-				<StudentSettingsSheet />
+				<NotificationsSheet />
+				<SettingsSheet />
 			</div>
 		</header>
 	)

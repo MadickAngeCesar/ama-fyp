@@ -30,7 +30,7 @@ export default function Page() {
       </header>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Complaints</CardTitle>
@@ -76,7 +76,7 @@ export default function Page() {
                     <div className="text-sm font-medium">{c.category || 'General'}</div>
                     <div className="text-xs text-muted-foreground line-clamp-1">{c.description}</div>
                   </div>
-                  <Badge variant={c.status === 'IN_PROGRESS' ? 'secondary' : 'default'}>{c.status}</Badge>
+                  <Badge variant="secondary">{c.status}</Badge>
                 </div>
               ))
             ) : (
