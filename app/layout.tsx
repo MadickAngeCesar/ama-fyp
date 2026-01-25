@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import CleanAttributes from "@/components/CleanAttributes";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,11 +28,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(() => { try { const keys = ['data-new-gr-c-s-check-loaded', 'data-gr-ext-installed']; for (const k of keys) { if (document.documentElement && document.documentElement.hasAttribute(k)) document.documentElement.removeAttribute(k); if (document.body && document.body.hasAttribute(k)) document.body.removeAttribute(k); } } catch(e){} })();`,
-          }}
-        />
+        <CleanAttributes />
         {children}
       </body>
     </html>
