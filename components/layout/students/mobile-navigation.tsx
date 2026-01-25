@@ -43,7 +43,7 @@ export default function MobileNavigation() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
-      <div className="mx-auto max-w-5xl px-safe flex items-center justify-between gap-2 border-t bg-surface p-2">
+      <div className="mx-auto max-w-5xl px-safe flex items-center justify-between gap-2 border-t bg-popover p-2">
         {items.map((it) => (
           <Link
             key={it.href}
