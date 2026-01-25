@@ -3,7 +3,16 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, MessageCircle, FileText, Lightbulb, LogOut, Users, Settings, Activity } from "lucide-react";
+import {
+  Home,
+  MessageCircle,
+  FileText,
+  Lightbulb,
+  LogOut,
+  Users,
+  Settings,
+  Activity,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
@@ -66,7 +75,7 @@ export default function DesktopSidebar({
   primaryItems: SidebarNavItem[];
   secondaryItems: SidebarNavItem[];
 }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const pathname = usePathname() ?? "/";
   const current = active ?? pathname;
 
@@ -123,24 +132,28 @@ export default function DesktopSidebar({
       >
         <SidebarHeader className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-              <span className="text-sm font-semibold text-primary-foreground">
-                AF
-              </span>
-            </div>
-            <div>
-              <div className="text-base font-semibold">{t('sidebar.appName')}</div>
-              <div className="text-xs text-muted-foreground">
-                {t('sidebar.portal', { portal })}
+            <Link href="/">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
+                <span className="text-sm font-semibold text-primary-foreground">
+                  AF
+                </span>
               </div>
-            </div>
+              <div>
+                <div className="text-base font-semibold">
+                  {t("sidebar.appName")}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {t("sidebar.portal", { portal })}
+                </div>
+              </div>
+            </Link>
           </div>
         </SidebarHeader>
 
         <SidebarContent className="px-3 py-2">
           <SidebarMenu>
             <div className="mb-2 px-1 text-xs font-medium text-muted-foreground">
-              {t('sidebar.main')}
+              {t("sidebar.main")}
             </div>
             {primaryItems.map((it) => (
               <SidebarMenuItem key={it.href}>
@@ -168,7 +181,7 @@ export default function DesktopSidebar({
             <div className="my-3 mx-1 h-px bg-border/30" />
 
             <div className="mb-2 px-1 text-xs font-medium text-muted-foreground">
-              {t('sidebar.explore')}
+              {t("sidebar.explore")}
             </div>
             {secondaryItems.map((it) => (
               <SidebarMenuItem key={it.href}>
@@ -205,18 +218,22 @@ export default function DesktopSidebar({
               )}
             </Avatar>
             <div className="flex-1">
-              <div className="text-sm font-medium">{user?.name ?? t('sidebar.guest')}</div>
+              <div className="text-sm font-medium">
+                {user?.name ?? t("sidebar.guest")}
+              </div>
               {user?.email ? (
                 <div className="text-xs text-muted-foreground truncate">
                   {user.email}
                 </div>
               ) : (
-                <div className="text-xs text-muted-foreground">{t(`sidebar.${portal.toLowerCase()}`)}</div>
+                <div className="text-xs text-muted-foreground">
+                  {t(`sidebar.${portal.toLowerCase()}`)}
+                </div>
               )}
             </div>
 
             <button
-              onClick={() => router.push('/signin')}
+              onClick={() => router.push("/signin")}
               className="-mr-2 rounded-md p-2 text-muted-foreground hover:text-primary hover:bg-surface-muted cursor-pointer"
               aria-label="Sign out"
               title="Sign out"
