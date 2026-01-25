@@ -1,7 +1,9 @@
+"use client"
 import * as React from "react"
 import { cn } from "@/lib/utils"
 import SettingsSheet from "@/components/layout/setting"
 import NotificationsSheet from "@/components/layout/notifications"
+import { useTranslation } from "react-i18next"
 
 /**
  * Props for Header
@@ -26,6 +28,7 @@ export type HeaderProps = {
  * Renders a top header bar for student pages with title, notification icon, and user avatar.
  */
 export default function Header({ title = "Student Dashboard", portal , className }: HeaderProps) {
+	const { t } = useTranslation()
 	return (
 		<header
 			className={cn(
@@ -40,8 +43,8 @@ export default function Header({ title = "Student Dashboard", portal , className
 					<span className="text-sm font-semibold text-primary-foreground">AF</span>
 				</div>
 				<div>
-					<div className="text-sm font-semibold">AMA FYP</div>
-					<div className="text-xs text-muted-foreground">{portal} Portal</div>
+					<div className="text-sm font-semibold">{t('header.appName')}</div>
+					<div className="text-xs text-muted-foreground">{t('header.portal', { portal })}</div>
 				</div>
 			</div>
 			<div className="flex items-center gap-4">

@@ -1,0 +1,130 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "chat": "Chat",
+    "complaint": "Complaints",
+    "suggestion": "Suggestions",
+    "home": "Home"
+  },
+  "sidebar": {
+    "main": "Main",
+    "explore": "Explore",
+    "appName": "AMA FYP",
+    "portal": "{{portal}} Portal",
+    "guest": "Guest",
+    "student": "Student",
+    "signOut": "Sign out"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Adjust language and theme preferences.",
+    "language": "Language",
+    "english": "English",
+    "french": "Français",
+    "theme": "Theme",
+    "themeLabel": "Light / Dark",
+    "themeDescription": "Toggle between light and dark themes",
+    "close": "Close",
+    "save": "Save",
+    "logout": "Logout"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "description": "Recent notifications about your account and activity.",
+    "none": "No notifications",
+    "markRead": "Mark read",
+    "read": "Read",
+    "clearAll": "Clear all"
+  },
+  "dashboard": {
+    "title": "Student Dashboard",
+    "description": "Overview of your complaints, suggestions, and support chats.",
+    "viewAll": "View All",
+    "contactStaff": "Contact Staff",
+    "complaints": "Complaints",
+    "complaintsDesc": "Total submitted",
+    "suggestions": "Suggestions",
+    "suggestionsDesc": "Ideas shared",
+    "activeChats": "Active Chats",
+    "activeChatsDesc": "Ongoing conversations",
+    "recentComplaints": "Recent Complaints",
+    "recentSuggestions": "Recent Suggestions",
+    "activeChatSessions": "Active Chat Sessions",
+    "noComplaints": "No complaints yet.",
+    "noSuggestions": "No suggestions yet.",
+    "noActiveChats": "No active chats.",
+    "upvotes": "upvotes",
+    "quickActions": "Quick Actions",
+    "createComplaint": "Create Complaint",
+    "shareSuggestion": "Share Suggestion",
+    "startChat": "Start Chat",
+    "lastActive": "Last active"
+  },
+  "chat": {
+    "title": "Student Support Chat",
+    "description": "Chat with our AI assistant or escalate to staff if needed.",
+    "placeholder": "Type your message...",
+    "send": "Send",
+    "noMessages": "No messages yet. Start the conversation!",
+    "typing": "AI is typing...",
+    "error": "Failed to send message. Please try again."
+  },
+  "complaints": {
+    "title": "Complaints",
+    "intro": "Submit issues and track their status — staff will respond here.",
+    "help": "Help",
+    "contactStaff": "Contact staff",
+    "newComplaint": "New complaint",
+    "createComplaint": "Create complaint",
+    "createComplaintTitle": "Create a complaint",
+    "search": "Search complaints, reporters or categories",
+    "filter": "Filter",
+    "category": "Category",
+    "categoryPlaceholder": "e.g. Facilities, IT",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Describe the issue in detail",
+    "nameOptional": "Your name (optional)",
+    "namePlaceholder": "John Student",
+    "noComplaints": "No complaints yet.",
+    "general": "General",
+    "open": "Open",
+    "status": {
+      "pending": "Pending",
+      "inProgress": "In Progress",
+      "resolved": "Resolved"
+    }
+  },
+  "suggestions": {
+    "title": "Suggestions",
+    "intro": "Share ideas, vote on improvements, and see what's being considered.",
+    "actionsFilters": "Actions & Filters",
+    "addSuggestion": "Add suggestion",
+    "shareIdea": "Share an idea",
+    "mySuggestions": "My suggestions",
+    "mySuggestionsTitle": "My Suggestions",
+    "search": "Search suggestions",
+    "newest": "Newest",
+    "top": "Top",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Short descriptive title",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Describe your idea or issue in a few sentences",
+    "nameOptional": "Your name (optional)",
+    "namePlaceholder": "Jane Doe",
+    "submit": "Submit suggestion",
+    "noSuggestions": "No suggestions yet.",
+    "by": "By {{author}}",
+    "discuss": "Discuss",
+    "noUserSuggestions": "You have not submitted any suggestions yet."
+  },
+  "header": {
+    "appName": "AMA FYP",
+    "portal": "{{portal}} Portal"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "Sorry, we couldn't find the page you're looking for. It might have been moved or deleted.",
+    "goToDashboard": "Go to Dashboard",
+    "goHome": "Go Home"
+  }
+}

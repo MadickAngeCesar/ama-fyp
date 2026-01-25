@@ -10,6 +10,7 @@
 import { ChatMessage } from "./ChatPanel";
 import { ScrollArea } from "../ui/scroll-area";
 import { Spinner } from "../ui/spinner";
+import { useTranslation } from "react-i18next";
 
 interface ChatMessageListProps {
   messages: ChatMessage[];
@@ -18,11 +19,12 @@ interface ChatMessageListProps {
 }
 
 export default function ChatMessageList({ messages, loading, error }: ChatMessageListProps) {
+  const { t } = useTranslation()
   return (
     <ScrollArea className="flex-1 h-full px-4 py-2 overflow-y-auto">
       <div className="flex flex-col gap-3 pb-4">
         {messages.length === 0 && !loading && !error && (
-          <div className="text-center text-muted-foreground mt-12">No messages yet. Start the conversation!</div>
+          <div className="text-center text-muted-foreground mt-12">{t('chat.noMessages')}</div>
         )}
         {messages.map((msg) => (
           <div
@@ -47,7 +49,7 @@ export default function ChatMessageList({ messages, loading, error }: ChatMessag
           <div className="flex justify-start">
             <div className="rounded-lg px-4 py-2 bg-muted text-foreground max-w-[75%] shadow-sm text-sm flex items-center gap-2">
               <Spinner className="w-4 h-4" />
-              <span>AI is typing...</span>
+              <span>{t('chat.typing')}</span>
             </div>
           </div>
         )}

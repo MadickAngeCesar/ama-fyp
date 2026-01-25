@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Bell } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 import {
   Sheet,
@@ -30,6 +31,7 @@ type Notification = {
  * persisted to localStorage for demo purposes and can be marked read or cleared.
  */
 export default function NotificationsSheet({ className }: { className?: string }) {
+  const { t } = useTranslation()
   const [open, setOpen] = React.useState(false)
   const [items, setItems] = React.useState<Notification[]>([])
 
@@ -79,12 +81,12 @@ export default function NotificationsSheet({ className }: { className?: string }
 
       <SheetContent side="right" className="w-full max-w-sm">
         <SheetHeader>
-          <SheetTitle>Notifications</SheetTitle>
-          <SheetDescription>Recent notifications about your account and activity.</SheetDescription>
+          <SheetTitle>{t('notifications.title')}</SheetTitle>
+          <SheetDescription>{t('notifications.description')}</SheetDescription>
         </SheetHeader>
 
         <div className="divide-y overflow-auto">
-          {items.length === 0 && <div className="p-4 text-sm text-muted-foreground">No notifications</div>}
+          {items.length === 0 && <div className="p-4 text-sm text-muted-foreground">{t('notifications.none')}</div>}
           {items.map((n) => (
             <div key={n.id} className="flex items-start gap-3 p-4">
               <div className="flex-1">
@@ -96,10 +98,10 @@ export default function NotificationsSheet({ className }: { className?: string }
                 <div className="mt-2">
                   {!n.read ? (
                     <Button variant="ghost" size="sm" onClick={() => markRead(n.id)}>
-                      Mark read
+                      {t('notifications.markRead')}
                     </Button>
                   ) : (
-                    <span className="text-xs text-muted-foreground">Read</span>
+                    <span className="text-xs text-muted-foreground">{t('notifications.read')}</span>
                   )}
                 </div>
               </div>
@@ -110,11 +112,11 @@ export default function NotificationsSheet({ className }: { className?: string }
         <SheetFooter>
           <div className="flex w-full items-center justify-between gap-2">
             <Button variant="outline" onClick={() => setOpen(false)}>
-              Close
+              {t('settings.close')}
             </Button>
             <div className="flex items-center gap-2">
               <Button variant="ghost" onClick={clearAll} disabled={items.length === 0}>
-                Clear all
+                {t('notifications.clearAll')}
               </Button>
             </div>
           </div>

@@ -12,7 +12,7 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const primaryItems = [
-    { label: "Dashboard", href: "/students", icon: "home" },
+    { label: "Dashboard", href: "/students", icon: "dashboard" },
     { label: "Chat", href: "/students/chat", icon: "chat" },
   ]
 

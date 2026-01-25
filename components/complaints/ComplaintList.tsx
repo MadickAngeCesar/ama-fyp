@@ -2,6 +2,7 @@
 import React from "react";
 import { Complaint } from "./types";
 import ComplaintCard from "./ComplaintCard";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   complaints: Complaint[];
@@ -9,7 +10,8 @@ type Props = {
 };
 
 export default function ComplaintList({ complaints, onOpen }: Props) {
-  if (!complaints || complaints.length === 0) return <div className="text-sm text-muted-foreground">No complaints yet.</div>;
+  const { t } = useTranslation()
+  if (!complaints || complaints.length === 0) return <div className="text-sm text-muted-foreground">{t('complaints.noComplaints')}</div>;
 
   return (
     <div className="grid grid-cols-2 gap-4">

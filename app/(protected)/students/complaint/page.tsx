@@ -8,8 +8,10 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useTranslation } from "react-i18next";
 
 export default function Page() {
+  const { t } = useTranslation()
   const initial = (placeholderComplaints || []).map((c) => {
     const user = (placeholderUsers || []).find((u) => u.id === c.userId);
     return {
@@ -58,12 +60,12 @@ export default function Page() {
     <div className="max-w-5xl mx-auto py-8 space-y-6">
       <header className="flex items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold">Complaints</h1>
-          <p className="text-sm text-muted-foreground">Submit issues and track their status — staff will respond here.</p>
+          <h1 className="text-3xl font-bold">{t('complaints.title')}</h1>
+          <p className="text-sm text-muted-foreground">{t('complaints.intro')}</p>
         </div>
         <div className="hidden sm:flex gap-2">
-          <Button variant="ghost">Help</Button>
-          <Button>Contact staff</Button>
+          <Button variant="ghost">{t('complaints.help')}</Button>
+          <Button>{t('complaints.contactStaff')}</Button>
         </div>
       </header>
 
@@ -71,16 +73,16 @@ export default function Page() {
         <aside className="lg:col-span-1">
           <Card>
             <CardHeader>
-              <CardTitle>New complaint</CardTitle>
+              <CardTitle>{t('complaints.newComplaint')}</CardTitle>
             </CardHeader>
             <CardContent>
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button size="lg" className="w-full">Create complaint</Button>
+                  <Button size="lg" className="w-full">{t('complaints.createComplaint')}</Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl">
                   <DialogHeader>
-                    <DialogTitle className="text-lg">Create a complaint</DialogTitle>
+                    <DialogTitle className="text-lg">{t('complaints.createComplaintTitle')}</DialogTitle>
                   </DialogHeader>
                   <div className="mt-4">
                     <ComplaintForm onSubmit={(p) => { handleCreate(p); }} />
@@ -94,10 +96,10 @@ export default function Page() {
         <main className="lg:col-span-3">
           <div className="flex flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <div className="flex-1">
-              <Input className="h-12 text-base" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search complaints, reporters or categories" />
+              <Input className="h-12 text-base" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('complaints.search')} />
             </div>
             <div className="flex gap-2">
-              <Button size="lg" variant="outline">Filter</Button>
+              <Button size="lg" variant="outline">{t('complaints.filter')}</Button>
             </div>
           </div>
 

@@ -1,0 +1,130 @@
+{
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "chat": "Chat",
+    "complaint": "Plaintes",
+    "suggestion": "Suggestions",
+    "home": "Accueil"
+  },
+  "sidebar": {
+    "main": "Principal",
+    "explore": "Explorer",
+    "appName": "AMA FYP",
+    "portal": "Portail {{portal}}",
+    "guest": "Invité",
+    "student": "Étudiant",
+    "signOut": "Se déconnecter"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "description": "Ajustez les préférences de langue et de thème.",
+    "language": "Langue",
+    "english": "Anglais",
+    "french": "Français",
+    "theme": "Thème",
+    "themeLabel": "Clair / Sombre",
+    "themeDescription": "Basculer entre les thèmes clair et sombre",
+    "close": "Fermer",
+    "save": "Enregistrer",
+    "logout": "Se déconnecter"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "description": "Notifications récentes concernant votre compte et votre activité.",
+    "none": "Aucune notification",
+    "markRead": "Marquer comme lu",
+    "read": "Lu",
+    "clearAll": "Tout effacer"
+  },
+  "dashboard": {
+    "title": "Tableau de bord étudiant",
+    "description": "Aperçu de vos plaintes, suggestions et chats de support.",
+    "viewAll": "Voir tout",
+    "contactStaff": "Contacter le personnel",
+    "complaints": "Plaintes",
+    "complaintsDesc": "Total soumis",
+    "suggestions": "Suggestions",
+    "suggestionsDesc": "Idées partagées",
+    "activeChats": "Chats actifs",
+    "activeChatsDesc": "Conversations en cours",
+    "recentComplaints": "Plaintes récentes",
+    "recentSuggestions": "Suggestions récentes",
+    "activeChatSessions": "Sessions de chat actives",
+    "noComplaints": "Aucune plainte pour le moment.",
+    "noSuggestions": "Aucune suggestion pour le moment.",
+    "noActiveChats": "Aucun chat actif.",
+    "upvotes": "votes",
+    "quickActions": "Actions rapides",
+    "createComplaint": "Créer une plainte",
+    "shareSuggestion": "Partager une suggestion",
+    "startChat": "Démarrer un chat",
+    "lastActive": "Dernière activité"
+  },
+  "chat": {
+    "title": "Chat de support étudiant",
+    "description": "Discutez avec notre assistant IA ou escaladez vers le personnel si nécessaire.",
+    "placeholder": "Tapez votre message...",
+    "send": "Envoyer",
+    "noMessages": "Aucun message pour le moment. Commencez la conversation !",
+    "typing": "L'IA tape...",
+    "error": "Échec de l'envoi du message. Veuillez réessayer."
+  },
+  "complaints": {
+    "title": "Plaintes",
+    "intro": "Soumettez des problèmes et suivez leur statut — le personnel répondra ici.",
+    "help": "Aide",
+    "contactStaff": "Contacter le personnel",
+    "newComplaint": "Nouvelle plainte",
+    "createComplaint": "Créer une plainte",
+    "createComplaintTitle": "Créer une plainte",
+    "search": "Rechercher des plaintes, rapporteurs ou catégories",
+    "filter": "Filtrer",
+    "category": "Catégorie",
+    "categoryPlaceholder": "ex. Installations, IT",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Décrivez le problème en détail",
+    "nameOptional": "Votre nom (optionnel)",
+    "namePlaceholder": "Jean Étudiant",
+    "noComplaints": "Aucune plainte pour le moment.",
+    "general": "Général",
+    "open": "Ouvrir",
+    "status": {
+      "pending": "En attente",
+      "inProgress": "En cours",
+      "resolved": "Résolu"
+    }
+  },
+  "suggestions": {
+    "title": "Suggestions",
+    "intro": "Partagez des idées, votez pour des améliorations et voyez ce qui est considéré.",
+    "actionsFilters": "Actions et filtres",
+    "addSuggestion": "Ajouter une suggestion",
+    "shareIdea": "Partager une idée",
+    "mySuggestions": "Mes suggestions",
+    "mySuggestionsTitle": "Mes suggestions",
+    "search": "Rechercher des suggestions",
+    "newest": "Les plus récentes",
+    "top": "Top",
+    "titleLabel": "Titre",
+    "titlePlaceholder": "Titre descriptif court",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Décrivez votre idée ou problème en quelques phrases",
+    "nameOptional": "Votre nom (optionnel)",
+    "namePlaceholder": "Jeanne Dupont",
+    "submit": "Soumettre une suggestion",
+    "noSuggestions": "Aucune suggestion pour le moment.",
+    "by": "Par {{author}}",
+    "discuss": "Discuter",
+    "noUserSuggestions": "Vous n'avez soumis aucune suggestion pour le moment."
+  },
+  "header": {
+    "appName": "AMA FYP",
+    "portal": "Portail {{portal}}"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "description": "Désolé, nous n'avons pas pu trouver la page que vous recherchez. Elle a peut-être été déplacée ou supprimée.",
+    "goToDashboard": "Aller au tableau de bord",
+    "goHome": "Retour à l'accueil"
+  }
+}

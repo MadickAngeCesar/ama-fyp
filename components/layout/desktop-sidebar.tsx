@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, MessageCircle, FileText, Lightbulb, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 import {
   SidebarProvider,
@@ -65,6 +66,7 @@ export default function DesktopSidebar({
   primaryItems: SidebarNavItem[];
   secondaryItems: SidebarNavItem[];
 }) {
+  const { t } = useTranslation()
   const pathname = usePathname() ?? "/";
   const current = active ?? pathname;
 
@@ -123,9 +125,9 @@ export default function DesktopSidebar({
               </span>
             </div>
             <div>
-              <div className="text-base font-semibold">AMA FYP</div>
+              <div className="text-base font-semibold">{t('sidebar.appName')}</div>
               <div className="text-xs text-muted-foreground">
-                {portal} Portal
+                {t('sidebar.portal', { portal })}
               </div>
             </div>
           </div>
@@ -134,7 +136,7 @@ export default function DesktopSidebar({
         <SidebarContent className="px-3 py-2">
           <SidebarMenu>
             <div className="mb-2 px-1 text-xs font-medium text-muted-foreground">
-              Main
+              {t('sidebar.main')}
             </div>
             {primaryItems.map((it) => (
               <SidebarMenuItem key={it.href}>
@@ -153,7 +155,7 @@ export default function DesktopSidebar({
                       const Icon = iconMap[it.icon ?? "home"] ?? Home;
                       return <Icon className="size-4" />;
                     })()}
-                    <span className="truncate">{it.label}</span>
+                    <span className="truncate">{t(`nav.${it.icon}`)}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -162,7 +164,7 @@ export default function DesktopSidebar({
             <div className="my-3 mx-1 h-px bg-border/30" />
 
             <div className="mb-2 px-1 text-xs font-medium text-muted-foreground">
-              Explore
+              {t('sidebar.explore')}
             </div>
             {secondaryItems.map((it) => (
               <SidebarMenuItem key={it.href}>
@@ -181,7 +183,7 @@ export default function DesktopSidebar({
                       const Icon = iconMap[it.icon ?? "home"] ?? Home;
                       return <Icon className="size-4" />;
                     })()}
-                    <span className="truncate">{it.label}</span>
+                    <span className="truncate">{t(`nav.${it.icon}`)}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -199,13 +201,13 @@ export default function DesktopSidebar({
               )}
             </Avatar>
             <div className="flex-1">
-              <div className="text-sm font-medium">{user?.name ?? "Guest"}</div>
+              <div className="text-sm font-medium">{user?.name ?? t('sidebar.guest')}</div>
               {user?.email ? (
                 <div className="text-xs text-muted-foreground truncate">
                   {user.email}
                 </div>
               ) : (
-                <div className="text-xs text-muted-foreground">Student</div>
+                <div className="text-xs text-muted-foreground">{t('sidebar.student')}</div>
               )}
             </div>
 

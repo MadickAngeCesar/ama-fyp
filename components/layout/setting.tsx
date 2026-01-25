@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Settings } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 import {
   Sheet,
@@ -24,6 +25,7 @@ import { cn } from "@/lib/utils"
  * on `document.documentElement`.
  */
 export default function SettingsSheet({ className }: { className?: string }) {
+  const { t, i18n } = useTranslation()
   const [open, setOpen] = React.useState(false)
   const [language, setLanguage] = React.useState<"en" | "fr">("en")
   const [dark, setDark] = React.useState(false)
@@ -48,10 +50,11 @@ export default function SettingsSheet({ className }: { className?: string }) {
   React.useEffect(() => {
     try {
       localStorage.setItem("prefLanguage", language)
+      i18n.changeLanguage(language)
     } catch (e) {
         console.error("Failed to save language preference", e)
     }
-  }, [language])
+  }, [language, i18n])
 
   React.useEffect(() => {
     try {
@@ -76,8 +79,8 @@ export default function SettingsSheet({ className }: { className?: string }) {
       </SheetTrigger>
       <SheetContent side="right" className="w-full max-w-sm">
         <SheetHeader>
-          <SheetTitle>Settings</SheetTitle>
-          <SheetDescription>Adjust language and theme preferences.</SheetDescription>
+          <SheetTitle>{t('settings.title')}</SheetTitle>
+          <SheetDescription>{t('settings.description')}</SheetDescription>
         </SheetHeader>
 
         {/* Mobile-only user details + logout */}
@@ -87,8 +90,8 @@ export default function SettingsSheet({ className }: { className?: string }) {
               <span className="text-sm font-semibold text-primary-foreground">{(user?.name ?? "?")[0]}</span>
             </div>
             <div className="flex-1">
-              <div className="font-medium">{user?.name ?? "Guest"}</div>
-              <div className="text-xs text-muted-foreground">{user?.email ?? "Student"}</div>
+              <div className="font-medium">{user?.name ?? t('sidebar.guest')}</div>
+              <div className="text-xs text-muted-foreground">{user?.email ?? t('sidebar.student')}</div>
             </div>
             <div>
               <Button variant="ghost" onClick={() => {
@@ -99,14 +102,14 @@ export default function SettingsSheet({ className }: { className?: string }) {
                 }
                 // simple logout: reload page
                 if (typeof window !== "undefined") window.location.reload()
-              }}>Logout</Button>
+              }}>{t('settings.logout')}</Button>
             </div>
           </div>
         </div>
 
         <div className="p-4 pt-0">
           <div className="mb-4">
-            <label className="mb-2 block text-sm font-medium">Language</label>
+            <label className="mb-2 block text-sm font-medium">{t('settings.language')}</label>
             <div className="flex items-center gap-3">
               <label className="inline-flex items-center gap-2">
                 <input
@@ -116,7 +119,7 @@ export default function SettingsSheet({ className }: { className?: string }) {
                   checked={language === "en"}
                   onChange={() => setLanguage("en")}
                 />
-                <span className="text-sm">English</span>
+                <span className="text-sm">{t('settings.english')}</span>
               </label>
               <label className="inline-flex items-center gap-2">
                 <input
@@ -126,17 +129,17 @@ export default function SettingsSheet({ className }: { className?: string }) {
                   checked={language === "fr"}
                   onChange={() => setLanguage("fr")}
                 />
-                <span className="text-sm">Français</span>
+                <span className="text-sm">{t('settings.french')}</span>
               </label>
             </div>
           </div>
 
           <div className="mb-4">
-            <label className="mb-2 block text-sm font-medium">Theme</label>
+            <label className="mb-2 block text-sm font-medium">{t('settings.theme')}</label>
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-sm">Light / Dark</div>
-                <div className="text-xs text-muted-foreground">Toggle between light and dark themes</div>
+                <div className="text-sm">{t('settings.themeLabel')}</div>
+                <div className="text-xs text-muted-foreground">{t('settings.themeDescription')}</div>
               </div>
               <Switch checked={dark} onCheckedChange={(v) => setDark(Boolean(v))} />
             </div>
@@ -146,9 +149,9 @@ export default function SettingsSheet({ className }: { className?: string }) {
         <SheetFooter>
           <div className="flex w-full items-center justify-end gap-2">
             <Button variant="outline" onClick={() => setOpen(false)}>
-              Close
+              {t('settings.close')}
             </Button>
-            <Button onClick={() => setOpen(false)}>Save</Button>
+            <Button onClick={() => setOpen(false)}>{t('settings.save')}</Button>
           </div>
         </SheetFooter>
       </SheetContent>

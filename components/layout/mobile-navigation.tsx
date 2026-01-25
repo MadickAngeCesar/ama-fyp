@@ -4,6 +4,7 @@ import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Home, MessageCircle, FileText, Lightbulb } from "lucide-react"
+import { useTranslation } from "react-i18next"
 import { cn } from "@/lib/utils"
 
 /**
@@ -15,6 +16,7 @@ import { cn } from "@/lib/utils"
 export type MobileNavItem = { label: string; href: string; icon?: string }
 
 export default function MobileNavigation({ items: propItems }: { items?: MobileNavItem[] }) {
+  const { t } = useTranslation()
   const pathname = usePathname() ?? "/"
 
   const items = React.useMemo(
@@ -72,7 +74,7 @@ export default function MobileNavigation({ items: propItems }: { items?: MobileN
                 return <Icon className="w-5 h-5" />
               })()
             }
-            <span className="truncate text-[11px]">{it.label}</span>
+            <span className="truncate text-[11px]">{t(`nav.${it.icon}`)}</span>
           </Link>
         ))}
       </div>

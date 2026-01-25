@@ -3,6 +3,7 @@ import React from "react";
 import { Suggestion as UIType } from "./types";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   suggestions: UIType[];
@@ -13,8 +14,9 @@ type Props = {
  * Content for listing current user's suggestions, now for Dialog.
  */
 export default function MySuggestionsContent({ suggestions, onOpen }: Props) {
+  const { t, i18n } = useTranslation()
   if (!suggestions || suggestions.length === 0) {
-    return <div className="p-4">You have not submitted any suggestions yet.</div>;
+    return <div className="p-4">{t('suggestions.noUserSuggestions')}</div>;
   }
 
   return (
@@ -28,8 +30,8 @@ export default function MySuggestionsContent({ suggestions, onOpen }: Props) {
                 <div className="text-xs text-muted-foreground line-clamp-2">{s.description}</div>
               </div>
               <div className="flex flex-col items-end gap-2">
-                <div className="text-xs text-muted-foreground">{new Date(s.createdAt).toLocaleDateString()}</div>
-                <Button size="sm" variant="ghost" onClick={() => onOpen?.(s.id)}>Open</Button>
+                <div className="text-xs text-muted-foreground">{new Date(s.createdAt).toLocaleDateString(i18n.language)}</div>
+                <Button size="sm" variant="ghost" onClick={() => onOpen?.(s.id)}>{t('complaints.open')}</Button>
               </div>
             </div>
           </CardContent>

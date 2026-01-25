@@ -10,6 +10,7 @@
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { useTranslation } from "react-i18next";
 
 interface ChatInputProps {
   onSend: (message: string) => void;
@@ -17,6 +18,7 @@ interface ChatInputProps {
 }
 
 export default function ChatInput({ onSend, disabled }: ChatInputProps) {
+  const { t } = useTranslation()
   const [value, setValue] = useState("");
 
   /**
@@ -34,7 +36,7 @@ export default function ChatInput({ onSend, disabled }: ChatInputProps) {
     <form onSubmit={handleSubmit} className="flex gap-2">
       <Input
         type="text"
-        placeholder="Type your message..."
+        placeholder={t('chat.placeholder')}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         disabled={disabled}
@@ -42,8 +44,8 @@ export default function ChatInput({ onSend, disabled }: ChatInputProps) {
         aria-label="Chat message input"
         autoComplete="off"
       />
-      <Button type="submit" disabled={disabled || !value.trim()} aria-label="Send message">
-        Send
+      <Button type="submit" disabled={disabled || !value.trim()} aria-label={t('chat.send')}>
+        {t('chat.send')}
       </Button>
     </form>
   );

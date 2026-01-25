@@ -9,8 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import MySuggestionsContent from "@/components/suggestions/MySuggestionsPopover";
+import { useTranslation } from "react-i18next";
 
 export default function Page() {
+  const { t } = useTranslation()
 
   // Ensure initial suggestions are static/serialized to avoid hydration mismatch
   const initial = useMemo(() => {
@@ -67,12 +69,12 @@ export default function Page() {
     <div className="max-w-5xl mx-auto py-2 space-y-6">
       <header className="flex items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold">Suggestions</h1>
-          <p className="text-sm text-muted-foreground">Share ideas, vote on improvements, and see what&apos;s being considered.</p>
+          <h1 className="text-3xl font-bold">{t('suggestions.title')}</h1>
+          <p className="text-sm text-muted-foreground">{t('suggestions.intro')}</p>
         </div>
         <div className="hidden sm:flex gap-2">
-          <Button variant="ghost">Help</Button>
-          <Button>Contact staff</Button>
+          <Button variant="ghost">{t('complaints.help')}</Button>
+          <Button>{t('complaints.contactStaff')}</Button>
         </div>
       </header>
 
@@ -80,17 +82,17 @@ export default function Page() {
         <aside className="lg:col-span-1">
           <Card>
             <CardHeader>
-              <CardTitle className="items-center justify-center ">Actions & Filters</CardTitle>
+              <CardTitle className="items-center justify-center ">{t('suggestions.actionsFilters')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 gap-3">
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button size="lg" className="w-full">Add suggestion</Button>
+                    <Button size="lg" className="w-full">{t('suggestions.addSuggestion')}</Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-2xl">
                     <DialogHeader>
-                      <DialogTitle className="text-lg">Share an idea</DialogTitle>
+                      <DialogTitle className="text-lg">{t('suggestions.shareIdea')}</DialogTitle>
                     </DialogHeader>
                     <div className="mt-4">
                       <SuggestionForm onSubmit={(p) => { handleSubmit(p); }} />
@@ -100,11 +102,11 @@ export default function Page() {
 
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="lg" className="w-full">My suggestions</Button>
+                    <Button variant="outline" size="lg" className="w-full">{t('suggestions.mySuggestions')}</Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-2xl">
                     <DialogHeader>
-                      <DialogTitle>My Suggestions</DialogTitle>
+                      <DialogTitle>{t('suggestions.mySuggestionsTitle')}</DialogTitle>
                     </DialogHeader>
                     <div className="mt-4">
                       <MySuggestionsContent
@@ -140,11 +142,11 @@ export default function Page() {
         <main className="lg:col-span-3">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <div className="flex-1">
-              <Input className="h-12 text-base" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search suggestions" />
+              <Input className="h-12 text-base" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('suggestions.search')} />
             </div>
             <div className="flex gap-2">
-              <Button size="lg" variant={sort === "new" ? "secondary" : "outline"} onClick={() => setSort("new")}>Newest</Button>
-              <Button size="lg" variant={sort === "top" ? "secondary" : "outline"} onClick={() => setSort("top")}>Top</Button>
+              <Button size="lg" variant={sort === "new" ? "secondary" : "outline"} onClick={() => setSort("new")}>{t('suggestions.newest')}</Button>
+              <Button size="lg" variant={sort === "top" ? "secondary" : "outline"} onClick={() => setSort("top")}>{t('suggestions.top')}</Button>
             </div>
           </div>
 

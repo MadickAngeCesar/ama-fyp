@@ -3,6 +3,7 @@ import React from "react";
 import { Suggestion } from "./types";
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   suggestion: Suggestion;
@@ -13,6 +14,7 @@ type Props = {
  * Card that represents a single suggestion using shadcn Card.
  */
 export default function SuggestionCard({ suggestion, onUpvote }: Props) {
+  const { t, i18n } = useTranslation()
   const handleUpvote = () => onUpvote?.(suggestion.id);
 
   return (
@@ -27,9 +29,9 @@ export default function SuggestionCard({ suggestion, onUpvote }: Props) {
       <CardFooter className="px-0 py-2">
         <div className="flex items-center justify-between w-full">
           <div className="text-xs text-muted-foreground">
-            <span>By {suggestion.authorName ?? "Student"}</span>
+            <span>{t('suggestions.by', { author: suggestion.authorName ?? t('sidebar.student') })}</span>
             <span className="mx-2">•</span>
-            <span>{new Date(suggestion.createdAt).toLocaleDateString()}</span>
+            <span>{new Date(suggestion.createdAt).toLocaleDateString(i18n.language)}</span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -41,7 +43,7 @@ export default function SuggestionCard({ suggestion, onUpvote }: Props) {
               {suggestion.upvotes}
             </Button>
 
-            <Button variant="outline" size="sm">Discuss</Button>
+            <Button variant="outline" size="sm">{t('suggestions.discuss')}</Button>
           </div>
         </div>
       </CardFooter>

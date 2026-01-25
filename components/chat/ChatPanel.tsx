@@ -10,6 +10,7 @@ import ChatMessageList from "./ChatMessageList";
 import ChatInput from "./ChatInput";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export interface ChatMessage {
   id: string;
@@ -19,6 +20,7 @@ export interface ChatMessage {
 }
 
 export default function ChatPanel() {
+  const { t } = useTranslation()
   // Placeholder state for messages
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
@@ -54,7 +56,7 @@ export default function ChatPanel() {
         setLoading(false);
       }, 900);
     } catch {
-      setError("Failed to send message. Please try again.");
+      setError(t('chat.error'));
       setLoading(false);
     }
   };
@@ -62,8 +64,8 @@ export default function ChatPanel() {
   return (
     <Card className="flex flex-col h-full">
       <CardHeader className="border-b bg-muted/50">
-        <CardTitle className="text-lg font-semibold tracking-tight">Student Support Chat</CardTitle>
-        <p className="text-sm text-muted-foreground">Chat with our AI assistant or escalate to staff if needed.</p>
+        <CardTitle className="text-lg font-semibold tracking-tight">{t('chat.title')}</CardTitle>
+        <p className="text-sm text-muted-foreground">{t('chat.description')}</p>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
         <ChatMessageList messages={messages} loading={loading} error={error} />
