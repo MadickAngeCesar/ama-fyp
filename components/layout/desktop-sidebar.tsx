@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, MessageCircle, FileText, Lightbulb, LogOut } from "lucide-react";
+import { Home, MessageCircle, FileText, Lightbulb, LogOut, Users, Settings, Activity } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
@@ -75,9 +75,13 @@ export default function DesktopSidebar({
     React.ComponentType<React.SVGProps<SVGSVGElement>>
   > = {
     home: Home,
+    dashboard: Home,
     chat: MessageCircle,
     complaint: FileText,
     suggestion: Lightbulb,
+    audit: Activity,
+    users: Users,
+    configuration: Settings,
   };
 
   const allItems = React.useMemo(

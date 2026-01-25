@@ -4,7 +4,10 @@
     "chat": "Chat",
     "complaint": "Plaintes",
     "suggestion": "Suggestions",
-    "home": "Accueil"
+    "home": "Accueil",
+    "audit": "Audit",
+    "users": "Utilisateurs",
+    "configuration": "Configuration"
   },
   "sidebar": {
     "main": "Principal",
@@ -92,7 +95,7 @@
     "open": "Ouvrir",
     "status": {
       "pending": "En attente",
-      "inProgress": "En cours",
+      "inprogress": "En cours",
       "resolved": "Résolu"
     }
   },
@@ -240,6 +243,85 @@
     "chat": {
       "title": "Chat de support du personnel",
       "description": "Discutez avec les étudiants et gérez les sessions de support."
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Tableau de bord admin",
+      "description": "Aperçu des statistiques système et activité récente.",
+      "stats": {
+        "users": "Utilisateurs totaux",
+        "usersDesc": "Utilisateurs enregistrés",
+        "complaints": "Plaintes totales",
+        "complaintsDesc": "Plaintes soumises",
+        "suggestions": "Suggestions totales",
+        "suggestionsDesc": "Suggestions partagées",
+        "auditLogs": "Journaux d'audit",
+        "auditLogsDesc": "Activités système"
+      },
+      "recentActivity": "Activité récente",
+      "recentActivityDesc": "Derniers événements système"
+    },
+    "audit": {
+      "title": "Journaux d'audit",
+      "description": "Voir et filtrer les journaux d'audit système.",
+      "filters": "Filtres",
+      "search": "Rechercher dans les journaux...",
+      "action": "Action",
+      "entity": "Entité",
+      "allActions": "Toutes les actions",
+      "allEntities": "Toutes les entités",
+      "logs": "Journaux d'audit",
+      "logsDesc": "Enregistrements d'activité système",
+      "actor": "Acteur",
+      "detail": "Détail",
+      "date": "Date",
+      "noLogs": "Aucun journal trouvé."
+    },
+    "users": {
+      "title": "Gestion des utilisateurs",
+      "description": "Gérer les comptes utilisateurs et rôles.",
+      "filters": "Filtres",
+      "filtersDesc": "Filtrer et rechercher des utilisateurs",
+      "search": "Rechercher des utilisateurs...",
+      "role": "Rôle",
+      "allRoles": "Tous les rôles",
+      "list": "Utilisateurs",
+      "listDesc": "Utilisateurs enregistrés",
+      "name": "Nom",
+      "email": "Email",
+      "created": "Créé",
+      "actions": "Actions",
+      "editRole": "Modifier le rôle",
+      "editRoleDesc": "Changer le rôle pour {{name}}",
+      "save": "Enregistrer",
+      "noUsers": "Aucun utilisateur trouvé.",
+      "addUser": "Ajouter un utilisateur",
+      "addUserDesc": "Créer un nouveau compte utilisateur",
+      "add": "Ajouter un utilisateur",
+      "remove": "Supprimer",
+      "removeUser": "Supprimer l'utilisateur",
+      "removeUserDesc": "Êtes-vous sûr de vouloir supprimer {{name}} ? Cette action ne peut pas être annulée.",
+      "cancel": "Annuler",
+      "confirmRemove": "Supprimer l'utilisateur",
+      "namePlaceholder": "Entrez le nom complet",
+      "emailPlaceholder": "Entrez l'adresse email"
+    },
+    "config": {
+      "title": "Configuration",
+      "description": "Configurer les paramètres système et catégories.",
+      "categories": "Catégories de plaintes",
+      "categoriesDesc": "Gérer les catégories de plaintes disponibles",
+      "newCategory": "Nouvelle catégorie",
+      "retention": "Conservation des données",
+      "retentionDesc": "Définir la durée de conservation des données",
+      "retentionYears": "Période de conservation (années)",
+      "retentionNote": "Les données plus anciennes seront archivées ou supprimées.",
+      "systemSettings": "Paramètres système",
+      "systemSettingsDesc": "Configuration générale du système",
+      "maxFileSize": "Taille max du fichier (MB)",
+      "supportEmail": "Email de support",
+      "save": "Enregistrer la configuration"
     }
   }
 }

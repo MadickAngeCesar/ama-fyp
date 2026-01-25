@@ -4,7 +4,10 @@
     "chat": "Chat",
     "complaint": "Complaints",
     "suggestion": "Suggestions",
-    "home": "Home"
+    "home": "Home",
+    "audit": "Audit",
+    "users": "Users",
+    "configuration": "Configuration"
   },
   "sidebar": {
     "main": "Main",
@@ -92,7 +95,7 @@
     "open": "Open",
     "status": {
       "pending": "Pending",
-      "inProgress": "In Progress",
+      "inprogress": "In Progress",
       "resolved": "Resolved"
     }
   },
@@ -240,6 +243,85 @@
     "chat": {
       "title": "Staff Support Chat",
       "description": "Chat with students and manage support sessions."
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "description": "Overview of system statistics and recent activity.",
+      "stats": {
+        "users": "Total Users",
+        "usersDesc": "Registered users",
+        "complaints": "Total Complaints",
+        "complaintsDesc": "Submitted complaints",
+        "suggestions": "Total Suggestions",
+        "suggestionsDesc": "Shared suggestions",
+        "auditLogs": "Audit Logs",
+        "auditLogsDesc": "System activities"
+      },
+      "recentActivity": "Recent Activity",
+      "recentActivityDesc": "Latest system events"
+    },
+    "audit": {
+      "title": "Audit Logs",
+      "description": "View and filter system audit logs.",
+      "filters": "Filters",
+      "search": "Search logs...",
+      "action": "Action",
+      "entity": "Entity",
+      "allActions": "All Actions",
+      "allEntities": "All Entities",
+      "logs": "Audit Logs",
+      "logsDesc": "System activity records",
+      "actor": "Actor",
+      "detail": "Detail",
+      "date": "Date",
+      "noLogs": "No logs found."
+    },
+    "users": {
+      "title": "User Management",
+      "description": "Manage user accounts and roles.",
+      "filters": "Filters",
+      "filtersDesc": "Filter and search users",
+      "search": "Search users...",
+      "role": "Role",
+      "allRoles": "All Roles",
+      "list": "Users",
+      "listDesc": "Registered users",
+      "name": "Name",
+      "email": "Email",
+      "created": "Created",
+      "actions": "Actions",
+      "editRole": "Edit Role",
+      "editRoleDesc": "Change the role for {{name}}",
+      "save": "Save",
+      "noUsers": "No users found.",
+      "addUser": "Add User",
+      "addUserDesc": "Create a new user account",
+      "add": "Add User",
+      "remove": "Remove",
+      "removeUser": "Remove User",
+      "removeUserDesc": "Are you sure you want to remove {{name}}? This action cannot be undone.",
+      "cancel": "Cancel",
+      "confirmRemove": "Remove User",
+      "namePlaceholder": "Enter full name",
+      "emailPlaceholder": "Enter email address"
+    },
+    "config": {
+      "title": "Configuration",
+      "description": "Configure system settings and categories.",
+      "categories": "Complaint Categories",
+      "categoriesDesc": "Manage available complaint categories",
+      "newCategory": "New category",
+      "retention": "Data Retention",
+      "retentionDesc": "Set how long to keep data",
+      "retentionYears": "Retention Period (Years)",
+      "retentionNote": "Data older than this will be archived or deleted.",
+      "systemSettings": "System Settings",
+      "systemSettingsDesc": "General system configuration",
+      "maxFileSize": "Max File Size (MB)",
+      "supportEmail": "Support Email",
+      "save": "Save Configuration"
     }
   }
 }
