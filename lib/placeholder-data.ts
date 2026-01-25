@@ -69,6 +69,18 @@ export const complaints = [
     createdAt: new Date('2026-01-18'),
     updatedAt: new Date('2026-01-22'),
   },
+  {
+    id: 'complaint-3',
+    userId: 'user-1',
+    category: 'Academic',
+    description: 'Professor is not responding to emails.',
+    status: 'RESOLVED' as const,
+    response: 'Issue has been resolved with the professor.',
+    attachment: null,
+    assigneeId: 'user-2',
+    createdAt: new Date('2026-01-10'),
+    updatedAt: new Date('2026-01-15'),
+  },
 ]
 
 // Add categories
