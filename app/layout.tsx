@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "AMA FYP",
-  description: "AMA FYP",
+  description: "AI-Powered Student Support System",
 };
 
 export default function RootLayout({

@@ -1,169 +1,317 @@
 
-<!--
-	Detailed README generated from project structure.
-	Edit to add project-specific notes and credentials; do NOT commit secrets.
--->
+# AI-Powered Student Support System (ASSS)
 
-# Next.js Demo — Detailed Developer README
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-000000?style=for-the-badge&logo=vercel)](https://ama-fyp.vercel.app)
+[![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/MadickAngeCesar/ama-fyp)
+[![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)](https://www.prisma.io/)
+[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
+[![Clerk](https://img.shields.io/badge/Clerk-6C47FF?style=for-the-badge&logo=clerk&logoColor=white)](https://clerk.com/)
 
-Short summary
- - Next.js app using the `/app` router (Next 13+ patterns)
- - TypeScript-first project with Prisma ORM and Supabase integration
- - Server and client code live in `app/`, `lib/`, and `components/`
+A comprehensive web-based platform that empowers students to submit complaints and suggestions while providing an AI-powered chatbot for immediate assistance. Staff members can efficiently manage and resolve issues through an intuitive administrative dashboard.
 
-Table of contents
- - Project architecture
- - Quickstart
- - Important directories & patterns
- - Developer workflows & scripts
- - Testing strategy (Jest) and API test requirements
- - Database: Prisma, migrations, seeds
- - CI/CD, linting, and typechecking
- - Contributing / AI agent guidance
- - Troubleshooting
+## 🌟 Features
 
-## Project architecture (big picture)
+### For Students
+- **Complaint Submission**: Submit detailed complaints with categories, descriptions, and file attachments
+- **Suggestion System**: Share ideas and vote on community suggestions
+- **AI-Powered Chatbot**: Get instant help from Gemini AI with contextual support
+- **Real-time Notifications**: Stay updated on complaint status changes
+- **Responsive Design**: Seamless experience across desktop and mobile devices
 
- - Frontend: Next.js `app/` routes and layouts. Pages are composed from server and client components where appropriate.
- - UI: `components/` and `components/ui/` contain presentational and shared UI primitives. Follow existing file patterns when adding components.
- - Data layer: `lib/` contains shared utilities, authentication helpers (`lib/auth.ts`), Supabase wrappers (`lib/supabase/`), DB access (`lib/db.ts`), and validations (`lib/validations/`).
- - ORM: Prisma client code is generated under `lib/generated/prisma/` from `prisma/schema.prisma`.
- - API surface: Route handlers live under `app/api/*/route.ts`. These are Next.js route handlers (server code).
- - Authentication: Routes and flows are organized under `app/(auth)/` and protected pages under `app/(protected)/` using helpers in `lib/auth.ts` and `lib/supabase/`.
+### For Staff
+- **Complaint Management**: View, filter, assign, and resolve student complaints
+- **Suggestion Review**: Moderate and respond to student suggestions
+- **Chat Support**: Assist students through integrated chat sessions
+- **Analytics Dashboard**: Monitor resolution rates and system performance
+- **Bulk Operations**: Efficiently handle multiple items with advanced filtering
 
-Why this structure
- - The `app/` router enables colocated layouts and server-first rendering for data fetching.
- - Splitting `(auth)`, `(protected)`, and `(public)` clarifies access boundaries and makes middleware simpler to reason about.
+### For Administrators
+- **User Management**: Create, edit, and manage user accounts and roles
+- **Audit Logging**: Comprehensive system activity tracking
+- **Configuration**: Customize categories, retention policies, and system settings
+- **System Monitoring**: Oversee platform health and user engagement
 
-## Quickstart (local)
+## 🚀 Tech Stack
 
-1. Install dependencies (pnpm is preferred):
+- **Frontend**: Next.js 16 with App Router, TypeScript, Tailwind CSS
+- **UI Components**: shadcn/ui with Radix UI primitives
+- **Authentication**: Clerk for secure user management
+- **Database**: PostgreSQL with Prisma ORM
+- **Real-time**: Supabase for live updates and file storage
+- **AI Integration**: Google Gemini API for chatbot functionality
+- **Deployment**: Vercel for seamless hosting
+- **Testing**: Jest for comprehensive test coverage
+- **Internationalization**: react-i18next for multi-language support
+
+## 📋 Prerequisites
+
+Before running this project, make sure you have the following installed:
+
+- Node.js 18+ and pnpm
+- PostgreSQL database
+- Supabase account
+- Clerk account
+- Google Gemini API access
+
+## 🛠️ Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/MadickAngeCesar/ama-fyp.git
+   cd ama-fyp
+   ```
+
+2. **Install dependencies**
+   ```bash
+   pnpm install
+   ```
+
+3. **Set up environment variables**
+
+   Create a `.env` file in the root directory:
+
+   ```env
+   # Database
+   DATABASE_URL="postgresql://username:password@localhost:5432/ama_fyp"
+
+   # Supabase
+   NEXT_PUBLIC_SUPABASE_URL="your-supabase-url"
+   NEXT_PUBLIC_SUPABASE_ANON_KEY="your-supabase-anon-key"
+   SUPABASE_SERVICE_ROLE_KEY="your-supabase-service-role-key"
+
+   # Clerk Authentication
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="your-clerk-publishable-key"
+   CLERK_SECRET_KEY="your-clerk-secret-key"
+
+   # Gemini AI
+   GEMINI_API_KEY="your-gemini-api-key"
+
+   # Next.js
+   NEXT_PUBLIC_APP_URL="http://localhost:3000"
+   ```
+
+4. **Set up the database**
+   ```bash
+   # Generate Prisma client
+   pnpm prisma generate
+
+   # Run migrations
+   pnpm prisma migrate dev
+
+   # Seed the database
+   pnpm prisma db seed
+   ```
+
+5. **Start the development server**
+   ```bash
+   pnpm dev
+   ```
+
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 📖 Usage
+
+### Student Portal
+1. Sign up or sign in using Clerk authentication
+2. Submit complaints with detailed descriptions and attachments
+3. Share suggestions and vote on community ideas
+4. Chat with the AI assistant for immediate help
+5. Track the status of your submissions in real-time
+
+### Staff Portal
+1. Access the staff dashboard to view pending items
+2. Filter and assign complaints to team members
+3. Respond to student inquiries and update statuses
+4. Moderate suggestions and provide feedback
+5. Monitor chat sessions and provide support
+
+### Admin Portal
+1. Manage user accounts and role assignments
+2. Review audit logs for system activity
+3. Configure complaint categories and system settings
+4. Monitor platform analytics and performance
+
+## 🏗️ Project Structure
+
+```
+ama-fyp/
+├── app/                          # Next.js App Router
+│   ├── (auth)/                   # Authentication pages
+│   ├── (protected)/              # Protected routes by role
+│   │   ├── admin/                # Admin dashboard
+│   │   ├── staff/                # Staff dashboard
+│   │   └── students/             # Student dashboard
+│   ├── (public)/                 # Public pages
+│   └── api/                      # API route handlers
+├── components/                   # Reusable UI components
+│   ├── ui/                       # shadcn/ui components
+│   ├── layout/                   # Layout components
+│   └── chat/                     # Chat-related components
+├── lib/                          # Utility functions
+│   ├── generated/prisma/         # Prisma client
+│   ├── supabase/                 # Supabase utilities
+│   └── validations/              # Form validations
+├── prisma/                       # Database schema and seeds
+├── public/                       # Static assets
+│   └── locales/                  # Internationalization files
+├── docs/                         # Documentation
+└── __tests__/                    # Test files
+```
+
+## 🧪 Testing
+
+Run the test suite:
 
 ```bash
-pnpm install
+pnpm test
 ```
 
-2. Add environment variables (do NOT commit): create a `.env` with your DB and Supabase keys. Example keys the app expects (search `lib/supabase` and `prisma` to confirm exact names):
+Tests include:
+- Unit tests for utilities and components
+- Integration tests for API routes
+- End-to-end tests with Cypress
 
-```env
-DATABASE_URL=postgresql://user:pass@localhost:5432/db?schema=public
-NEXT_PUBLIC_SUPABASE_URL=...
-NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-SUPABASE_SERVICE_ROLE_KEY=...
-```
+## 🚀 Deployment
 
-3. Run database migrations and seed (development):
+The application is deployed on Vercel at [https://ama-fyp.vercel.app](https://ama-fyp.vercel.app).
 
-```bash
-pnpm prisma migrate dev
-pnpm prisma db seed --preview-feature || node prisma/seeds.ts
-```
+### Environment Variables for Production
 
-4. Start dev server:
+Ensure these environment variables are set in your Vercel project:
 
-```bash
-pnpm dev
-# open http://localhost:3000
-```
+- `DATABASE_URL`: Production PostgreSQL connection string
+- `NEXT_PUBLIC_SUPABASE_URL`: Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Supabase anonymous key
+- `SUPABASE_SERVICE_ROLE_KEY`: Supabase service role key
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`: Clerk publishable key
+- `CLERK_SECRET_KEY`: Clerk secret key
+- `GEMINI_API_KEY`: Google Gemini API key
+- `NEXT_PUBLIC_APP_URL`: Production URL
 
-## Important directories & patterns (map to code)
+### Deployment Steps
 
- - `app/` — Next.js App Router pages, nested layouts, server/client components.
-	 - `app/(auth)/` — authentication pages (signin, signup)
-	 - `app/(protected)/` — authenticated pages (dashboard, protected routes)
-	 - `app/(public)/` — public-facing pages
-	 - `app/api/` — route handlers. Add route handlers as `app/api/<name>/route.ts`.
- - `components/` — UI components and design primitives. Add new components under `components/ui/`.
- - `lib/` — utilities (auth.ts, db.ts, api-response.ts, validations, rate-limit, etc.). Use these helpers rather than introducing global singletons.
- - `lib/generated/prisma/` — auto-generated Prisma client and types. Do not edit directly.
- - `prisma/` — Prisma schema and seed scripts.
- - `docs/` — higher-level requirements, diagrams, and design docs.
+1. Connect your GitHub repository to Vercel
+2. Configure environment variables
+3. Deploy automatically on push to main branch
 
-## Developer workflows & npm scripts
+## 🌐 Internationalization
 
-Common commands (pnpm preferred):
+The application supports multiple languages:
+- English (en)
+- French (fr)
 
-```bash
-pnpm dev         # start Next dev server
-pnpm build       # production build
-pnpm start       # start built app
-pnpm prisma      # run Prisma CLI
-pnpm test        # run Jest tests
-pnpm run lint    # lint codebase
-pnpm run typecheck # run TypeScript checks
-```
+Language files are located in `public/locales/`.
 
-If `pnpm` is not available you may use `npm`/`yarn`, but CI and contributor scripts assume `pnpm`.
+## 🤝 Contributing
 
-### Adding API routes
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-1. Create `app/api/<route>/route.ts` and export handlers for supported methods.
-2. Use utilities in `lib/` for consistent responses and validations (e.g., `api-response.ts`, `lib/validations/`).
-3. Add a Jest test under `__tests__/api/<route>.test.ts` (see Testing Strategy).
+### Development Guidelines
 
-## Testing strategy (Jest) and API route requirements
+- Follow TypeScript best practices
+- Write tests for new features
+- Update documentation as needed
+- Ensure accessibility compliance (WCAG 2.1 AA)
+- Use conventional commits
 
- - All generated API routes must include a corresponding Jest test in `__tests__/api/` that covers main success and failure cases.
- - Tests should be runnable with `pnpm test`. When adding tests:
-	 - Mock external services (Supabase, DB) where possible.
-	 - Use the Prisma testing pattern appropriate for the project (in-memory DB or test database). Check `prisma/seeds.ts` and `lib/db.ts` for patterns used.
- - Example test path: `__tests__/api/arcjet.route.test.ts` for `app/api/arcjet/route.ts`.
+## 📄 API Documentation
 
-If you need a test scaffold, request it and the project will add a minimal Jest config and example tests.
+### Authentication Endpoints
+- `POST /api/auth/signin` - User sign in
+- `POST /api/auth/signup` - User registration
+- `POST /api/auth/signout` - User sign out
 
-## Database: Prisma, migrations, seeds
+### Complaint Endpoints
+- `GET /api/complaints` - List complaints (filtered by role)
+- `POST /api/complaints` - Create new complaint
+- `PUT /api/complaints/[id]` - Update complaint
+- `DELETE /api/complaints/[id]` - Delete complaint
 
- - Update `prisma/schema.prisma` for schema changes and run `pnpm prisma migrate dev`.
- - Generated client lands in `lib/generated/prisma/`; run `pnpm prisma generate` when schema changes.
- - Seeds are in `prisma/seeds.ts`. Use `pnpm prisma db seed` or run the seed file directly for local development.
+### Chat Endpoints
+- `POST /api/chat` - Send message to AI
+- `GET /api/chat/sessions` - Get chat sessions
 
-## CI/CD, linting, and typechecking
+### Admin Endpoints
+- `GET /api/admin/users` - List all users
+- `POST /api/admin/users` - Create user
+- `PUT /api/admin/users/[id]` - Update user
+- `GET /api/admin/audit` - Get audit logs
 
- - CI is defined in `.github/workflows/ci.yml` and runs on PRs and pushes to `main`.
- - The CI job installs dependencies, runs lint, typecheck, tests, build, and records `pnpm audit` results.
- - Before opening a PR run locally:
+## 📊 Database Schema
 
-```bash
-pnpm ci
-pnpm run lint
-pnpm run typecheck
-pnpm test --if-present
-pnpm run build --if-present
-```
+The application uses Prisma ORM with the following main models:
 
-## Contributing & code generation rules
+- **User**: User accounts with roles (STUDENT, STAFF, ADMIN)
+- **Complaint**: Student complaints with status tracking
+- **Suggestion**: Student suggestions with voting
+- **AuditLog**: System activity logging
+- **ChatSession**: AI chat conversations
+- **Message**: Individual chat messages
 
- - Document all new exported types, interfaces, functions, classes, and components with JSDoc comments.
- - For UI components include props documentation, defaults, and accessibility notes.
- - For every new or changed API route, add a Jest test in `__tests__/api/` and ensure it passes before merging.
- - Use conventional commits to keep changelogs clean.
+## 🔒 Security
 
-### AI agent guidance
+- Authentication handled by Clerk
+- Role-based access control (RBAC)
+- Data encryption at rest and in transit
+- Input validation and sanitization
+- Rate limiting on API endpoints
+- Audit logging for sensitive operations
 
- - See `.github/copilot-instructions.md` for agent-specific conventions. Highlights:
-	 - Prefer `pnpm` scripts and the project helper functions in `lib/`.
-	 - When generating code, include JSDoc and create tests for API routes.
-	 - Avoid committing secrets; use `.env` and GitHub secrets for CI.
+## 📈 Performance
 
-## GitHub issue templates
+- Server-side rendering with Next.js
+- Optimized database queries with Prisma
+- Real-time updates via Supabase
+- Image optimization and lazy loading
+- Code splitting and bundle optimization
 
- - Bug report: `.github/ISSUE_TEMPLATE/bug_report.md`
- - Feature request: `.github/ISSUE_TEMPLATE/feature_request.md`
+## 🐛 Troubleshooting
 
-## Troubleshooting
+### Common Issues
 
- - If CI fails after a workflow change, revert and run steps locally matching the CI commands.
- - If tests fail due to DB state, regenerate migrations and reseed the test DB.
+1. **Database Connection Issues**
+   - Verify `DATABASE_URL` in `.env`
+   - Ensure PostgreSQL is running
+   - Run `pnpm prisma migrate deploy`
 
-## Deployment
+2. **Authentication Problems**
+   - Check Clerk configuration
+   - Verify environment variables
+   - Clear browser cache
 
- - Deploy to Vercel (recommended) or your preferred host. Ensure environment variables in production match those used locally (`DATABASE_URL`, Supabase keys).
+3. **Build Failures**
+   - Run `pnpm prisma generate`
+   - Check TypeScript errors
+   - Verify all dependencies are installed
+
+## 📞 Support
+
+For support and questions:
+- Create an issue on GitHub
+- Contact the development team
+- Check the documentation in `/docs`
+
+## 📜 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Next.js team for the amazing framework
+- Vercel for hosting and deployment
+- Supabase for real-time database and storage
+- Clerk for authentication
+- Google for Gemini AI
+- All contributors and the open-source community
 
 ---
 
-If you'd like, I can also:
- - add a Jest scaffold and one example API test,
- - add a CONTRIBUTING.md that enforces these checks locally, or
- - run the local `pnpm ci` and report failures.
+**Live Demo**: [https://ama-fyp.vercel.app](https://ama-fyp.vercel.app)
 
-Please tell me which follow-up you'd like next.
+**Repository**: [https://github.com/MadickAngeCesar/ama-fyp](https://github.com/MadickAngeCesar/ama-fyp)
