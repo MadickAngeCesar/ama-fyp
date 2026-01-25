@@ -13,6 +13,8 @@
     "portal": "Portail {{portal}}",
     "guest": "Invité",
     "student": "Étudiant",
+    "staff": "Personnel",
+    "admin": "Admin",
     "signOut": "Se déconnecter"
   },
   "settings": {

@@ -8,7 +8,7 @@ sequenceDiagram
 	participant DB as Database (Prisma/Supabase)
 	participant Gemini as Gemini AI
 	participant Notif as Notification Service
-	participant Admin as Admin Dashboard
+	participant Staff as Staff Dashboard
 
 	%% Student submits suggestion
 	Student->>Browser: Fill suggestion form & submit
@@ -24,25 +24,25 @@ sequenceDiagram
 
 	API->>DB: Update suggestion with AI result & metadata
 
-	%% Notify admin
-	API->>Notif: Create admin notification (webhook/email)
+	%% Notify Staff
+	API->>Notif: Create Staff notification (webhook/email)
 	API-->>Browser: 200 OK (suggestion accepted)
 
-	Notif->>Admin: Deliver notification (email/in-app)
-	Admin->>Admin: Review suggestion
+	Notif->>Staff: Deliver notification (email/in-app)
+	Staff->>Staff: Review suggestion
 
-	alt Admin replies or updates status
-		Admin->>API: POST /api/suggestions/{id}/action {status, response}
-		API->>DB: Save admin response & status
+	alt Staff replies or updates status
+		Staff->>API: POST /api/suggestions/{id}/action {status, response}
+		API->>DB: Save Staff response & status
 		API->>Notif: Notify student of response
 		Notif->>Student: Deliver response (email/push/in-app)
-	else Admin flags for follow-up
-		Admin->>DB: Add moderation note / escalate
+	else Staff flags for follow-up
+		Staff->>DB: Add moderation note / escalate
 	end
 
 	%% Optional alternate flows
 	alt Gemini fails or rate-limited
 		API-->>DB: Keep original suggestion (status: pending-ai)
-		API->>Notif: Alert admin that AI enrichment failed
+		API->>Notif: Alert Staff that AI enrichment failed
 	end
 

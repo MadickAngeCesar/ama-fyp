@@ -207,7 +207,7 @@ export default function DesktopSidebar({
                   {user.email}
                 </div>
               ) : (
-                <div className="text-xs text-muted-foreground">{t('sidebar.student')}</div>
+                <div className="text-xs text-muted-foreground">{t(`sidebar.${portal.toLowerCase()}`)}</div>
               )}
             </div>
 

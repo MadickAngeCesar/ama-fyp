@@ -13,6 +13,8 @@
     "portal": "{{portal}} Portal",
     "guest": "Guest",
     "student": "Student",
+    "staff": "Staff",
+    "admin": "Admin",
     "signOut": "Sign out"
   },
   "settings": {
