@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -8,16 +8,46 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search } from "lucide-react"
-import { auditLogs, users } from "@/lib/placeholder-data"
+
+interface AuditLog {
+  id: string;
+  actorId: string | null;
+  action: string;
+  entity: string;
+  entityId: string;
+  detail: string | null;
+  createdAt: string;
+  actorName: string;
+}
 
 export default function AdminAuditPage() {
   const { t } = useTranslation()
+  const [logs, setLogs] = useState<AuditLog[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("")
   const [actionFilter, setActionFilter] = useState("")
   const [entityFilter, setEntityFilter] = useState("")
 
-  const filteredLogs = auditLogs.filter(log => {
-    const actor = users.find(u => u.id === log.actorId)?.name || ""
+  useEffect(() => {
+    const fetchLogs = async () => {
+      try {
+        const response = await fetch('/api/audit');
+        if (response.ok) {
+          const data = await response.json();
+          setLogs(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch audit logs:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLogs();
+  }, []);
+
+  const filteredLogs = logs.filter(log => {
+    const actor = log.actorName;
     const matchesSearch = actor.toLowerCase().includes(search.toLowerCase()) ||
                          log.action.toLowerCase().includes(search.toLowerCase()) ||
                          log.entity.toLowerCase().includes(search.toLowerCase()) ||
@@ -27,8 +57,8 @@ export default function AdminAuditPage() {
     return matchesSearch && matchesAction && matchesEntity
   })
 
-  const actions = [...new Set(auditLogs.map(log => log.action))]
-  const entities = [...new Set(auditLogs.map(log => log.entity))]
+  const actions = [...new Set(logs.map(log => log.action))]
+  const entities = [...new Set(logs.map(log => log.entity))]
 
   return (
     <div className="space-y-6">
@@ -99,7 +129,7 @@ export default function AdminAuditPage() {
             <TableBody>
               {filteredLogs.map((log) => (
                 <TableRow key={log.id}>
-                  <TableCell>{users.find(u => u.id === log.actorId)?.name || 'System'}</TableCell>
+                  <TableCell>{log.actorName}</TableCell>
                   <TableCell>
                     <Badge variant="outline">{log.action}</Badge>
                   </TableCell>

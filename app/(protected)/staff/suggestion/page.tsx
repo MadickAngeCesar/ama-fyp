@@ -1,8 +1,7 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import StaffSuggestionTable from "@/components/suggestions/StaffSuggestionTable";
 import { Suggestion } from "@/components/suggestions/types";
-import { suggestions as placeholderSuggestions, users as placeholderUsers } from "@/lib/placeholder-data";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -13,42 +12,75 @@ import { useTranslation } from "react-i18next";
 export default function Page() {
   const { t } = useTranslation();
 
-  // Ensure initial suggestions are static/serialized to avoid hydration mismatch
-  const initial = useMemo(() => {
-    return (placeholderSuggestions || []).map((s) => {
-      const user = (placeholderUsers || []).find((u) => u.id === s.userId);
-      return {
-        id: String(s.id),
-        title: s.title,
-        description: s.description,
-        authorName: user?.name,
-        upvotes: Number(s.upvotes) || 0,
-        createdAt:
-          typeof s.createdAt === "string"
-            ? s.createdAt
-            : s.createdAt instanceof Date
-            ? s.createdAt.toISOString()
-            : String(s.createdAt),
-        status: (s as { status?: string }).status || "pending", // Add default status
-        assignedTo: (s as { assignedTo?: string }).assignedTo,
-        category: (s as { category?: string }).category || "General",
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        responses: (s as { responses?: any[] }).responses || [],
-      } as Suggestion;
-    });
-  }, []);
-
-  const [suggestions, setSuggestions] = useState<Suggestion[]>(initial);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("none");
   const [sortOrder, setSortOrder] = useState<string>("desc");
 
-  const handleUpdateSuggestion = (id: string, updates: Partial<Suggestion>) => {
-    setSuggestions((list) =>
-      list.map((s) => (s.id === id ? { ...s, ...updates } : s))
-    );
+  // Fetch suggestions on mount
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      try {
+        const response = await fetch('/api/suggestions');
+        if (response.ok) {
+          const data = await response.json();
+          // Map API response to component format
+          const formatted = data.map((s: any) => ({
+            ...s,
+            status: s.status || "pending",
+            category: "General", // Default category since not in schema
+            responses: [], // Not in current schema
+          }));
+          setSuggestions(formatted);
+        }
+      } catch (error) {
+        console.error('Failed to fetch suggestions:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSuggestions();
+  }, []);
+
+  const handleUpdateSuggestion = async (id: string, updates: Partial<Suggestion>) => {
+    try {
+      // For status updates, use the action API
+      if (updates.status) {
+        const response = await fetch(`/api/suggestions/${id}/action`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'update_status',
+            status: updates.status,
+          }),
+        });
+
+        if (response.ok) {
+          setSuggestions((list) =>
+            list.map((s) => (s.id === id ? { ...s, ...updates } : s))
+          );
+        }
+      } else {
+        // For other updates, use PUT
+        const response = await fetch(`/api/suggestions/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updates),
+        });
+
+        if (response.ok) {
+          setSuggestions((list) =>
+            list.map((s) => (s.id === id ? { ...s, ...updates } : s))
+          );
+        }
+      }
+    } catch (error) {
+      console.error('Failed to update suggestion:', error);
+    }
   };
 
   const filtered = useMemo(() => {

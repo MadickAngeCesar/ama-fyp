@@ -66,7 +66,7 @@
     "lastActive": "Last active"
   },
   "chat": {
-    "title": "Student Support Chat",
+    "title": "Support Chat",
     "description": "Chat with our AI assistant or escalate to staff if needed.",
     "placeholder": "Type your message...",
     "send": "Send",

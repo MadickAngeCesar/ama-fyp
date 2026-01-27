@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from '@clerk/nextjs/server';
 import { db } from "@/lib/db";
 import { ComplaintStatus } from "@/lib/generated/prisma/client";
 import { getCurrentUser } from "@/lib/auth";

@@ -63,3 +63,34 @@ Return only valid JSON that describes a simple form or interface element.
 
 // In App and Email notifications
 
+/**
+ * Logs an audit event to the database.
+ * @param actorId - The ID of the user performing the action (optional for system actions)
+ * @param action - The action performed (e.g., 'CREATE', 'UPDATE', 'DELETE')
+ * @param entity - The entity type (e.g., 'Suggestion', 'Complaint')
+ * @param entityId - The ID of the entity
+ * @param detail - Additional details about the action
+ */
+export async function logAuditEvent(
+  actorId: string | null,
+  action: string,
+  entity: string,
+  entityId: string,
+  detail?: string
+) {
+  try {
+    const { db } = await import('./db');
+    await db.auditLog.create({
+      data: {
+        actorId,
+        action,
+        entity,
+        entityId,
+        detail,
+      },
+    });
+  } catch (error) {
+    console.error('Error logging audit event:', error);
+  }
+}
+

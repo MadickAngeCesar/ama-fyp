@@ -1,9 +1,8 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import SuggestionForm from "@/components/suggestions/SuggestionForm";
 import SuggestionList from "@/components/suggestions/SuggestionList";
 import { Suggestion } from "@/components/suggestions/types";
-import { suggestions as placeholderSuggestions, users as placeholderUsers } from "@/lib/placeholder-data";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -14,47 +13,70 @@ import { useTranslation } from "react-i18next";
 export default function Page() {
   const { t } = useTranslation()
 
-  // Ensure initial suggestions are static/serialized to avoid hydration mismatch
-  const initial = useMemo(() => {
-    return (placeholderSuggestions || []).map((s) => {
-      const user = (placeholderUsers || []).find((u) => u.id === s.userId);
-      return {
-        id: String(s.id),
-        title: s.title,
-        description: s.description,
-        authorName: user?.name,
-        upvotes: s.upvotes ?? 0,
-        createdAt:
-          typeof s.createdAt === "string"
-            ? s.createdAt
-            : s.createdAt instanceof Date
-            ? s.createdAt.toISOString()
-            : String(s.createdAt),
-      } as Suggestion;
-    });
-  }, []);
-
-  const [suggestions, setSuggestions] = useState<Suggestion[]>(initial);
-
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<"new" | "top">("new");
 
-  const handleSubmit = (payload: Omit<Suggestion, "id" | "createdAt" | "upvotes">) => {
-    // Only generate new Date/id on client event
-    const now = new Date();
-    const newOne: Suggestion = {
-      id: now.getTime().toString(),
-      createdAt: now.toISOString(),
-      upvotes: 0,
-      ...payload,
+  // Fetch suggestions on mount
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      try {
+        const response = await fetch('/api/suggestions');
+        if (response.ok) {
+          const data = await response.json();
+          setSuggestions(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch suggestions:', error);
+      } finally {
+        setLoading(false);
+      }
     };
-    setSuggestions((s) => [newOne, ...s]);
+
+    fetchSuggestions();
+  }, []);
+
+  const handleSubmit = async (payload: Omit<Suggestion, "id" | "createdAt" | "upvotes">) => {
+    try {
+      const response = await fetch('/api/suggestions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        const newSuggestion = await response.json();
+        setSuggestions((s) => [newSuggestion, ...s]);
+      }
+    } catch (error) {
+      console.error('Failed to submit suggestion:', error);
+    }
   };
 
-  const handleUpvote = (id: string) => {
-    setSuggestions((list) =>
-      list.map((s) => (s.id === id ? { ...s, upvotes: s.upvotes + 1 } : s))
-    );
+  const handleUpvote = async (id: string) => {
+    try {
+      const response = await fetch(`/api/suggestions/${id}/upvote`, {
+        method: 'POST',
+      });
+
+      if (response.ok) {
+        const { upvoted } = await response.json();
+        setSuggestions((list) =>
+          list.map((s) =>
+            s.id === id
+              ? {
+                  ...s,
+                  upvotes: upvoted ? s.upvotes + 1 : s.upvotes - 1,
+                  userUpvoted: upvoted,
+                }
+              : s
+          )
+        );
+      }
+    } catch (error) {
+      console.error('Failed to upvote suggestion:', error);
+    }
   };
 
   const filtered = useMemo(() => {
@@ -110,18 +132,9 @@ export default function Page() {
                     </DialogHeader>
                     <div className="mt-4">
                       <MySuggestionsContent
-                        suggestions={(placeholderSuggestions || [])
-                          .filter((ps) => ps.userId === (placeholderUsers || [])[0]?.id)
-                          .map((s) => ({
-                            id: s.id,
-                            title: s.title,
-                            description: s.description,
-                            authorName: (placeholderUsers || []).find((u) => u.id === s.userId)?.name,
-                            upvotes: s.upvotes ?? 0,
-                            createdAt: s.createdAt instanceof Date ? s.createdAt.toISOString() : String(s.createdAt),
-                          }))}
+                        suggestions={suggestions}
                         onOpen={(id) => {
-                          // bring selected suggestion to top for demo
+                          // bring selected suggestion to top
                           setSuggestions((list) => {
                             const idx = list.findIndex((x) => x.id === id);
                             if (idx === -1) return list;
@@ -150,7 +163,7 @@ export default function Page() {
             </div>
           </div>
 
-          <SuggestionList suggestions={filtered} onUpvote={handleUpvote} />
+          <SuggestionList suggestions={filtered} onUpvote={handleUpvote} loading={loading} />
         </main>
       </div>
     </div>

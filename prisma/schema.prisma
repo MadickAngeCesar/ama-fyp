@@ -25,6 +25,7 @@ model User {
   chatSessions ChatSession[]
   auditLogs    AuditLog[]
   assignedComplaints Complaint[] @relation("Assignee")
+  assignedSuggestions Suggestion[] @relation("SuggestionAssignee")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -52,6 +53,9 @@ model Suggestion {
   title       String
   description String
   status      SuggestionStatus @default(PENDING)
+  response    String?
+  assigneeId  String?
+  assignee    User?    @relation("SuggestionAssignee", fields: [assigneeId], references: [id])
   upvotes     Upvote[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -128,6 +132,7 @@ enum ComplaintStatus {
 
 enum SuggestionStatus {
   PENDING
+  IN_PROGRESS
   APPROVED
   REJECTED
 }

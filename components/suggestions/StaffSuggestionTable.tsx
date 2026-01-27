@@ -17,13 +17,15 @@ interface StaffSuggestionTableProps {
   suggestions: Suggestion[];
   /** Callback to update a suggestion */
   onUpdateSuggestion: (id: string, updates: Partial<Suggestion>) => void;
+  /** List of available staff members for assignment */
+  staffMembers?: Array<{id: string, name: string}>;
 }
 
 /**
  * StaffSuggestionTable component for managing suggestions in the staff portal.
  * Displays suggestions in a table with actions to view, respond, change status, and assign.
  */
-export default function StaffSuggestionTable({ suggestions, onUpdateSuggestion }: StaffSuggestionTableProps) {
+export default function StaffSuggestionTable({ suggestions, onUpdateSuggestion, staffMembers = [] }: StaffSuggestionTableProps) {
   const { t } = useTranslation();
   const [responseText, setResponseText] = useState("");
 
@@ -129,12 +131,15 @@ export default function StaffSuggestionTable({ suggestions, onUpdateSuggestion }
                       </Dialog>
                       <Select onValueChange={(value) => handleAssign(suggestion.id, value)}>
                         <SelectTrigger className="w-23 h-8">
-                          <SelectValue placeholder="Assign" />
+                          <SelectValue placeholder={suggestion.assignedTo || "Assign"} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="staff1">Staff 1</SelectItem>
-                          <SelectItem value="staff2">Staff 2</SelectItem>
                           <SelectItem value="unassigned">Unassigned</SelectItem>
+                          {staffMembers.map((staff) => (
+                            <SelectItem key={staff.id} value={staff.name}>
+                              {staff.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>

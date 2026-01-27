@@ -29,7 +29,7 @@ export default function SettingsSheet({ className }: { className?: string }) {
   const { t, i18n } = useTranslation()
   const [open, setOpen] = React.useState(false)
   const [language, setLanguage] = React.useState<"en" | "fr">("en")
-  const [dark, setDark] = React.useState(false)
+  const [dark, setDark] = React.useState(true)
 
   React.useEffect(() => {
     try {

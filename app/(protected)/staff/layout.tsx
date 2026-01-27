@@ -33,7 +33,15 @@ export default function DashboardLayout({
           if (data.role === 'STAFF') {
             setAuthorized(true)
           } else {
-            router.push(`/${data.role.toLowerCase()}`)
+            if (data.role === 'STUDENT'){
+              router.push('/students')
+            }
+            else if (data.role === 'ADMIN'){
+              router.push('/admin')
+            }
+            else{
+              router.push('/')
+            }
           }
         })
         .catch(() => {

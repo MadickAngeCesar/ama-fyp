@@ -1,8 +1,8 @@
-import DesktopSidebar from "@/components/layout/desktop-sidebar"
-import Header from "@/components/layout/header"
-import MobileNavigation from "@/components/layout/mobile-navigation"
-import { getCurrentUser } from "@/lib/auth"
-import { redirect } from "next/navigation"
+import DesktopSidebar from "@/components/layout/desktop-sidebar";
+import Header from "@/components/layout/header";
+import MobileNavigation from "@/components/layout/mobile-navigation";
+import { getCurrentUser } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 /**
  * Dashboard layout for admin area.
@@ -11,36 +11,53 @@ import { redirect } from "next/navigation"
 export default async function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const user = await getCurrentUser()
+  const user = await getCurrentUser();
   if (!user) {
-    redirect('/')
-  }
-  else if (user.role !== 'ADMIN') {
-    redirect(`/${user.role.toLowerCase()}`)  // Redirect to appropriate dashboard based on role
+    redirect("/");
+  } else if (user.role !== "ADMIN") {
+    if (user.role === "STUDENT") {
+      redirect("/students");
+    } else if (user.role === "STAFF") {
+      redirect("/staff");
+    } else {
+      redirect("/");
+    }
   }
   const primaryItems = [
     { label: "Dashboard", href: "/admin", icon: "dashboard" },
     { label: "Audit", href: "/admin/audit", icon: "audit" },
-  ]
+  ];
 
   const secondaryItems = [
     { label: "Users", href: "/admin/users", icon: "users" },
-    { label: "Configuration", href: "/admin/configuration", icon: "configuration" },
-  ]
+    {
+      label: "Configuration",
+      href: "/admin/configuration",
+      icon: "configuration",
+    },
+  ];
 
   const mobileItems = [
     { label: "Home", href: "/admin", icon: "home" },
     { label: "Audit", href: "/admin/audit", icon: "audit" },
     { label: "Users", href: "/admin/users", icon: "users" },
-    { label: "Configuration", href: "/admin/configuration", icon: "configuration" },
-  ]
+    {
+      label: "Configuration",
+      href: "/admin/configuration",
+      icon: "configuration",
+    },
+  ];
   return (
     <div className="flex h-screen w-full bg-background">
       {/* Sidebar: fixed width, full height */}
       <aside className="hidden md:flex h-full w-72 shrink-0">
-        <DesktopSidebar primaryItems={primaryItems} secondaryItems={secondaryItems} portal="Admin" />
+        <DesktopSidebar
+          primaryItems={primaryItems}
+          secondaryItems={secondaryItems}
+          portal="Admin"
+        />
       </aside>
       {/* Main area: header + content, fills remaining space */}
       <div className="flex min-w-0 flex-1 flex-col h-full">
@@ -49,5 +66,5 @@ export default async function DashboardLayout({
         <MobileNavigation items={mobileItems} />
       </div>
     </div>
-  )
+  );
 }
