@@ -14,8 +14,11 @@ export default async function DashboardLayout({
   children: React.ReactNode
 }) {
   const user = await getCurrentUser()
-  if (!user || user.role !== 'ADMIN') {
+  if (!user) {
     redirect('/')
+  }
+  else if (user.role !== 'ADMIN') {
+    redirect(`/${user.role.toLowerCase()}`)  // Redirect to appropriate dashboard based on role
   }
   const primaryItems = [
     { label: "Dashboard", href: "/admin", icon: "dashboard" },

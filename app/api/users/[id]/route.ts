@@ -8,7 +8,8 @@ import { auth } from '@clerk/nextjs/server';
  * @param params The route parameters containing the user ID.
  * @returns JSON success response or error.
  */
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const authResult = await auth();
   const { userId } = authResult;
   if (!userId) {
@@ -20,7 +21,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  const userToDelete = await db.user.findUnique({ where: { id: params.id } });
+  const userToDelete = await db.user.findUnique({ where: { id } });
   if (!userToDelete) {
     return NextResponse.json({ error: 'User not found' }, { status: 404 });
   }
@@ -31,7 +32,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
   }
 
   await db.user.delete({
-    where: { id: params.id },
+    where: { id },
   });
 
   return NextResponse.json({ success: true });

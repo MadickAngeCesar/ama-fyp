@@ -33,11 +33,11 @@ export default function DashboardLayout({
           if (data.role === 'STAFF') {
             setAuthorized(true)
           } else {
-            router.push('/')
+            router.push(`/${data.role.toLowerCase()}`)
           }
         })
         .catch(() => {
-          router.push('/')
+          router.push('/sign-in')
         })
     }
   }, [user, isLoaded, router])

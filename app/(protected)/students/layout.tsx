@@ -13,10 +13,15 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
+  
   const user = await getCurrentUser()
-  if (!user || user.role !== 'STUDENT') {
-    redirect('/')
+  if (!user) {
+    redirect('/sign-in')
   }
+  else if (user.role !== 'STUDENT') {
+    redirect(`/${user.role.toLowerCase()}`)  // Redirect to appropriate dashboard based on role
+  }
+
   const primaryItems = [
     { label: "Dashboard", href: "/students", icon: "dashboard" },
     { label: "Chat", href: "/students/chat", icon: "chat" },
