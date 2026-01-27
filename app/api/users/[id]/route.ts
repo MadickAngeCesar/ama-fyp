@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { auth } from '@clerk/nextjs/server';
+import { createClerkClient } from '@clerk/backend';
 
 /**
  * DELETE /api/users/[id] - Deletes a user (admin only).
@@ -29,6 +30,17 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   // Prevent deleting self
   if (userToDelete.id === currentUser.id) {
     return NextResponse.json({ error: 'Cannot delete yourself' }, { status: 400 });
+  }
+
+  // Delete from Clerk if clerkId exists
+  if (userToDelete.clerkId) {
+    try {
+      const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
+      await clerk.users.deleteUser(userToDelete.clerkId);
+    } catch (error) {
+      console.error('Failed to delete user from Clerk:', userToDelete.clerkId, error);
+      // Still proceed to delete from DB
+    }
   }
 
   await db.user.delete({

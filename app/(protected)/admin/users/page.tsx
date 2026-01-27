@@ -94,9 +94,13 @@ export default function AdminUsersPage() {
           setAddingUser(false)
           setNewUser({ name: "", email: "", role: "STUDENT" as UserRole })
           fetchUsers()
+        } else {
+          const errorData = await res.json()
+          alert(`Failed to add user: ${errorData.error}${errorData.details ? '\nDetails: ' + JSON.stringify(errorData.details) : ''}`)
         }
       } catch (error) {
         console.error('Failed to add user:', error)
+        alert('Failed to add user: Network error')
       }
     }
   }

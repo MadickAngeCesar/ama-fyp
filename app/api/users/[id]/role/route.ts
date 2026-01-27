@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { auth } from '@clerk/nextjs/server';
 import { z } from 'zod';
+import { createClerkClient } from '@clerk/backend';
 
 /**
  * Schema for updating user role.
@@ -46,6 +47,42 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     where: { id },
     data: { role },
   });
+
+  // Update Clerk user's private metadata
+  if (updatedUser.clerkId) {
+    try {
+      const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
+      await clerk.users.updateUser(updatedUser.clerkId, {
+        privateMetadata: { role },
+      });
+
+      // Update organization membership role if applicable
+      const membershipsRes = await fetch(`https://api.clerk.com/v1/users/${updatedUser.clerkId}/organization_memberships`, {
+        headers: {
+          'Authorization': `Bearer ${process.env.CLERK_SECRET_KEY}`,
+        },
+      });
+      if (membershipsRes.ok) {
+        const memberships = await membershipsRes.json();
+        if (memberships.length > 0) {
+          const membership = memberships[0];
+          const newOrgRole = role === 'ADMIN' ? 'admin' : 'member';
+          if (membership.role !== newOrgRole) {
+            await fetch(`https://api.clerk.com/v1/organizations/${membership.organization_id}/memberships/${membership.id}`, {
+              method: 'PATCH',
+              headers: {
+                'Authorization': `Bearer ${process.env.CLERK_SECRET_KEY}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ role: newOrgRole }),
+            });
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Failed to update user in Clerk:', error);
+    }
+  }
 
   return NextResponse.json(updatedUser);
 }
