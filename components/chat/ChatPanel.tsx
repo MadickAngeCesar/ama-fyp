@@ -25,6 +25,7 @@ export default function ChatPanel() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
   /**
    * Handles sending a new chat message.
@@ -43,18 +44,33 @@ export default function ChatPanel() {
     };
     setMessages((msgs) => [...msgs, userMsg]);
     try {
-      // TODO: Call backend API for AI response
-      // Simulate AI response for now
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sessionId,
+          message,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send message");
+      }
+
+      const data = await response.json();
+      setSessionId(data.sessionId);
+
+      // Add AI response
       const aiMsg: ChatMessage = {
         id: `${Date.now()}-ai`,
         sender: "ai",
-        content: "This is a sample AI response.",
+        content: data.response,
         createdAt: new Date().toISOString(),
       };
-      setTimeout(() => {
-        setMessages((msgs) => [...msgs, aiMsg]);
-        setLoading(false);
-      }, 900);
+      setMessages((msgs) => [...msgs, aiMsg]);
+      setLoading(false);
     } catch {
       setError(t('chat.error'));
       setLoading(false);

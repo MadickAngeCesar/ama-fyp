@@ -31,6 +31,7 @@ export default function AdminUsersPage() {
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [newRole, setNewRole] = useState("")
   const [addingUser, setAddingUser] = useState(false)
+  const [isAddingUser, setIsAddingUser] = useState(false)
   const [newUser, setNewUser] = useState({ name: "", email: "", role: "STUDENT" as UserRole })
   const [, setLoading] = useState(true)
 
@@ -84,6 +85,7 @@ export default function AdminUsersPage() {
 
   const handleAddUser = async () => {
     if (newUser.name && newUser.email) {
+      setIsAddingUser(true)
       try {
         const res = await fetch('/api/users', {
           method: 'POST',
@@ -101,6 +103,8 @@ export default function AdminUsersPage() {
       } catch (error) {
         console.error('Failed to add user:', error)
         alert('Failed to add user: Network error')
+      } finally {
+        setIsAddingUser(false)
       }
     }
   }
@@ -187,7 +191,9 @@ export default function AdminUsersPage() {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button onClick={handleAddUser}>{t('admin.users.add')}</Button>
+                  <Button onClick={handleAddUser} disabled={isAddingUser}>
+                    {isAddingUser ? 'Adding User...' : t('admin.users.add')}
+                  </Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
