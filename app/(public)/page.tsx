@@ -1,6 +1,10 @@
 import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
+import { getCurrentUser, getRedirectUrl } from "@/lib/auth";
+import { auth } from "@clerk/nextjs/server";
 
 /**
  * Landing page for the public site.
@@ -9,7 +13,26 @@ import { Button } from "@/components/ui/button";
  *
  * @returns React element for the landing page
  */
-export default function Page() {
+export default async function Page() {
+  const user = await getCurrentUser();
+  if (user) {
+    redirect(getRedirectUrl(user.role));
+  }
+
+  // Check if signed in but not authorized
+  const authResult = await auth();
+  const { userId } = authResult;
+  if (userId) {
+    return (
+      <main className="min-h-screen bg-[#0B0F14] text-[#E6EAF2] flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
+          <p className="text-[#A9B1C7] mb-6">Your account is not authorized. Please contact an administrator.</p>
+          <UserButton />
+        </div>
+      </main>
+    );
+  }
   const features = [
     {
       title: "AI-assisted triage",
@@ -36,7 +59,7 @@ export default function Page() {
           <div className="w-10 h-10 rounded-full bg-[#4F7DFF] flex items-center justify-center text-white font-semibold">
             A
           </div>
-          <div >
+          <div>
             <div className="text-lg font-semibold">ASSS</div>
             <div className="text-xs text-[#A9B1C7]">Student Support System</div>
           </div>
@@ -55,15 +78,30 @@ export default function Page() {
         </nav>
 
         {/* Sign in button */}
-        <Link href="/signin">
-          <Button
-            variant="outline"
-            className="bg-gray-400 text-gray-950 cursor-pointer hover:bg-gray-950 hover:text-gray-400"
-            size="sm"
-          >
-            Sign in
-          </Button>
-        </Link>
+        <SignedOut>
+          <Link href="/sign-in">
+            <Button
+              variant="outline"
+              className="bg-gray-400 text-gray-950 cursor-pointer hover:bg-gray-950 hover:text-gray-400"
+              size="sm"
+            >
+              Sign in
+            </Button>
+          </Link>
+        </SignedOut>
+        <SignedIn>
+          <UserButton
+            appearance={{
+              elements: {
+                userButtonBox: "bg-[#1A2232] border border-[#273046]",
+                userButtonPopoverCard:
+                  "bg-[#1A2232] border border-[#273046] text-[#E6EAF2]",
+                userButtonActionButton:
+                  "hover:bg-[#273046] text-[#E6EAF2] hover:text-white",
+              },
+            }}
+          />
+        </SignedIn>
       </header>
 
       {/* Hero section */}

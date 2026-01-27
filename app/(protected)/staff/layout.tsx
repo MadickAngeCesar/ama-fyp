@@ -3,6 +3,9 @@ import DesktopSidebar from "@/components/layout/desktop-sidebar"
 import Header from "@/components/layout/header"
 import MobileNavigation from "@/components/layout/mobile-navigation"
 import { useTranslation } from "react-i18next"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import { useUser } from "@clerk/nextjs"
 
 /**
  * Dashboard layout for staff area.
@@ -14,6 +17,34 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const { t } = useTranslation()
+  const { user, isLoaded } = useUser()
+  const router = useRouter()
+  const [authorized, setAuthorized] = useState(false)
+
+  useEffect(() => {
+    if (isLoaded && !user) {
+      router.push('/')
+      return
+    }
+    if (user) {
+      fetch('/api/users/role')
+        .then(res => res.json())
+        .then(data => {
+          if (data.role === 'STAFF') {
+            setAuthorized(true)
+          } else {
+            router.push('/')
+          }
+        })
+        .catch(() => {
+          router.push('/')
+        })
+    }
+  }, [user, isLoaded, router])
+
+  if (!authorized) {
+    return <div>Loading...</div>
+  }
 
   const primaryItems = [
     { label: t('nav.dashboard'), href: "/staff", icon: "dashboard" },

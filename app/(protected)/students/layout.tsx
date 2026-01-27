@@ -1,16 +1,22 @@
 import DesktopSidebar from "@/components/layout/desktop-sidebar"
 import Header from "@/components/layout/header"
 import MobileNavigation from "@/components/layout/mobile-navigation"
+import { getCurrentUser } from "@/lib/auth"
+import { redirect } from "next/navigation"
 
 /**
  * Dashboard layout for student area.
  * Renders the Desktop Sidebar and a main content region for dashboard pages.
  */
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const user = await getCurrentUser()
+  if (!user || user.role !== 'STUDENT') {
+    redirect('/')
+  }
   const primaryItems = [
     { label: "Dashboard", href: "/students", icon: "dashboard" },
     { label: "Chat", href: "/students/chat", icon: "chat" },

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -12,18 +12,45 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from "@/components/ui/label"
 import { Search, Edit, Plus, Trash2 } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
-import { users } from "@/lib/placeholder-data"
 
 type UserRole = "STUDENT" | "STAFF" | "ADMIN"
+
+type User = {
+  id: string;
+  name: string | null;
+  email: string;
+  role: UserRole;
+  createdAt: string;
+}
 
 export default function AdminUsersPage() {
   const { t } = useTranslation()
   const [search, setSearch] = useState("")
   const [roleFilter, setRoleFilter] = useState("")
-  const [editingUser, setEditingUser] = useState<typeof users[0] | null>(null)
+  const [users, setUsers] = useState<User[]>([])
+  const [editingUser, setEditingUser] = useState<User | null>(null)
   const [newRole, setNewRole] = useState("")
   const [addingUser, setAddingUser] = useState(false)
   const [newUser, setNewUser] = useState({ name: "", email: "", role: "STUDENT" as UserRole })
+  const [, setLoading] = useState(true)
+
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch('/api/users')
+      if (res.ok) {
+        const data = await res.json()
+        setUsers(data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch users:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchUsers()
+  }, [])
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -32,32 +59,59 @@ export default function AdminUsersPage() {
     return matchesSearch && matchesRole
   })
 
-  const handleEditRole = (user: typeof users[0]) => {
+  const handleEditRole = (user: User) => {
     setEditingUser(user)
     setNewRole(user.role)
   }
 
-  const handleSaveRole = () => {
+  const handleSaveRole = async () => {
     if (editingUser) {
-      // In real app, update DB
-      // For demo, just log
-      console.log(`Updating ${editingUser.name} role to ${newRole}`)
-      setEditingUser(null)
+      try {
+        const res = await fetch(`/api/users/${editingUser.id}/role`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ role: newRole }),
+        })
+        if (res.ok) {
+          setEditingUser(null)
+          fetchUsers()
+        }
+      } catch (error) {
+        console.error('Failed to update role:', error)
+      }
     }
   }
 
-  const handleAddUser = () => {
+  const handleAddUser = async () => {
     if (newUser.name && newUser.email) {
-      // In real app, add to DB
-      console.log('Adding user:', newUser)
-      setAddingUser(false)
-      setNewUser({ name: "", email: "", role: "STUDENT" as UserRole })
+      try {
+        const res = await fetch('/api/users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newUser),
+        })
+        if (res.ok) {
+          setAddingUser(false)
+          setNewUser({ name: "", email: "", role: "STUDENT" as UserRole })
+          fetchUsers()
+        }
+      } catch (error) {
+        console.error('Failed to add user:', error)
+      }
     }
   }
 
-  const handleRemoveUser = (userId: string) => {
-    // In real app, remove from DB
-    console.log('Removing user:', userId)
+  const handleRemoveUser = async (userId: string) => {
+    try {
+      const res = await fetch(`/api/users/${userId}`, {
+        method: 'DELETE',
+      })
+      if (res.ok) {
+        fetchUsers()
+      }
+    } catch (error) {
+      console.error('Failed to remove user:', error)
+    }
   }
 
   const roles = ['STUDENT', 'STAFF', 'ADMIN']
