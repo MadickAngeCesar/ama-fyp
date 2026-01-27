@@ -1,12 +1,11 @@
 import { GoogleGenAI } from "@google/genai";
 
-// The client gets the API key from the environment variable `GEMINI_API_KEY`.
-const ai = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY});
+const ai = new GoogleGenAI({ apiKey: "AIzaSyAdWzkzmbOdxyiPerQaSlxEpypKH3jbS8w" });
 
 async function main() {
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
-    contents: "Do you know Madick Ange Cesar",
+    contents: "Explain how AI works in a few words",
   });
   console.log(response.text);
 }
