@@ -8,12 +8,11 @@ import {
   MessageCircle,
   FileText,
   Lightbulb,
-  LogOut,
   Users,
   Settings,
   Activity,
+  LogOut,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -27,20 +26,13 @@ import {
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
 
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-
 import { cn } from "@/lib/utils";
+import { UserButton, useUser, useClerk } from "@clerk/nextjs";
 
 /**
  * Props for Sidebar
  */
 export type SidebarProps = {
-  /** Current authenticated user (optional) */
-  user?: {
-    name?: string;
-    email?: string;
-    image?: string;
-  };
   /** Currently active path used to mark active nav item */
   active?: string;
   /** Additional className for outer container */
@@ -65,7 +57,6 @@ export type SidebarNavItem = {
 };
 
 export default function DesktopSidebar({
-  user,
   active,
   className,
   primaryItems,
@@ -116,7 +107,16 @@ export default function DesktopSidebar({
   const [, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
 
-  const router = useRouter();
+  const { user } = useUser();
+  const { signOut } = useClerk();
+  const [role, setRole] = React.useState("");
+
+  React.useEffect(() => {
+    fetch("/api/users/role")
+      .then((res) => res.json())
+      .then((data) => setRole(data.role || ""))
+      .catch(console.error);
+  }, []);
 
   // Do not return a placeholder; always render the sidebar tree for SSR/CSR consistency
 
@@ -131,23 +131,21 @@ export default function DesktopSidebar({
         data-role="student-sidebar"
       >
         <SidebarHeader className="px-6 py-4 border-b border-gray-200">
-          <div className="flex items-center gap-3">
-            <Link href="/">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-                <span className="text-sm font-semibold text-primary-foreground">
-                  AF
-                </span>
+          <Link href="/" className="flex flex-row items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
+              <span className="text-sm font-semibold text-primary-foreground">
+                AF
+              </span>
+            </div>
+            <div>
+              <div className="text-base font-semibold">
+                {t("sidebar.appName")}
               </div>
-              <div>
-                <div className="text-base font-semibold">
-                  {t("sidebar.appName")}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {t("sidebar.portal", { portal })}
-                </div>
+              <div className="text-xs text-muted-foreground">
+                {t("sidebar.portal", { portal })}
               </div>
-            </Link>
-          </div>
+            </div>
+          </Link>
         </SidebarHeader>
 
         <SidebarContent className="px-3 py-2">
@@ -209,32 +207,32 @@ export default function DesktopSidebar({
         </SidebarContent>
 
         <SidebarFooter className="mt-auto px-4 py-4 border-t border-gray-200">
-          <div className="flex items-center gap-3">
-            <Avatar>
-              {user?.image ? (
-                <AvatarImage src={user.image} alt={user.name ?? "User"} />
-              ) : (
-                <AvatarFallback>{(user?.name ?? "?")[0]}</AvatarFallback>
-              )}
-            </Avatar>
-            <div className="flex-1">
-              <div className="text-sm font-medium">
-                {user?.name ?? t("sidebar.guest")}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <UserButton
+                appearance={{
+                  elements: {
+                    userButtonBox: "bg-surface",
+                    userButtonPopoverCard:
+                      "bg-surface border border-border text-text-primary",
+                    userButtonActionButton:
+                      "hover:bg-surface-muted text-text-primary hover:text-primary",
+                  },
+                }}
+              />
+              <div>
+                <div className="text-sm font-medium">
+                  {user
+                    ? `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+                      t("sidebar.guest")
+                    : t("sidebar.guest")}
+                </div>
+                <div className="text-xs text-muted-foreground">{role}</div>
               </div>
-              {user?.email ? (
-                <div className="text-xs text-muted-foreground truncate">
-                  {user.email}
-                </div>
-              ) : (
-                <div className="text-xs text-muted-foreground">
-                  {t(`sidebar.${portal.toLowerCase()}`)}
-                </div>
-              )}
             </div>
-
             <button
-              onClick={() => router.push("/signin")}
-              className="-mr-2 rounded-md p-2 text-muted-foreground hover:text-primary hover:bg-surface-muted cursor-pointer"
+              onClick={() => signOut()}
+              className="rounded-md p-2 text-muted-foreground hover:text-primary hover:bg-surface-muted cursor-pointer"
               aria-label="Sign out"
               title="Sign out"
             >

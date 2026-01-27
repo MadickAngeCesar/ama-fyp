@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
+import { UserButton } from "@clerk/nextjs"
 
 /**
  * SettingsSheet
@@ -29,23 +30,6 @@ export default function SettingsSheet({ className }: { className?: string }) {
   const [open, setOpen] = React.useState(false)
   const [language, setLanguage] = React.useState<"en" | "fr">("en")
   const [dark, setDark] = React.useState(false)
-  const [user, setUser] = React.useState<{ name?: string; email?: string; image?: string } | null>(null)
-
-  React.useEffect(() => {
-    const storedLang = typeof window !== "undefined" && localStorage.getItem("prefLanguage")
-    const storedTheme = typeof window !== "undefined" && localStorage.getItem("prefTheme")
-    if (storedLang === "fr") setLanguage("fr")
-    if (storedTheme === "dark") setDark(true)
-    if (storedTheme === "light") setDark(false)
-    try {
-      const name = localStorage.getItem("userName")
-      const email = localStorage.getItem("userEmail")
-      const image = localStorage.getItem("userImage")
-      if (name || email || image) setUser({ name: name ?? undefined, email: email ?? undefined, image: image ?? undefined })
-    } catch (e) {
-        console.error("Failed to load user info", e)
-    }
-  }, [])
 
   React.useEffect(() => {
     try {
@@ -85,26 +69,15 @@ export default function SettingsSheet({ className }: { className?: string }) {
 
         {/* Mobile-only user details + logout */}
         <div className="px-4 md:hidden">
-          <div className="flex items-center gap-3 py-4">
-            <div className="h-10 w-10 rounded-md bg-primary flex items-center justify-center">
-              <span className="text-sm font-semibold text-primary-foreground">{(user?.name ?? "?")[0]}</span>
-            </div>
-            <div className="flex-1">
-              <div className="font-medium">{user?.name ?? t('sidebar.guest')}</div>
-              <div className="text-xs text-muted-foreground">{user?.email ?? t('sidebar.student')}</div>
-            </div>
-            <div>
-              <Button variant="ghost" onClick={() => {
-                try {
-                  localStorage.removeItem("userName"); localStorage.removeItem("userEmail"); localStorage.removeItem("userImage")
-                } catch (e) {
-                    console.error("Failed to clear user info", e)
-                }
-                // simple logout: reload page
-                if (typeof window !== "undefined") window.location.reload()
-              }}>{t('settings.logout')}</Button>
-            </div>
-          </div>
+          <UserButton
+            appearance={{
+              elements: {
+                userButtonBox: "bg-surface border border-border",
+                userButtonPopoverCard: "bg-surface border border-border text-text-primary",
+                userButtonActionButton: "hover:bg-surface-muted text-text-primary hover:text-primary",
+              },
+            }}
+          />
         </div>
 
         <div className="p-4 pt-0">
