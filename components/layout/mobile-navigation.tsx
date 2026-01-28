@@ -54,7 +54,7 @@ export default function MobileNavigation({ items: propItems }: { items?: MobileN
   const isActive = (href: string) => normalize(href) === activeHref
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+    <nav className="bottom-0 left-0 right-0 z-50 md:hidden">
       <div className="mx-auto max-w-5xl px-safe flex items-center justify-between gap-2 border-t bg-popover shadow-lg p-2">
         {items.map((it) => (
           <Link
