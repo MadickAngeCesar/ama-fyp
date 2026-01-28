@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Search, Filter, Lightbulb, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import * as XLSX from 'xlsx';
+import { toast } from "sonner";
 
 export default function Page() {
   const { t } = useTranslation();
@@ -60,28 +62,43 @@ export default function Page() {
   }, []);
 
   const handleExport = () => {
-    const csvContent = [
-      ['Title', 'Description', 'Author', 'Status', 'Assignee', 'Upvotes', 'Created At'],
-      ...suggestions.map(s => [
-        s.title,
-        s.description,
-        s.authorName || '',
-        s.status || '',
-        s.assigneeName || '',
-        s.upvotes.toString(),
-        new Date(s.createdAt).toLocaleDateString()
-      ])
-    ].map(row => row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(',')).join('\n');
+    // Prepare data for Excel export
+    const exportData = suggestions.map(suggestion => ({
+      'Title': suggestion.title,
+      'Description': suggestion.description,
+      'Author': suggestion.authorName || '',
+      'Status': suggestion.status || '',
+      'Assignee': suggestion.assigneeName || 'Unassigned',
+      'Upvotes': Number(suggestion.upvotes) || 0,
+      'Created At': new Date(suggestion.createdAt).toLocaleDateString(),
+    }));
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'suggestions.csv');
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Create workbook and worksheet
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(exportData);
+
+    // Auto-size columns
+    const colWidths = [
+      { wch: 30 }, // Title
+      { wch: 50 }, // Description
+      { wch: 20 }, // Author
+      { wch: 12 }, // Status
+      { wch: 20 }, // Assignee
+      { wch: 8 },  // Upvotes
+      { wch: 12 }, // Created At
+    ];
+    ws['!cols'] = colWidths;
+
+    // Add worksheet to workbook
+    XLSX.utils.book_append_sheet(wb, ws, 'Suggestions');
+
+    // Generate filename with current date
+    const date = new Date().toISOString().split('T')[0];
+    const filename = `suggestions_${date}.xlsx`;
+
+    // Save file
+    XLSX.writeFile(wb, filename);
+    toast.success('Suggestions exported successfully');
   };
 
   const handleUpdateSuggestion = async (id: string, updates: Partial<Suggestion>) => {
@@ -118,6 +135,29 @@ export default function Page() {
       }
     } catch (error) {
       console.error('Failed to update suggestion:', error);
+    }
+  };
+
+  const handleDeleteSuggestion = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this suggestion? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/suggestions/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setSuggestions((list) => list.filter((s) => s.id !== id));
+        toast.success('Suggestion deleted successfully');
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        toast.error(errorData.error || 'Failed to delete suggestion');
+      }
+    } catch (error) {
+      console.error('Failed to delete suggestion:', error);
+      toast.error('Failed to delete suggestion. Please try again.');
     }
   };
 
@@ -323,7 +363,7 @@ export default function Page() {
         </aside>
 
         <main className="lg:col-span-3">
-          <StaffSuggestionTable suggestions={filtered} onUpdateSuggestion={handleUpdateSuggestion} staffMembers={staffMembers} />
+          <StaffSuggestionTable suggestions={filtered} onUpdateSuggestion={handleUpdateSuggestion} onDeleteSuggestion={handleDeleteSuggestion} staffMembers={staffMembers} />
         </main>
       </div>
     </div>

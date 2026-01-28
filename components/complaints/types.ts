@@ -10,11 +10,14 @@ export interface ComplaintResponse {
 
 export interface Complaint {
   id: string;
-  category?: string;
+  category: string;
   description: string;
-  status?: string;
-  reporterName?: string;
-  assigneeName?: string | null;
+  status: 'PENDING' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
+  response?: string;
+  attachment?: string;
+  authorName: string;
+  assigneeName?: string;
   createdAt: string;
+  updatedAt: string;
   responses?: ComplaintResponse[];
 }

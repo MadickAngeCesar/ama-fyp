@@ -76,6 +76,8 @@
   },
   "complaints": {
     "title": "Plaintes",
+    "creatingComplaint": "Création de la plainte...",
+    "attachment": "Pièce jointe",
     "intro": "Soumettez des problèmes et suivez leur statut — le personnel répondra ici.",
     "help": "Aide",
     "contactStaff": "Contacter le personnel",
@@ -84,6 +86,8 @@
     "createComplaintTitle": "Créer une plainte",
     "search": "Rechercher des plaintes, rapporteurs ou catégories",
     "filter": "Filtrer",
+    "filterByStatus": "Filtrer par statut",
+    "allStatuses": "Tous les statuts",
     "category": "Catégorie",
     "categoryPlaceholder": "ex. Installations, IT",
     "descriptionLabel": "Description",
@@ -95,8 +99,9 @@
     "open": "Ouvrir",
     "status": {
       "pending": "En attente",
-      "inprogress": "En cours",
-      "resolved": "Résolu"
+      "in_progress": "En cours",
+      "resolved": "Résolu",
+      "closed": "Fermé"
     }
   },
   "suggestions": {

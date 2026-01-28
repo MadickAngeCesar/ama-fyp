@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useTranslation } from "react-i18next";
+import { Trash2 } from "lucide-react";
 
 /**
  * Props for StaffSuggestionTable component.
@@ -17,6 +18,8 @@ interface StaffSuggestionTableProps {
   suggestions: Suggestion[];
   /** Callback to update a suggestion */
   onUpdateSuggestion: (id: string, updates: Partial<Suggestion>) => void;
+  /** Callback to delete a suggestion */
+  onDeleteSuggestion: (id: string) => void;
   /** List of available staff members for assignment */
   staffMembers?: Array<{id: string, name: string}>;
 }
@@ -25,7 +28,7 @@ interface StaffSuggestionTableProps {
  * StaffSuggestionTable component for managing suggestions in the staff portal.
  * Displays suggestions in a table with actions to view, respond, change status, and assign.
  */
-export default function StaffSuggestionTable({ suggestions, onUpdateSuggestion, staffMembers = [] }: StaffSuggestionTableProps) {
+export default function StaffSuggestionTable({ suggestions, onUpdateSuggestion, onDeleteSuggestion, staffMembers = [] }: StaffSuggestionTableProps) {
   const { t } = useTranslation();
   const [responseText, setResponseText] = useState("");
 
@@ -146,6 +149,14 @@ export default function StaffSuggestionTable({ suggestions, onUpdateSuggestion, 
                           ))}
                         </SelectContent>
                       </Select>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onDeleteSuggestion(suggestion.id)}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -223,6 +234,14 @@ export default function StaffSuggestionTable({ suggestions, onUpdateSuggestion, 
                       <SelectItem value="unassigned">Unassigned</SelectItem>
                     </SelectContent>
                   </Select>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onDeleteSuggestion(suggestion.id)}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             </Card>

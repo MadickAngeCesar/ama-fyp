@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Eye, MessageSquare, User } from "lucide-react";
+import { Eye, MessageSquare, User, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 /**
@@ -17,38 +17,39 @@ import { useTranslation } from "react-i18next";
 interface StaffComplaintTableProps {
   /** List of complaints to display */
   complaints: Complaint[];
-  /** Callback to update a complaint */
-  onUpdateComplaint: (id: string, updates: Partial<Complaint>) => void;
+  /** Callback to update a complaint with action and data */
+  onUpdateComplaint: (id: string, action: string, data?: { assigneeId?: string; status?: string; response?: string }) => void;
+  /** Callback to delete a complaint */
+  onDeleteComplaint: (id: string) => void;
+  /** List of available staff members for assignment */
+  staffMembers?: { id: string; name: string }[];
 }
 
 /**
  * StaffComplaintTable component for managing complaints in the staff portal.
  * Displays complaints in a table with actions to view, respond, change status, and assign.
  */
-export default function StaffComplaintTable({ complaints, onUpdateComplaint }: StaffComplaintTableProps) {
+export default function StaffComplaintTable({ complaints, onUpdateComplaint, onDeleteComplaint, staffMembers = [] }: StaffComplaintTableProps) {
   const { t } = useTranslation();
   const [responseText, setResponseText] = useState("");
 
   const handleRespond = (complaint: Complaint) => {
     if (!responseText.trim()) return;
-    const newResponse = {
-      id: Date.now().toString(),
-      content: responseText,
-      authorName: "Staff Member",
-      createdAt: new Date().toISOString(),
-    };
-    onUpdateComplaint(complaint.id, {
-      responses: [...(complaint.responses || []), newResponse],
-    });
+    onUpdateComplaint(complaint.id, 'respond', { response: responseText });
     setResponseText("");
   };
 
   const handleStatusChange = (id: string, status: string) => {
-    onUpdateComplaint(id, { status });
+    onUpdateComplaint(id, 'update_status', { status });
   };
 
-  const handleAssign = (id: string, assignedTo: string) => {
-    onUpdateComplaint(id, { assigneeName: assignedTo });
+  const handleAssign = (id: string, assigneeId: string) => {
+    // Handle unassignment case
+    if (assigneeId === 'unassigned') {
+      onUpdateComplaint(id, 'assign', { assigneeId: '' });
+    } else {
+      onUpdateComplaint(id, 'assign', { assigneeId });
+    }
   };
 
   return (
@@ -64,6 +65,7 @@ export default function StaffComplaintTable({ complaints, onUpdateComplaint }: S
                 <TableHead>Category</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Assignee</TableHead>
                 {/*<TableHead>Reporter</TableHead>*/}
                 <TableHead className="hidden lg:table-cell">Created</TableHead>
                 <TableHead>Actions</TableHead>
@@ -80,7 +82,7 @@ export default function StaffComplaintTable({ complaints, onUpdateComplaint }: S
                       onValueChange={(value) => handleStatusChange(complaint.id, value)}
                     >
                       <SelectTrigger className="w-28">
-                        <SelectValue />
+                        <SelectValue placeholder="Status" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="PENDING">Pending</SelectItem>
@@ -90,7 +92,25 @@ export default function StaffComplaintTable({ complaints, onUpdateComplaint }: S
                       </SelectContent>
                     </Select>
                   </TableCell>
-                  {/*<TableCell className="max-w-xs truncate">{complaint.reporterName || "Anonymous"}</TableCell>*/}
+                  <TableCell>
+                    <Select
+                      value={complaint.assigneeName ? staffMembers.find(s => s.name === complaint.assigneeName)?.id || 'unassigned' : 'unassigned'}
+                      onValueChange={(value) => handleAssign(complaint.id, value)}
+                    >
+                      <SelectTrigger className="w-24">
+                        <SelectValue placeholder="Assign" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="unassigned">Unassigned</SelectItem>
+                        {staffMembers.map((staff) => (
+                          <SelectItem key={staff.id} value={staff.id}>
+                            {staff.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </TableCell>
+                  {/*<TableCell className="max-w-xs truncate">{complaint.authorName || "Anonymous"}</TableCell>*/}
                   <TableCell className="hidden lg:table-cell text-sm">{new Date(complaint.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <div className="flex gap-1">
@@ -121,7 +141,7 @@ export default function StaffComplaintTable({ complaints, onUpdateComplaint }: S
                             </div>
                             <div>
                               <h4 className="font-medium">{t('staff.complaints.reporter')}</h4>
-                              <p>{complaint.reporterName || t('staff.complaints.anonymous')}</p>
+                              <p>{complaint.authorName || t('staff.complaints.anonymous')}</p>
                             </div>
                             <div>
                               <h4 className="font-medium">{t('staff.complaints.created')}</h4>
@@ -170,11 +190,22 @@ export default function StaffComplaintTable({ complaints, onUpdateComplaint }: S
                           <User className="h-4 w-4" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Staff A">Staff A</SelectItem>
-                          <SelectItem value="Staff B">Staff B</SelectItem>
-                          <SelectItem value="Unassigned">Unassigned</SelectItem>
+                          <SelectItem value="unassigned">Unassigned</SelectItem>
+                          {staffMembers.map((staff) => (
+                            <SelectItem key={staff.id} value={staff.id}>
+                              {staff.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onDeleteComplaint(complaint.id)}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -198,7 +229,7 @@ export default function StaffComplaintTable({ complaints, onUpdateComplaint }: S
                     onValueChange={(value) => handleStatusChange(complaint.id, value)}
                   >
                     <SelectTrigger className="w-24 h-7 text-xs">
-                      <SelectValue />
+                      <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="PENDING">Pending</SelectItem>
@@ -207,8 +238,24 @@ export default function StaffComplaintTable({ complaints, onUpdateComplaint }: S
                       <SelectItem value="CLOSED">Closed</SelectItem>
                     </SelectContent>
                   </Select>
+                  <Select
+                    value={complaint.assigneeName ? staffMembers.find(s => s.name === complaint.assigneeName)?.id || 'unassigned' : 'unassigned'}
+                    onValueChange={(value) => handleAssign(complaint.id, value)}
+                  >
+                    <SelectTrigger className="w-20 h-7 text-xs">
+                      <SelectValue placeholder="Assign" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="unassigned">Unassigned</SelectItem>
+                      {staffMembers.map((staff) => (
+                        <SelectItem key={staff.id} value={staff.id}>
+                          {staff.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-                <p className="text-xs text-muted-foreground">By {complaint.reporterName || "Anonymous"} • {new Date(complaint.createdAt).toLocaleDateString()}</p>
+                <p className="text-xs text-muted-foreground">By {complaint.authorName || "Anonymous"} • {new Date(complaint.createdAt).toLocaleDateString()}</p>
                 <div className="flex gap-2">
                   <Dialog>
                     <DialogTrigger asChild>
@@ -237,7 +284,7 @@ export default function StaffComplaintTable({ complaints, onUpdateComplaint }: S
                         </div>
                         <div>
                           <h4 className="font-medium">{t('staff.complaints.reporter')}</h4>
-                          <p>{complaint.reporterName || t('staff.complaints.anonymous')}</p>
+                          <p>{complaint.authorName || t('staff.complaints.anonymous')}</p>
                         </div>
                         <div>
                           <h4 className="font-medium">{t('staff.complaints.created')}</h4>
@@ -281,16 +328,14 @@ export default function StaffComplaintTable({ complaints, onUpdateComplaint }: S
                       </div>
                     </DialogContent>
                   </Dialog>
-                  <Select onValueChange={(value) => handleAssign(complaint.id, value)}>
-                    <SelectTrigger className="w-20 h-7 text-xs">
-                      <SelectValue placeholder="Assign" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Staff A">Staff A</SelectItem>
-                      <SelectItem value="Staff B">Staff B</SelectItem>
-                      <SelectItem value="Unassigned">Unassigned</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onDeleteComplaint(complaint.id)}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             </Card>

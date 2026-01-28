@@ -150,3 +150,57 @@ export async function PUT(
     );
   }
 }
+
+/**
+ * DELETE /api/suggestions/[id]
+ * Deletes a suggestion (students can delete their own, staff/admin can delete any).
+ */
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const suggestion = await db.suggestion.findUnique({
+      where: { id },
+    });
+
+    if (!suggestion) {
+      return NextResponse.json({ error: "Suggestion not found" }, { status: 404 });
+    }
+
+    // Check permissions
+    if (user.role === 'STUDENT' && suggestion.userId !== user.id) {
+      return NextResponse.json({ error: "Access denied" }, { status: 403 });
+    }
+
+    // Staff and admin can delete any suggestion, students can only delete their own
+
+    // Delete the suggestion
+    await db.suggestion.delete({
+      where: { id },
+    });
+
+    // Log audit event
+    await logAuditEvent(
+      user.id,
+      'DELETE',
+      'Suggestion',
+      id,
+      `Deleted suggestion: ${suggestion.title}`
+    );
+
+    return NextResponse.json({ message: "Suggestion deleted successfully" });
+  } catch (error) {
+    console.error("Delete suggestion error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}

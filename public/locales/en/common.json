@@ -76,6 +76,8 @@
   },
   "complaints": {
     "title": "Complaints",
+    "attachment": "Attachment",
+    "creatingComplaint": "Creating complaint...",
     "intro": "Submit issues and track their status — staff will respond here.",
     "help": "Help",
     "contactStaff": "Contact staff",
@@ -84,6 +86,8 @@
     "createComplaintTitle": "Create a complaint",
     "search": "Search complaints, reporters or categories",
     "filter": "Filter",
+    "filterByStatus": "Filter by status",
+    "allStatuses": "All statuses",
     "category": "Category",
     "categoryPlaceholder": "e.g. Facilities, IT",
     "descriptionLabel": "Description",
@@ -95,8 +99,9 @@
     "open": "Open",
     "status": {
       "pending": "Pending",
-      "inprogress": "In Progress",
-      "resolved": "Resolved"
+      "in_progress": "In Progress",
+      "resolved": "Resolved",
+      "closed": "Closed"
     }
   },
   "suggestions": {
