@@ -1,11 +1,6 @@
 // Gemini AI
 import { GoogleGenAI } from "@google/genai";
 
-// Initialize Gemini AI client
-const genAI = new GoogleGenAI({
-  apiKey: "AIzaSyAdWzkzmbOdxyiPerQaSlxEpypKH3jbS8w"
-});
-
 /**
  * Loads ICT University FAQs content for AI context
  * @returns The FAQs content as a string
@@ -195,11 +190,16 @@ export async function generateChatResponse(
   context: string = ""
 ): Promise<string> {
   try {
+    // Initialize Gemini AI client with API key
+    const genAI = new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY
+    });
+
     // Load ICT University FAQs for context
     const faqsContext = await loadFAQsContext();
 
     const response = await genAI.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: process.env.GEMINI_MODEL || "gemini-2.5-flash-lite",
       contents: `
 You are an AI assistant for ICT University's student support system. Help students with their inquiries about university services, complaints, and suggestions.
 
@@ -237,8 +237,13 @@ Provide a helpful, concise response. If the user wants to escalate to a formal c
  */
 export async function generateUIPrototype(prompt: string): Promise<unknown> {
   try {
+    // Initialize Gemini AI client with API key
+    const genAI = new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY
+    });
+
     const response = await genAI.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
       contents: `
 Generate a JSON schema for a UI component based on this description: ${prompt}
 
