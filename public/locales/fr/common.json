@@ -204,6 +204,8 @@
     },
     "suggestions": {
       "manage": "Gérer les suggestions",
+      "approved": "Approuvé",
+      "rejected": "Rejeté",
       "review": "Examiner, répondre et gérer les suggestions des étudiants.",
       "export": "Exporter",
       "total": "Total",

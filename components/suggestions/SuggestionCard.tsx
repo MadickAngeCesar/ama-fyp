@@ -40,10 +40,8 @@ export default function SuggestionCard({ suggestion, onUpvote }: Props) {
                 <path d="M14 9V5a3 3 0 0 0-3-3L7 6v7h9a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4z"></path>
                 <path d="M7 22a3 3 0 0 0 3-3v-9"></path>
               </svg>
-              {suggestion.upvotes}
+              {Number(suggestion.upvotes) || 0}
             </Button>
-
-            <Button variant="outline" size="sm">{t('suggestions.discuss')}</Button>
           </div>
         </div>
       </CardFooter>

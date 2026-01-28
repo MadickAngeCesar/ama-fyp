@@ -1,7 +1,7 @@
 "use client";
 import React, { useMemo, useState, useEffect } from "react";
 import StaffSuggestionTable from "@/components/suggestions/StaffSuggestionTable";
-import { Suggestion } from "@/components/suggestions/types";
+import { Suggestion, SuggestionApiResponse, UserApiResponse } from "@/components/suggestions/types";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -13,12 +13,12 @@ export default function Page() {
   const { t } = useTranslation();
 
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
-  const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("none");
   const [sortOrder, setSortOrder] = useState<string>("desc");
+  const [staffMembers, setStaffMembers] = useState<Array<{id: string, name: string}>>([]);
 
   // Fetch suggestions on mount
   useEffect(() => {
@@ -26,11 +26,12 @@ export default function Page() {
       try {
         const response = await fetch('/api/suggestions');
         if (response.ok) {
-          const data = await response.json();
+          const data: SuggestionApiResponse[] = await response.json();
           // Map API response to component format
-          const formatted = data.map((s: any) => ({
+          const formatted = data.map((s: SuggestionApiResponse) => ({
             ...s,
-            status: s.status || "pending",
+            authorName: s.authorName || undefined,
+            status: (s.status as 'PENDING' | 'IN_PROGRESS' | 'APPROVED' | 'REJECTED') || "PENDING",
             category: "General", // Default category since not in schema
             responses: [], // Not in current schema
           }));
@@ -38,13 +39,50 @@ export default function Page() {
         }
       } catch (error) {
         console.error('Failed to fetch suggestions:', error);
-      } finally {
-        setLoading(false);
+      }
+    };
+
+    const fetchStaff = async () => {
+      try {
+        const response = await fetch('/api/users');
+        if (response.ok) {
+          const users: UserApiResponse[] = await response.json();
+          const staff = users.filter((u: UserApiResponse) => u.role === 'STAFF').map((u: UserApiResponse) => ({ id: u.id, name: u.name || u.email }));
+          setStaffMembers(staff);
+        }
+      } catch (error) {
+        console.error('Failed to fetch staff:', error);
       }
     };
 
     fetchSuggestions();
+    fetchStaff();
   }, []);
+
+  const handleExport = () => {
+    const csvContent = [
+      ['Title', 'Description', 'Author', 'Status', 'Assignee', 'Upvotes', 'Created At'],
+      ...suggestions.map(s => [
+        s.title,
+        s.description,
+        s.authorName || '',
+        s.status || '',
+        s.assigneeName || '',
+        s.upvotes.toString(),
+        new Date(s.createdAt).toLocaleDateString()
+      ])
+    ].map(row => row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(',')).join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'suggestions.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const handleUpdateSuggestion = async (id: string, updates: Partial<Suggestion>) => {
     try {
@@ -104,11 +142,11 @@ export default function Page() {
 
   const stats = useMemo(() => {
     const total = suggestions.length;
-    const pending = suggestions.filter(s => s.status === 'pending').length;
-    const inProgress = suggestions.filter(s => s.status === 'in_progress').length;
-    const resolved = suggestions.filter(s => s.status === 'resolved').length;
-    const closed = suggestions.filter(s => s.status === 'closed').length;
-    return { total, pending, inProgress, resolved, closed };
+    const pending = suggestions.filter(s => s.status === 'PENDING').length;
+    const inProgress = suggestions.filter(s => s.status === 'IN_PROGRESS').length;
+    const approved = suggestions.filter(s => s.status === 'APPROVED').length;
+    const rejected = suggestions.filter(s => s.status === 'REJECTED').length;
+    return { total, pending, inProgress, approved, rejected };
   }, [suggestions]);
 
   return (
@@ -123,7 +161,7 @@ export default function Page() {
             <p className="text-sm text-muted-foreground">{t('staff.suggestions.review')}</p>
           </div>
         </div>
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" onClick={handleExport}>
           <Filter className="h-4 w-4 mr-2" />
           {t('staff.suggestions.export')}
         </Button>
@@ -169,8 +207,8 @@ export default function Page() {
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-green-500" />
               <div>
-                <p className="text-lg font-bold">{stats.resolved}</p>
-                <p className="text-xs text-muted-foreground">{t('staff.suggestions.resolved')}</p>
+                <p className="text-lg font-bold">{stats.approved}</p>
+                <p className="text-xs text-muted-foreground">{t('staff.suggestions.approved')}</p>
               </div>
             </div>
           </CardContent>
@@ -178,10 +216,10 @@ export default function Page() {
         <Card className="p-3">
           <CardContent className="p-0">
             <div className="flex items-center gap-2">
-              <XCircle className="h-4 w-4 text-gray-500" />
+              <XCircle className="h-4 w-4 text-red-500" />
               <div>
-                <p className="text-lg font-bold">{stats.closed}</p>
-                <p className="text-xs text-muted-foreground">{t('staff.suggestions.closed')}</p>
+                <p className="text-lg font-bold">{stats.rejected}</p>
+                <p className="text-xs text-muted-foreground">{t('staff.suggestions.rejected')}</p>
               </div>
             </div>
           </CardContent>
@@ -219,10 +257,10 @@ export default function Page() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">{t('staff.suggestions.all')}</SelectItem>
-                      <SelectItem value="pending">{t('staff.suggestions.pending')}</SelectItem>
-                      <SelectItem value="in_progress">{t('staff.suggestions.inProgress')}</SelectItem>
-                      <SelectItem value="resolved">{t('staff.suggestions.resolved')}</SelectItem>
-                      <SelectItem value="closed">{t('staff.suggestions.closed')}</SelectItem>
+                      <SelectItem value="PENDING">{t('staff.suggestions.pending')}</SelectItem>
+                      <SelectItem value="IN_PROGRESS">{t('staff.suggestions.inProgress')}</SelectItem>
+                      <SelectItem value="APPROVED">{t('staff.suggestions.approved')}</SelectItem>
+                      <SelectItem value="REJECTED">{t('staff.suggestions.rejected')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -285,7 +323,7 @@ export default function Page() {
         </aside>
 
         <main className="lg:col-span-3">
-          <StaffSuggestionTable suggestions={filtered} onUpdateSuggestion={handleUpdateSuggestion} />
+          <StaffSuggestionTable suggestions={filtered} onUpdateSuggestion={handleUpdateSuggestion} staffMembers={staffMembers} />
         </main>
       </div>
     </div>

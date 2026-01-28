@@ -9,6 +9,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import MySuggestionsContent from "@/components/suggestions/MySuggestionsPopover";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 export default function Page() {
   const { t } = useTranslation()
@@ -25,7 +26,12 @@ export default function Page() {
         const response = await fetch('/api/suggestions');
         if (response.ok) {
           const data = await response.json();
-          setSuggestions(data);
+          // Ensure upvotes is a number
+          const formattedData = (data as Suggestion[]).map((s) => ({
+            ...s,
+            upvotes: Number(s.upvotes) || 0,
+          }));
+          setSuggestions(formattedData);
         }
       } catch (error) {
         console.error('Failed to fetch suggestions:', error);
@@ -67,15 +73,19 @@ export default function Page() {
             s.id === id
               ? {
                   ...s,
-                  upvotes: upvoted ? s.upvotes + 1 : s.upvotes - 1,
+                  upvotes: upvoted ? Number(s.upvotes) + 1 : Number(s.upvotes) - 1,
                   userUpvoted: upvoted,
                 }
               : s
           )
         );
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        toast.error(errorData.error || 'Failed to upvote suggestion');
       }
     } catch (error) {
       console.error('Failed to upvote suggestion:', error);
+      toast.error('Failed to upvote suggestion. Please try again.');
     }
   };
 
@@ -133,16 +143,6 @@ export default function Page() {
                     <div className="mt-4">
                       <MySuggestionsContent
                         suggestions={suggestions}
-                        onOpen={(id) => {
-                          // bring selected suggestion to top
-                          setSuggestions((list) => {
-                            const idx = list.findIndex((x) => x.id === id);
-                            if (idx === -1) return list;
-                            const copy = [...list];
-                            const [sel] = copy.splice(idx, 1);
-                            return [sel, ...copy];
-                          });
-                        }}
                       />
                     </div>
                   </DialogContent>

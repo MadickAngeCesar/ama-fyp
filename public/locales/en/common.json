@@ -204,6 +204,8 @@
     },
     "suggestions": {
       "manage": "Manage Suggestions",
+      "approved": "Approved",
+      "rejected": "Rejected",
       "review": "Review, respond, and manage student suggestions.",
       "export": "Export",
       "total": "Total",

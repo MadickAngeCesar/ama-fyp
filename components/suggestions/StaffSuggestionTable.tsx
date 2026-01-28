@@ -44,11 +44,12 @@ export default function StaffSuggestionTable({ suggestions, onUpdateSuggestion, 
   };
 
   const handleStatusChange = (id: string, status: string) => {
-    onUpdateSuggestion(id, { status: status as 'pending' | 'in_progress' | 'resolved' | 'closed' });
+    onUpdateSuggestion(id, { status: status as 'PENDING' | 'IN_PROGRESS' | 'APPROVED' | 'REJECTED' });
   };
 
-  const handleAssign = (id: string, assignedTo: string) => {
-    onUpdateSuggestion(id, { assignedTo });
+  const handleAssign = (id: string, value: string) => {
+    const assigneeId = value === "unassigned" ? undefined : value;
+    onUpdateSuggestion(id, { assigneeId });
   };
 
   return (
@@ -83,10 +84,10 @@ export default function StaffSuggestionTable({ suggestions, onUpdateSuggestion, 
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="in_progress">In Progress</SelectItem>
-                        <SelectItem value="resolved">Resolved</SelectItem>
-                        <SelectItem value="closed">Closed</SelectItem>
+                        <SelectItem value="PENDING">Pending</SelectItem>
+                        <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
+                        <SelectItem value="APPROVED">Approved</SelectItem>
+                        <SelectItem value="REJECTED">Rejected</SelectItem>
                       </SelectContent>
                     </Select>
                   </TableCell>
@@ -129,14 +130,17 @@ export default function StaffSuggestionTable({ suggestions, onUpdateSuggestion, 
                           </div>
                         </DialogContent>
                       </Dialog>
-                      <Select onValueChange={(value) => handleAssign(suggestion.id, value)}>
+                      <Select 
+                        value={suggestion.assigneeId || "unassigned"}
+                        onValueChange={(value) => handleAssign(suggestion.id, value)}
+                      >
                         <SelectTrigger className="w-23 h-8">
-                          <SelectValue placeholder={suggestion.assignedTo || "Assign"} />
+                          <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="unassigned">Unassigned</SelectItem>
                           {staffMembers.map((staff) => (
-                            <SelectItem key={staff.id} value={staff.name}>
+                            <SelectItem key={staff.id} value={staff.id}>
                               {staff.name}
                             </SelectItem>
                           ))}

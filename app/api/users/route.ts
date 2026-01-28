@@ -23,13 +23,16 @@ export async function GET() {
     console.error('Database error:', error);
     return NextResponse.json({ error: 'Database error' }, { status: 500 });
   }
-  if (!currentUser || currentUser.role !== 'ADMIN') {
+  if (!currentUser || (currentUser.role !== 'ADMIN' && currentUser.role !== 'STAFF')) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   let users;
   try {
     users = await db.user.findMany({
+      where: {
+        role: { in: ['STAFF', 'ADMIN', 'STUDENT'] }
+      },
       orderBy: { createdAt: 'desc' },
     });
   } catch (error) {

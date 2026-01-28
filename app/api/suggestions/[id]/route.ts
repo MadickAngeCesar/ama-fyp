@@ -54,6 +54,7 @@ export async function GET(
       response: suggestion.response,
       authorName: suggestion.user.name,
       assigneeName: suggestion.assignee?.name,
+      assigneeId: suggestion.assigneeId,
       upvotes: suggestion._count.upvotes,
       createdAt: suggestion.createdAt.toISOString(),
       userUpvoted: suggestion.upvotes.some(u => u.userId === user.id),
@@ -138,6 +139,7 @@ export async function PUT(
       status: suggestion.status,
       response: suggestion.response,
       assigneeName: suggestion.assignee?.name,
+      assigneeId: suggestion.assigneeId,
       updatedAt: suggestion.updatedAt.toISOString(),
     });
   } catch (error) {

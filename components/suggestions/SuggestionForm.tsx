@@ -18,14 +18,20 @@ export default function SuggestionForm({ onSubmit }: Props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [authorName, setAuthorName] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !description.trim()) return;
-    onSubmit({ title: title.trim(), description: description.trim(), authorName: authorName.trim() || undefined });
-    setTitle("");
-    setDescription("");
-    setAuthorName("");
+    if (!title.trim() || !description.trim() || loading) return;
+    setLoading(true);
+    try {
+      await onSubmit({ title: title.trim(), description: description.trim(), authorName: authorName.trim() || undefined });
+      setTitle("");
+      setDescription("");
+      setAuthorName("");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -46,7 +52,9 @@ export default function SuggestionForm({ onSubmit }: Props) {
       </div>
 
       <div className="flex justify-end">
-        <Button type="submit">{t('suggestions.submit')}</Button>
+        <Button type="submit" disabled={loading}>
+          {loading ? "Submitting suggestion..." : t('suggestions.submit')}
+        </Button>
       </div>
     </form>
   );
