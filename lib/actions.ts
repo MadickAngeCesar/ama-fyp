@@ -261,7 +261,7 @@ export async function generateUIPrototype(prompt: string): Promise<unknown> {
     });
 
     const response = await genAI.models.generateContent({
-      model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
+      model: process.env.GEMINI_MODEL || "gemini-2.5-flash-lite",
       contents: `
 Generate a JSON schema for a UI component based on this description: ${prompt}
 

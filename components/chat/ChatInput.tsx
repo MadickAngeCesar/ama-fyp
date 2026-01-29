@@ -64,7 +64,7 @@ export default function ChatInput({ onSend, disabled, hasPendingMessage, onCance
           {t('chat.cancel')}
         </Button>
       ) : (
-        <Button type="submit" disabled={disabled || !value.trim()} aria-label={t('chat.send')}>
+        <Button type="submit" disabled={disabled || !value.trim()} loading={disabled} loadingText={t('chat.sending') ?? 'Sending...'} aria-label={t('chat.send')}>
           {t('chat.send')}
         </Button>
       )}

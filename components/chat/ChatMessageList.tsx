@@ -23,13 +23,19 @@ interface ChatMessageListProps {
   messages: ChatMessage[];
   loading?: boolean;
   error?: string | null;
-  onEditMessage?: (messageId: string, newContent: string) => void;
+  // Callback may perform async work and return a Promise
+  onEditMessage?: (messageId: string, newContent: string) => void | Promise<void>;
+}
+
+function isPromise<T = unknown>(p: unknown): p is Promise<T> {
+  return Boolean(p && typeof (p as { then?: unknown }).then === "function");
 }
 
 export default function ChatMessageList({ messages, loading, error, onEditMessage }: ChatMessageListProps) {
   const { t } = useTranslation();
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
+  const [saving, setSaving] = useState(false);
   const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null);
 
   // Cleanup speech synthesis when component unmounts
@@ -105,12 +111,23 @@ export default function ChatMessageList({ messages, loading, error, onEditMessag
   /**
    * Saves the edited message
    */
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (editingMessageId && onEditMessage && editContent.trim()) {
-      onEditMessage(editingMessageId, editContent.trim());
-      setEditingMessageId(null);
-      setEditContent("");
-      toast.success("Message updated");
+      try {
+        const res = onEditMessage(editingMessageId, editContent.trim());
+        if (isPromise(res)) {
+          setSaving(true);
+          await res;
+        }
+        setEditingMessageId(null);
+        setEditContent("");
+        toast.success("Message updated");
+      } catch (err) {
+        console.error("Failed to save edit", err);
+        toast.error("Failed to save edit");
+      } finally {
+        setSaving(false);
+      }
     }
   };
 
@@ -154,7 +171,7 @@ export default function ChatMessageList({ messages, loading, error, onEditMessag
                       <Button size="sm" variant="ghost" onClick={handleCancelEdit}>
                         Cancel
                       </Button>
-                      <Button size="sm" onClick={handleSaveEdit} disabled={!editContent.trim()}>
+                      <Button size="sm" onClick={handleSaveEdit} loading={saving} loadingText={"Saving..."} disabled={!editContent.trim()}>
                         Save
                       </Button>
                     </div>

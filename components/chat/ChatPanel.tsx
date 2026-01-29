@@ -208,7 +208,8 @@ export default function ChatPanel() {
                     variant="ghost"
                     size="sm"
                     onClick={handleRegenerate}
-                    disabled={loading}
+                    loading={loading}
+                    loadingText={"Regenerating..."}
                     title="Regenerate last response"
                   >
                     <RotateCcw className="h-4 w-4" />
@@ -346,12 +347,12 @@ export default function ChatPanel() {
                           </Button>
                           <Button
                             onClick={handleEscalate}
-                            disabled={isEscalating || !escalationCategory}
+                            disabled={!escalationCategory}
+                            loading={isEscalating}
+                            loadingText={"Escalating..."}
                             className="flex-1"
                           >
-                            {isEscalating
-                              ? "Escalating..."
-                              : `Escalate as ${escalationType}`}
+                            {`Escalate as ${escalationType}`}
                           </Button>
                         </div>
                       </div>

@@ -191,8 +191,8 @@ export default function AdminUsersPage() {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button onClick={handleAddUser} disabled={isAddingUser}>
-                    {isAddingUser ? 'Adding User...' : t('admin.users.add')}
+                  <Button onClick={handleAddUser} loading={isAddingUser} loadingText={'Adding user...'}>
+                    {t('admin.users.add')}
                   </Button>
                 </DialogFooter>
               </DialogContent>

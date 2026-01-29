@@ -227,7 +227,8 @@ export default function StaffChatPanel({ sessionId }: StaffChatPanelProps) {
                   />
                   <Button
                     onClick={handleSendMessage}
-                    disabled={!message.trim() || loading}
+                    disabled={!message.trim()}
+                    loading={loading}
                     size="icon"
                     className="self-end"
                   >

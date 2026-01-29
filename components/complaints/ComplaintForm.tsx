@@ -147,9 +147,11 @@ export default function ComplaintForm({ onSubmit, isLoading = false }: Props) {
               type="button"
               size="sm"
               onClick={handleAddCategory}
-              disabled={isAddingCategory || !newCategory.trim()}
+              loading={isAddingCategory}
+              loadingText={"Adding..."}
+              disabled={!newCategory.trim()}
             >
-              {isAddingCategory ? "Adding..." : "Add"}
+              Add
             </Button>
             <Button
               type="button"
@@ -177,8 +179,8 @@ export default function ComplaintForm({ onSubmit, isLoading = false }: Props) {
       </div>
 
       <div className="flex justify-end">
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? t('complaints.creatingComplaint') : t('complaints.createComplaint')}
+        <Button type="submit" loading={isLoading} loadingText={t('complaints.creatingComplaint') ?? 'Creating...'} disabled={false}>
+          {t('complaints.createComplaint')}
         </Button>
       </div>
     </form>

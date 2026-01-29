@@ -35,6 +35,8 @@ export default function NotificationsSheet({ className }: { className?: string }
   const [open, setOpen] = React.useState(false)
   const [items, setItems] = React.useState<Notification[]>([])
   const [loading, setLoading] = React.useState(false)
+  const [markingIds, setMarkingIds] = React.useState<string[]>([])
+  const [clearing, setClearing] = React.useState(false)
 
   const fetchNotifications = React.useCallback(async () => {
     try {
@@ -59,6 +61,7 @@ export default function NotificationsSheet({ className }: { className?: string }
 
   const markRead = async (id: string) => {
     try {
+      setMarkingIds((s) => [...s, id]);
       const response = await fetch(`/api/notifications/${id}/read`, {
         method: 'POST',
       })
@@ -67,11 +70,14 @@ export default function NotificationsSheet({ className }: { className?: string }
       }
     } catch (error) {
       console.error("Failed to mark notification as read", error)
+    } finally {
+      setMarkingIds((s) => s.filter((x) => x !== id));
     }
   }
 
   const clearAll = async () => {
     try {
+      setClearing(true);
       const response = await fetch('/api/notifications/clear', {
         method: 'POST',
       })
@@ -80,6 +86,8 @@ export default function NotificationsSheet({ className }: { className?: string }
       }
     } catch (error) {
       console.error("Failed to clear notifications", error)
+    } finally {
+      setClearing(false);
     }
   }
 
@@ -120,7 +128,7 @@ export default function NotificationsSheet({ className }: { className?: string }
                 {n.body && <div className="text-sm text-muted-foreground mt-1">{n.body}</div>}
                 <div className="mt-2">
                   {!n.read ? (
-                    <Button variant="ghost" size="sm" onClick={() => markRead(n.id)}>
+                    <Button variant="ghost" size="sm" onClick={() => markRead(n.id)} loading={markingIds.includes(n.id)} loadingText={t('notifications.marking') ?? 'Marking...'}>
                       {t('notifications.markRead')}
                     </Button>
                   ) : (
@@ -138,7 +146,7 @@ export default function NotificationsSheet({ className }: { className?: string }
               {t('settings.close')}
             </Button>
             <div className="flex items-center gap-2">
-              <Button variant="ghost" onClick={clearAll} disabled={items.length === 0}>
+              <Button variant="ghost" onClick={clearAll} disabled={items.length === 0} loading={clearing} loadingText={t('notifications.clearing') ?? 'Clearing...'}>
                 {t('notifications.clearAll')}
               </Button>
             </div>

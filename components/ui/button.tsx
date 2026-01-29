@@ -3,6 +3,7 @@ import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { Spinner } from "./spinner"
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
@@ -38,26 +39,52 @@ const buttonVariants = cva(
   }
 )
 
+/**
+ * Button
+ *
+ * Adds `loading` and `loadingText` props so callers can replace the
+ * button label while an action is in progress. When `loading` is true the
+ * button is disabled and a spinner is shown. If `loadingText` is provided
+ * it will replace the children; otherwise the original children remain.
+ */
 function Button({
   className,
   variant = "default",
   size = "default",
   asChild = false,
+  loading = false,
+  loadingText,
+  children,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
+    /** Visual loading state: disables the button and shows spinner */
+    loading?: boolean
+    /** Optional text to show while loading (replaces children) */
+    loadingText?: React.ReactNode
   }) {
   const Comp = asChild ? Slot : "button"
+
+  const content = loading && loadingText !== undefined ? (
+    loadingText
+  ) : (
+    children
+  )
 
   return (
     <Comp
       data-slot="button"
       data-variant={variant}
       data-size={size}
+      aria-busy={loading ? true : undefined}
+      disabled={loading || props.disabled}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
-    />
+    >
+      {loading && <Spinner className="opacity-90" />}
+      {content}
+    </Comp>
   )
 }
 

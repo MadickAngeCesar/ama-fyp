@@ -192,7 +192,7 @@ export default function AdminConfigurationPage() {
                 onKeyPress={(e) => e.key === 'Enter' && handleAddCategory()}
                 disabled={isSaving}
               />
-              <Button onClick={handleAddCategory} disabled={isSaving}>
+              <Button onClick={handleAddCategory} loading={isSaving}>
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
@@ -278,8 +278,7 @@ export default function AdminConfigurationPage() {
       </Card>
 
       <div className="flex justify-end">
-        <Button onClick={handleSave} disabled={isSaving || !hasUnsavedChanges}>
-          {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        <Button onClick={handleSave} loading={isSaving} disabled={!hasUnsavedChanges} loadingText={"Saving..."}>
           {hasUnsavedChanges ? "Save Configuration" : "Configuration Saved"}
         </Button>
       </div>

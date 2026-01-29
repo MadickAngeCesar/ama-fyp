@@ -52,8 +52,8 @@ export default function SuggestionForm({ onSubmit }: Props) {
       </div>
 
       <div className="flex justify-end">
-        <Button type="submit" disabled={loading}>
-          {loading ? "Submitting suggestion..." : t('suggestions.submit')}
+        <Button type="submit" loading={loading} loadingText={t('suggestions.submitting') ?? 'Submitting...'}>
+          {t('suggestions.submit')}
         </Button>
       </div>
     </form>
