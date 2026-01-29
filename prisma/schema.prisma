@@ -26,6 +26,8 @@ model User {
   auditLogs    AuditLog[]
   assignedComplaints Complaint[] @relation("Assignee")
   assignedSuggestions Suggestion[] @relation("SuggestionAssignee")
+  assignedChats ChatSession[] @relation("ChatAssignee")
+  notifications Notification[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -91,6 +93,9 @@ model ChatSession {
   status      ChatStatus @default(OPEN)
   title       String?
   lastActivity DateTime @updatedAt
+  escalated   Boolean  @default(false)
+  assigneeId  String?
+  assignee    User?    @relation("ChatAssignee", fields: [assigneeId], references: [id])
   messages    Message[]
   uiPrototypes UIPrototype[]
   createdAt   DateTime @default(now())
@@ -157,4 +162,25 @@ model Configuration {
   isSystem       Boolean  @default(false)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  title       String
+  body        String?
+  type        NotificationType @default(INFO)
+  read        Boolean  @default(false)
+  relatedId   String?  // ID of related entity (message, complaint, etc.)
+  relatedType String?  // Type of related entity
+  createdAt   DateTime @default(now())
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+  MESSAGE
 }

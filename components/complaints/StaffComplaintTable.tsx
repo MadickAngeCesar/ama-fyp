@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Eye, MessageSquare, User, Trash2 } from "lucide-react";
+import { Eye, MessageSquare, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 /**
@@ -81,7 +81,7 @@ export default function StaffComplaintTable({ complaints, onUpdateComplaint, onD
                       value={complaint.status || "PENDING"}
                       onValueChange={(value) => handleStatusChange(complaint.id, value)}
                     >
-                      <SelectTrigger className="w-28">
+                      <SelectTrigger className="w-24">
                         <SelectValue placeholder="Status" />
                       </SelectTrigger>
                       <SelectContent>
@@ -185,19 +185,6 @@ export default function StaffComplaintTable({ complaints, onUpdateComplaint, onD
                           </div>
                         </DialogContent>
                       </Dialog>
-                      <Select onValueChange={(value) => handleAssign(complaint.id, value)}>
-                        <SelectTrigger className="w-24">
-                          <User className="h-4 w-4" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="unassigned">Unassigned</SelectItem>
-                          {staffMembers.map((staff) => (
-                            <SelectItem key={staff.id} value={staff.id}>
-                              {staff.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
                       <Button
                         variant="ghost"
                         size="sm"

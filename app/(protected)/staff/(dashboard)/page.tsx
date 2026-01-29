@@ -18,7 +18,10 @@ interface StaffStats {
     total: number;
     pending: number;
   };
-  activeChats: number;
+  chats: {
+    active: number;
+    escalated: number;
+  };
   recentPendingComplaints: Array<{
     id: string;
     category: string | null;
@@ -92,7 +95,7 @@ export default function Page() {
     );
   }
 
-  const { complaints, suggestions, activeChats, recentPendingComplaints, recentPendingSuggestions, recentActiveChats } = stats;
+  const { complaints, suggestions, chats, recentPendingComplaints, recentPendingSuggestions, recentActiveChats } = stats;
 
   return (
     <div className="max-w-6xl mx-auto py-8 space-y-8">
@@ -109,7 +112,7 @@ export default function Page() {
       </header>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">{t('staff.dashboard.pendingComplaints')}</CardTitle>
@@ -155,9 +158,22 @@ export default function Page() {
             <MessageSquare className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{activeChats}</div>
+            <div className="text-2xl font-bold">{chats.active}</div>
             <p className="text-xs text-muted-foreground">
               Requiring attention
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Escalated Chats</CardTitle>
+            <AlertTriangle className="h-4 w-4 text-red-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{chats.escalated}</div>
+            <p className="text-xs text-muted-foreground">
+              Need immediate attention
             </p>
           </CardContent>
         </Card>
@@ -289,6 +305,39 @@ export default function Page() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Quick Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('staff.dashboard.quickActions')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-4">
+            <Button asChild>
+              <Link href="/staff/complaint">
+                <AlertTriangle className="h-4 w-4 mr-2" />
+                {t('staff.dashboard.manageComplaints')}
+              </Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link href="/staff/suggestion">
+                <Lightbulb className="h-4 w-4 mr-2" />
+                {t('staff.dashboard.reviewSuggestions')}
+              </Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link href="/staff/chat">
+                <MessageSquare className="h-4 w-4 mr-2" />
+                {t('staff.dashboard.viewChatSessions')}
+              </Link>
+            </Button>
+            <Button variant="outline">
+              <TrendingUp className="h-4 w-4 mr-2" />
+              {t('staff.dashboard.viewReports')}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

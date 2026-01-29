@@ -57,7 +57,12 @@ export default function SettingsSheet({ className }: { className?: string }) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" className={cn("rounded-full p-2 text-muted-foreground", className)} aria-label="Settings">
+        <Button 
+          variant="ghost" 
+          className={cn("rounded-full p-2 text-muted-foreground", className)} 
+          aria-label="Settings"
+          suppressHydrationWarning
+        >
           <Settings className="size-5" />
         </Button>
       </SheetTrigger>

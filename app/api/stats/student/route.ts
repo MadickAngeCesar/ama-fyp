@@ -55,7 +55,7 @@ export async function GET() {
     const recentChats = await db.chatSession.findMany({
       where: { userId: user.id },
       take: 3,
-      orderBy: { lastActivity: 'desc' }
+      orderBy: { createdAt: 'desc' }
     });
 
     return NextResponse.json({

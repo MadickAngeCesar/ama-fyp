@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "react-i18next";
+import Link from "next/link";
 
 interface StudentStats {
   complaints: {
@@ -95,7 +96,9 @@ export default function Page() {
           <p className="text-sm text-muted-foreground">{t('dashboard.description')}</p>
         </div>
         <div className="hidden sm:flex gap-2">
-          <Button>{t('dashboard.contactStaff')}</Button>
+          <Button asChild>
+            <Link href="/students/chat">{t('dashboard.contactStaff')}</Link>
+          </Button>
         </div>
       </header>
 

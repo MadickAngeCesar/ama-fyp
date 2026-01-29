@@ -20,52 +20,67 @@ type Notification = {
   id: string
   title: string
   body?: string
-  time?: string
-  read?: boolean
+  type: string
+  read: boolean
+  createdAt: string
 }
 
 /**
  * NotificationsSheet
  *
- * Displays a sheet with a short list of notifications. Notifications are
- * persisted to localStorage for demo purposes and can be marked read or cleared.
+ * Displays a sheet with notifications fetched from the API.
  */
 export default function NotificationsSheet({ className }: { className?: string }) {
   const { t } = useTranslation()
   const [open, setOpen] = React.useState(false)
   const [items, setItems] = React.useState<Notification[]>([])
+  const [loading, setLoading] = React.useState(false)
 
-  React.useEffect(() => {
+  const fetchNotifications = React.useCallback(async () => {
     try {
-      const raw = localStorage.getItem("Notifications")
-      if (raw) setItems(JSON.parse(raw))
-      else {
-        const seed: Notification[] = [
-          { id: "1", title: "Welcome to the portal", body: "Get started by creating a complaint.", time: "now", read: false },
-          { id: "2", title: "Suggestion accepted", body: "Your suggestion was upvoted.", time: "1d", read: false },
-        ]
-        setItems(seed)
+      setLoading(true)
+      const response = await fetch('/api/notifications')
+      if (response.ok) {
+        const data = await response.json()
+        setItems(data)
       }
-    } catch (e) {
-        console.error("Failed to load notifications", e)
-      setItems([])
+    } catch (error) {
+      console.error("Failed to fetch notifications", error)
+    } finally {
+      setLoading(false)
     }
   }, [])
 
   React.useEffect(() => {
-    try {
-      localStorage.setItem("Notifications", JSON.stringify(items))
-    } catch (e) {
-        console.error("Failed to save notifications", e)
+    if (open) {
+      fetchNotifications()
     }
-  }, [items])
+  }, [open, fetchNotifications])
 
-  function markRead(id: string) {
-    setItems((s) => s.map((it) => (it.id === id ? { ...it, read: true } : it)))
+  const markRead = async (id: string) => {
+    try {
+      const response = await fetch(`/api/notifications/${id}/read`, {
+        method: 'POST',
+      })
+      if (response.ok) {
+        setItems((s) => s.map((it) => (it.id === id ? { ...it, read: true } : it)))
+      }
+    } catch (error) {
+      console.error("Failed to mark notification as read", error)
+    }
   }
 
-  function clearAll() {
-    setItems([])
+  const clearAll = async () => {
+    try {
+      const response = await fetch('/api/notifications/clear', {
+        method: 'POST',
+      })
+      if (response.ok) {
+        setItems([])
+      }
+    } catch (error) {
+      console.error("Failed to clear notifications", error)
+    }
   }
 
   const unreadCount = items.filter((i) => !i.read).length
@@ -73,7 +88,12 @@ export default function NotificationsSheet({ className }: { className?: string }
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" className={cn("relative rounded-full p-2 text-muted-foreground", className)} aria-label="Notifications">
+        <Button 
+          variant="ghost" 
+          className={cn("relative rounded-full p-2 text-muted-foreground", className)} 
+          aria-label="Notifications"
+          suppressHydrationWarning
+        >
           <Bell className="size-5" />
           {unreadCount > 0 && <span className="absolute -right-0.5 -top-0.5 block h-2 w-2 rounded-full bg-primary" />}
         </Button>
@@ -86,13 +106,16 @@ export default function NotificationsSheet({ className }: { className?: string }
         </SheetHeader>
 
         <div className="divide-y overflow-auto">
-          {items.length === 0 && <div className="p-4 text-sm text-muted-foreground">{t('notifications.none')}</div>}
-          {items.map((n) => (
+          {loading && <div className="p-4 text-sm text-muted-foreground">Loading...</div>}
+          {!loading && items.length === 0 && <div className="p-4 text-sm text-muted-foreground">{t('notifications.none')}</div>}
+          {!loading && items.map((n) => (
             <div key={n.id} className="flex items-start gap-3 p-4">
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <div className="font-medium text-sm">{n.title}</div>
-                  <div className="text-xs text-muted-foreground">{n.time}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {new Date(n.createdAt).toLocaleDateString()}
+                  </div>
                 </div>
                 {n.body && <div className="text-sm text-muted-foreground mt-1">{n.body}</div>}
                 <div className="mt-2">

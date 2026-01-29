@@ -122,6 +122,41 @@ export default function ChatPanel() {
   };
 
   /**
+   * Handles requesting staff assistance for the current chat session.
+   */
+  const handleRequestStaff = async () => {
+    if (!sessionId) {
+      toast.error("No active chat session");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/chat/${sessionId}/request-staff`, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to request staff assistance");
+      }
+
+      toast.success("Staff assistance requested. A staff member will respond shortly.");
+
+      // Add a system message
+      const systemMsg: ChatMessage = {
+        id: `${Date.now()}-system`,
+        sender: "ai",
+        content: "Staff assistance has been requested. A staff member will respond to your chat shortly.",
+        createdAt: new Date().toISOString(),
+      };
+      setMessages((msgs) => [...msgs, systemMsg]);
+
+    } catch (error) {
+      console.error("Request staff error:", error);
+      toast.error("Failed to request staff assistance. Please try again.");
+    }
+  };
+
+  /**
    * Clears the current chat session.
    */
   const handleClearChat = () => {
@@ -204,8 +239,16 @@ export default function ChatPanel() {
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </>
-              )}
-              <Dialog open={showEscalateDialog} onOpenChange={setShowEscalateDialog}>
+              )}              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleRequestStaff}
+                disabled={!sessionId || loading}
+                title="Request staff assistance"
+              >
+                <User className="h-4 w-4" />
+                Request Help
+              </Button>              <Dialog open={showEscalateDialog} onOpenChange={setShowEscalateDialog}>
                 <DialogTrigger asChild>
                   <Button
                     variant="ghost"

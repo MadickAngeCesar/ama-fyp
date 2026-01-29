@@ -34,6 +34,11 @@ export async function GET() {
       where: { status: 'OPEN' }
     });
 
+    // Get escalated chat sessions
+    const escalatedChats = await db.chatSession.count({
+      where: { escalated: true, status: 'OPEN' }
+    });
+
     // Get recent pending complaints (last 3)
     const recentPendingComplaints = await db.complaint.findMany({
       where: { status: 'PENDING' },
@@ -65,7 +70,7 @@ export async function GET() {
     const recentActiveChats = await db.chatSession.findMany({
       where: { status: 'OPEN' },
       take: 3,
-      orderBy: { lastActivity: 'desc' }
+      orderBy: { createdAt: 'desc' }
     });
 
     return NextResponse.json({
@@ -79,7 +84,10 @@ export async function GET() {
         total: totalSuggestions,
         pending: pendingSuggestions,
       },
-      activeChats,
+      chats: {
+        active: activeChats,
+        escalated: escalatedChats,
+      },
       recentPendingComplaints: recentPendingComplaints.map(c => ({
         id: c.id,
         category: c.category,
