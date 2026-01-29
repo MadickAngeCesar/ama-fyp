@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 
 /**
  * Terms of Service page for ASSS.
@@ -10,7 +11,7 @@ export default function TermsPage() {
     <main className="min-h-screen bg-[#0B0F14] text-[#E6EAF2]">
       <header className="max-w-6xl sticky top-0 bg-[#0B0F14] z-50 mx-auto px-3 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-[#4F7DFF] flex items-center justify-center text-white font-semibold">A</div>
+          <Image src="/images/logo.png" alt="ASSS" width={40} height={40} className="rounded-full" />
           <div>
             <div className="text-lg font-semibold">ASSS</div>
             <div className="text-xs text-[#A9B1C7]">Student Support System</div>
@@ -128,9 +129,7 @@ export default function TermsPage() {
           {/* Logo & tagline */}
           <div className="flex flex-col gap-3">
             <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#4F7DFF] flex items-center justify-center text-white font-semibold text-xl">
-                A
-              </div>
+              <Image src="/images/logo.png" alt="ASSS" width={40} height={40} className="rounded-full" />
               <span className="text-lg font-semibold text-white">ASSS</span>
             </Link>
             <span className="text-xs mt-2">
