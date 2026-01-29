@@ -16,6 +16,8 @@ import { useTranslation } from "react-i18next";
 import { Copy, Volume2, VolumeX, Edit } from "lucide-react";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 interface ChatMessageListProps {
   messages: ChatMessage[];
@@ -157,9 +159,15 @@ export default function ChatMessageList({ messages, loading, error, onEditMessag
                       </Button>
                     </div>
                   </div>
-                ) : (
+                  ) : (
                   <>
-                    {msg.content}
+                    {msg.sender === 'ai' ? (
+                      <div className="prose dark:prose-invert max-w-full wrap-break-word">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+                      </div>
+                    ) : (
+                      msg.content
+                    )}
                     {/* Action buttons */}
                     <div className={`flex gap-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity ${
                       msg.sender === "user" ? "justify-end" : "justify-start"

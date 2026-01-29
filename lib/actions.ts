@@ -1,5 +1,22 @@
 // Gemini AI
+
+import "dotenv/config";
 import { GoogleGenAI } from "@google/genai";
+import fs from 'fs';
+import dotenv from 'dotenv';
+
+// Prefer explicit .env value when available (helps local dev if a user-level
+// environment variable overrides .env with a suspended key). Fall back to
+// process.env if .env is not present.
+let LOCAL_GEMINI_KEY: string | undefined;
+try {
+  const parsed = dotenv.parse(fs.readFileSync('.env'));
+  LOCAL_GEMINI_KEY = parsed.GEMINI_API_KEY?.replace(/^"|"$/g, '');
+} catch (e) {
+  LOCAL_GEMINI_KEY = undefined;
+  console.log(e)
+}
+const GEMINI_KEY = LOCAL_GEMINI_KEY || process.env.GEMINI_API_KEY;
 
 /**
  * Loads ICT University FAQs content for AI context
@@ -22,7 +39,7 @@ async function loadFAQsContext(): Promise<string> {
       console.warn('Could not fetch university website content:', error);
     }
 
-    return `${faqsContent}\n\nADDITIONAL INFORMATION FROM UNIVERSITY WEBSITE:\n${websiteContent}`;
+    return `${faqsContent} \n\n${websiteContent}`;
   } catch (error) {
     console.error('Error loading FAQs:', error);
     return `
@@ -190,13 +207,14 @@ export async function generateChatResponse(
   context: string = ""
 ): Promise<string> {
   try {
-    // Initialize Gemini AI client with API key
+    // Initialize Gemini AI client with API key from environment
     const genAI = new GoogleGenAI({
-      apiKey: process.env.GEMINI_API_KEY
+      apiKey: GEMINI_KEY!
     });
 
     // Load ICT University FAQs for context
     const faqsContext = await loadFAQsContext();
+    //const websiteContext = await fetchUniversityWebsiteInfo();
 
     const response = await genAI.models.generateContent({
       model: process.env.GEMINI_MODEL || "gemini-2.5-flash-lite",
@@ -220,7 +238,7 @@ RESPONSE GUIDELINES:
 - Use the contact information provided in the FAQs when relevant
 - When appropriate, suggest visiting the university website for the most current information
 
-Provide a helpful, concise response. If the user wants to escalate to a formal complaint, suggest they use the escalation feature.
+Provide a helpful, concise response in Markdown format. If the user wants to escalate to a formal complaint, suggest they use the escalation feature.
 `,
     });
     return response.text || "No response generated.";
@@ -237,9 +255,9 @@ Provide a helpful, concise response. If the user wants to escalate to a formal c
  */
 export async function generateUIPrototype(prompt: string): Promise<unknown> {
   try {
-    // Initialize Gemini AI client with API key
+    // Initialize Gemini AI client with API key from environment
     const genAI = new GoogleGenAI({
-      apiKey: process.env.GEMINI_API_KEY
+      apiKey: GEMINI_KEY!
     });
 
     const response = await genAI.models.generateContent({

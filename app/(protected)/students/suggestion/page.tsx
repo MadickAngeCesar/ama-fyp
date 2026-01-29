@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import MySuggestionsContent from "@/components/suggestions/MySuggestionsPopover";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import Link from "next/link";
 
 export default function Page() {
   const { t } = useTranslation()
@@ -105,8 +106,9 @@ export default function Page() {
           <p className="text-sm text-muted-foreground">{t('suggestions.intro')}</p>
         </div>
         <div className="hidden sm:flex gap-2">
-          <Button variant="ghost">{t('complaints.help')}</Button>
-          <Button>{t('complaints.contactStaff')}</Button>
+          <Button asChild>
+            <Link href="/students/chat">{t("complaints.help")}</Link>
+          </Button>
         </div>
       </header>
 
