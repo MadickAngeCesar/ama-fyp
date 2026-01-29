@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Home,
@@ -132,15 +133,15 @@ export default function DesktopSidebar({
       >
         <SidebarHeader className="px-6 py-4 border-b border-gray-200">
           <Link href="/" className="flex flex-row items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-              <span className="text-sm font-semibold text-primary-foreground">
-                AF
-              </span>
-            </div>
+            <Image
+              src="/images/logo.png"
+              alt="ASSS logo"
+              width={60}
+              height={60}
+              className="rounded-lg"
+            />
             <div>
-              <div className="text-base font-semibold">
-                {t("sidebar.appName")}
-              </div>
+              <div className="text-base font-semibold">{t("sidebar.appName")}</div>
               <div className="text-xs text-muted-foreground">
                 {t("sidebar.portal", { portal })}
               </div>
