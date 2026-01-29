@@ -69,7 +69,9 @@
     "title": "Chat de support",
     "description": "Discutez avec notre assistant IA ou escaladez vers le personnel si nécessaire.",
     "placeholder": "Tapez votre message...",
+    "waiting": "En attente d'envoi...",
     "send": "Envoyer",
+    "cancel": "Annuler",
     "noMessages": "Aucun message pour le moment. Commencez la conversation !",
     "typing": "L'IA tape...",
     "error": "Échec de l'envoi du message. Veuillez réessayer."

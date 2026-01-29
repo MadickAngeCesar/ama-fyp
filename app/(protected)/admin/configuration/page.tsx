@@ -1,20 +1,49 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { Plus, X } from "lucide-react"
+import { Plus, X, Loader2 } from "lucide-react"
+import { toast } from "sonner"
 
 export default function AdminConfigurationPage() {
   const { t } = useTranslation()
-  const [categories, setCategories] = useState(['Facilities', 'IT Support', 'Academic', 'Administrative'])
+  const [categories, setCategories] = useState<string[]>([])
   const [newCategory, setNewCategory] = useState("")
   const [retentionYears, setRetentionYears] = useState(5)
+  const [maxFileSize, setMaxFileSize] = useState(10)
+  const [supportEmail, setSupportEmail] = useState("support@university.edu")
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSaving, setIsSaving] = useState(false)
+
+  // Load configuration on mount
+  useEffect(() => {
+    loadConfiguration()
+  }, [])
+
+  const loadConfiguration = async () => {
+    try {
+      const response = await fetch("/api/configuration")
+      if (!response.ok) throw new Error("Failed to load configuration")
+
+      const data = await response.json()
+      const config = data.configurations
+
+      setCategories(config["categories.complaint"] || ["Facilities", "IT Support", "Academic", "Administrative"])
+      setRetentionYears(config["retention.years"] || 5)
+      setMaxFileSize(config["system.maxFileSize"] || 10)
+      setSupportEmail(config["system.supportEmail"] || "support@university.edu")
+    } catch (error) {
+      console.error("Error loading configuration:", error)
+      toast.error("Failed to load configuration")
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const handleAddCategory = () => {
     if (newCategory.trim() && !categories.includes(newCategory.trim())) {
@@ -27,9 +56,42 @@ export default function AdminConfigurationPage() {
     setCategories(categories.filter(c => c !== category))
   }
 
-  const handleSave = () => {
-    // In real app, save to DB
-    console.log('Saving configuration:', { categories, retentionYears })
+  const handleSave = async () => {
+    setIsSaving(true)
+    try {
+      const configurationData = {
+        "categories.complaint": categories,
+        "categories.suggestion": categories, // Use same categories for suggestions
+        "retention.years": retentionYears,
+        "system.maxFileSize": maxFileSize,
+        "system.supportEmail": supportEmail
+      }
+
+      const response = await fetch("/api/configuration", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ configurations: configurationData }),
+      })
+
+      if (!response.ok) throw new Error("Failed to save configuration")
+
+      toast.success("Configuration saved successfully")
+    } catch (error) {
+      console.error("Error saving configuration:", error)
+      toast.error("Failed to save configuration")
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    )
   }
 
   return (
@@ -52,8 +114,9 @@ export default function AdminConfigurationPage() {
                 value={newCategory}
                 onChange={(e) => setNewCategory(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleAddCategory()}
+                disabled={isSaving}
               />
-              <Button onClick={handleAddCategory}>
+              <Button onClick={handleAddCategory} disabled={isSaving}>
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
@@ -64,6 +127,7 @@ export default function AdminConfigurationPage() {
                   <button
                     onClick={() => handleRemoveCategory(category)}
                     className="ml-1 hover:bg-destructive hover:text-destructive-foreground rounded-full p-0.5"
+                    disabled={isSaving}
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -91,6 +155,7 @@ export default function AdminConfigurationPage() {
                 className="col-span-3"
                 min="1"
                 max="10"
+                disabled={isSaving}
               />
             </div>
             <p className="text-sm text-muted-foreground">
@@ -113,9 +178,11 @@ export default function AdminConfigurationPage() {
             <Input
               id="maxFileSize"
               type="number"
-              defaultValue={10}
+              value={maxFileSize}
+              onChange={(e) => setMaxFileSize(Number(e.target.value))}
               className="col-span-3"
               min="1"
+              disabled={isSaving}
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
@@ -125,15 +192,20 @@ export default function AdminConfigurationPage() {
             <Input
               id="supportEmail"
               type="email"
-              defaultValue="support@university.edu"
+              value={supportEmail}
+              onChange={(e) => setSupportEmail(e.target.value)}
               className="col-span-3"
+              disabled={isSaving}
             />
           </div>
         </CardContent>
       </Card>
 
       <div className="flex justify-end">
-        <Button onClick={handleSave}>{t('admin.config.save')}</Button>
+        <Button onClick={handleSave} disabled={isSaving}>
+          {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {t('admin.config.save')}
+        </Button>
       </div>
     </div>
   )

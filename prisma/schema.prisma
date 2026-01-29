@@ -147,3 +147,14 @@ enum MessageSender {
   AI
   STAFF
 }
+
+model Configuration {
+  id             String   @id @default(cuid())
+  key            String   @unique
+  value          Json
+  description    String?
+  category       String   @default("general")
+  isSystem       Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}

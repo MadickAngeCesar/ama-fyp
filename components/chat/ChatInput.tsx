@@ -15,9 +15,11 @@ import { useTranslation } from "react-i18next";
 interface ChatInputProps {
   onSend: (message: string) => void;
   disabled?: boolean;
+  hasPendingMessage?: boolean;
+  onCancel?: () => void;
 }
 
-export default function ChatInput({ onSend, disabled }: ChatInputProps) {
+export default function ChatInput({ onSend, disabled, hasPendingMessage, onCancel }: ChatInputProps) {
   const { t } = useTranslation()
   const [value, setValue] = useState("");
 
@@ -32,21 +34,40 @@ export default function ChatInput({ onSend, disabled }: ChatInputProps) {
     setValue("");
   };
 
+  /**
+   * Handles canceling the pending message.
+   */
+  const handleCancel = () => {
+    onCancel?.();
+    setValue("");
+  };
+
   return (
     <form onSubmit={handleSubmit} className="flex gap-2">
       <Input
         type="text"
-        placeholder={t('chat.placeholder')}
+        placeholder={hasPendingMessage ? t('chat.waiting') : t('chat.placeholder')}
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        disabled={disabled}
+        disabled={disabled || hasPendingMessage}
         className="flex-1"
         aria-label="Chat message input"
         autoComplete="off"
       />
-      <Button type="submit" disabled={disabled || !value.trim()} aria-label={t('chat.send')}>
-        {t('chat.send')}
-      </Button>
+      {hasPendingMessage ? (
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleCancel}
+          aria-label={t('chat.cancel')}
+        >
+          {t('chat.cancel')}
+        </Button>
+      ) : (
+        <Button type="submit" disabled={disabled || !value.trim()} aria-label={t('chat.send')}>
+          {t('chat.send')}
+        </Button>
+      )}
     </form>
   );
 }

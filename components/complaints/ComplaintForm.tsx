@@ -1,6 +1,6 @@
 "use client";
-import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
+import React, { useState, useEffect } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
@@ -15,6 +15,25 @@ export default function ComplaintForm({ onSubmit, isLoading = false }: Props) {
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
   const [attachment, setAttachment] = useState<File | null>(null);
+  const [categories, setCategories] = useState<string[]>([]);
+
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
+  const loadCategories = async () => {
+    try {
+      const response = await fetch("/api/config/categories/complaint");
+      if (!response.ok) throw new Error("Failed to load categories");
+
+      const data = await response.json();
+      setCategories(data.categories);
+    } catch (error) {
+      console.error("Error loading categories:", error);
+      // Fallback categories
+      setCategories(["Facilities", "IT Support", "Academic", "Administrative"]);
+    }
+  };
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +48,18 @@ export default function ComplaintForm({ onSubmit, isLoading = false }: Props) {
     <form onSubmit={submit} className="space-y-3">
       <div>
         <label className="block text-sm font-medium text-muted-foreground">{t('complaints.category')}</label>
-        <Input value={category} onChange={(e) => setCategory(e.target.value)} placeholder={t('complaints.categoryPlaceholder')} required />
+        <Select value={category} onValueChange={setCategory}>
+          <SelectTrigger>
+            <SelectValue placeholder={t('complaints.categoryPlaceholder')} />
+          </SelectTrigger>
+          <SelectContent>
+            {categories.map((cat) => (
+              <SelectItem key={cat} value={cat}>
+                {cat}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div>
@@ -39,7 +69,7 @@ export default function ComplaintForm({ onSubmit, isLoading = false }: Props) {
 
       <div>
         <label className="block text-sm font-medium text-muted-foreground">{t('complaints.attachment')}</label>
-        <Input type="file" onChange={(e) => setAttachment(e.target.files?.[0] || null)} accept="image/*,.pdf" />
+        <input type="file" onChange={(e) => setAttachment(e.target.files?.[0] || null)} accept="image/*,.pdf" className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/80" />
       </div>
 
       <div className="flex justify-end">

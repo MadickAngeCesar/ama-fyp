@@ -8,7 +8,7 @@
  * @param props.error - Optional error message to display
  * @param props.onEditMessage - Callback to edit a user message
  */
-import { ChatMessage } from "./ChatPanel";
+import { ChatMessage } from "@/hooks/useChat";
 import { ScrollArea } from "../ui/scroll-area";
 import { Spinner } from "../ui/spinner";
 import { Button } from "../ui/button";

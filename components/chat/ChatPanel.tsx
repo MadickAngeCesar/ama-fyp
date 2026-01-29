@@ -18,21 +18,13 @@ import { AlertTriangle, RotateCcw, Trash2, User } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-
-export interface ChatMessage {
-  id: string;
-  sender: "user" | "ai";
-  content: string;
-  createdAt: string;
-}
+import { useChat, ChatMessage } from "@/hooks/useChat";
 
 export default function ChatPanel() {
   const { t } = useTranslation()
   // Placeholder state for messages
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [sessionId, setSessionId] = useState<string | null>(null);
 
   // New state for enhancements
   const [showEscalateDialog, setShowEscalateDialog] = useState(false);
@@ -42,54 +34,33 @@ export default function ChatPanel() {
   const [escalationDescription, setEscalationDescription] = useState('');
   const [isEscalating, setIsEscalating] = useState(false);
 
+  // Use the chat hook with debouncing and retry logic
+  const {
+    sendMessage,
+    cancelPending,
+    hasPendingMessage,
+    loading,
+    sessionId
+  } = useChat({
+    debounceMs: 500, // 500ms debounce
+    onMessageSent: (message) => {
+      setMessages((msgs) => [...msgs, message]);
+      setError(null);
+    },
+    onResponseReceived: (response) => {
+      setMessages((msgs) => [...msgs, response]);
+    },
+    onError: (errorMsg) => {
+      setError(errorMsg);
+    }
+  });
+
   /**
-   * Handles sending a new chat message.
+   * Handles sending a new chat message with debouncing and retry logic.
    * @param message - The message content to send
    */
   const handleSend = async (message: string) => {
-    if (!message.trim()) return;
-    setLoading(true);
-    setError(null);
-    // Add user message optimistically
-    const userMsg: ChatMessage = {
-      id: `${Date.now()}`,
-      sender: "user",
-      content: message,
-      createdAt: new Date().toISOString(),
-    };
-    setMessages((msgs) => [...msgs, userMsg]);
-    try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          sessionId,
-          message,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to send message");
-      }
-
-      const data = await response.json();
-      setSessionId(data.sessionId);
-
-      // Add AI response
-      const aiMsg: ChatMessage = {
-        id: `${Date.now()}-ai`,
-        sender: "ai",
-        content: data.response,
-        createdAt: new Date().toISOString(),
-      };
-      setMessages((msgs) => [...msgs, aiMsg]);
-      setLoading(false);
-    } catch {
-      setError(t('chat.error'));
-      setLoading(false);
-    }
+    await sendMessage(message);
   };
 
   /**
@@ -155,7 +126,6 @@ export default function ChatPanel() {
    */
   const handleClearChat = () => {
     setMessages([]);
-    setSessionId(null);
     setError(null);
     toast.success("Chat cleared");
   };
@@ -179,42 +149,8 @@ export default function ChatPanel() {
     const messagesToKeep = updatedMessages.slice(0, messageIndex + 1);
     setMessages(messagesToKeep);
 
-    // Regenerate AI response for the edited message
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          sessionId,
-          message: newContent,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to regenerate response");
-      }
-
-      const data = await response.json();
-      setSessionId(data.sessionId);
-
-      // Add new AI response
-      const aiMsg: ChatMessage = {
-        id: `${Date.now()}-ai-edited`,
-        sender: "ai",
-        content: data.response,
-        createdAt: new Date().toISOString(),
-      };
-      setMessages((msgs) => [...msgs, aiMsg]);
-    } catch {
-      setError("Failed to regenerate response after edit");
-    } finally {
-      setLoading(false);
-    }
+    // Regenerate AI response for the edited message using the hook
+    await sendMessage(newContent);
   };
 
   /**
@@ -228,39 +164,9 @@ export default function ChatPanel() {
 
     // Remove the last AI response
     setMessages(msgs => msgs.slice(0, -1));
-    setLoading(true);
 
-    try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          sessionId,
-          message: lastUserMessage.content,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to regenerate response");
-      }
-
-      const data = await response.json();
-
-      // Add new AI response
-      const aiMsg: ChatMessage = {
-        id: `${Date.now()}-ai-regenerated`,
-        sender: "ai",
-        content: data.response,
-        createdAt: new Date().toISOString(),
-      };
-      setMessages((msgs) => [...msgs, aiMsg]);
-    } catch {
-      setError("Failed to regenerate response");
-    } finally {
-      setLoading(false);
-    }
+    // Regenerate using the hook
+    await sendMessage(lastUserMessage.content);
   };
 
   return (
@@ -399,7 +305,12 @@ export default function ChatPanel() {
         <ChatMessageList messages={messages} loading={loading} error={error} onEditMessage={handleEditMessage} />
       </CardContent>
       <div className="border-t p-4 bg-background">
-        <ChatInput onSend={handleSend} disabled={loading} />
+        <ChatInput
+          onSend={handleSend}
+          disabled={loading}
+          hasPendingMessage={hasPendingMessage()}
+          onCancel={cancelPending}
+        />
         {messages.length > 0 && (
           <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
             <span>{messages.length} messages in session</span>

@@ -69,7 +69,9 @@
     "title": "Support Chat",
     "description": "Chat with our AI assistant or escalate to staff if needed.",
     "placeholder": "Type your message...",
+    "waiting": "Waiting to send...",
     "send": "Send",
+    "cancel": "Cancel",
     "noMessages": "No messages yet. Start the conversation!",
     "typing": "AI is typing...",
     "error": "Failed to send message. Please try again."

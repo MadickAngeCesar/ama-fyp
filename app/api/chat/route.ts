@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { generateChatResponse } from "@/lib/actions";
 import { MessageSender } from "@/lib/generated/prisma/client";
 import { getCurrentUser } from "@/lib/auth";
+import { withAiRateLimit } from "@/lib/rate-limit";
 
 /**
  * POST /api/chat
@@ -10,6 +11,12 @@ import { getCurrentUser } from "@/lib/auth";
  * Creates or updates a chat session.
  */
 export async function POST(request: NextRequest) {
+  // Apply AI rate limiting (10 requests per minute)
+  const rateLimitResponse = await withAiRateLimit(request);
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   try {
     const user = await getCurrentUser();
     if (!user) {
