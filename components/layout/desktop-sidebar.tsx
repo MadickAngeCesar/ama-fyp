@@ -136,8 +136,8 @@ export default function DesktopSidebar({
             <Image
               src="/images/logo.png"
               alt="ASSS logo"
-              width={60}
-              height={60}
+              width={70}
+              height={70}
               className="rounded-lg"
             />
             <div>
