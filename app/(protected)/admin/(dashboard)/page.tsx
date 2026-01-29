@@ -82,7 +82,7 @@ export default function AdminDashboardPage() {
         <p className="text-muted-foreground">{t('admin.dashboard.description')}</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         {loading ? (
           // Loading skeletons
           Array.from({ length: 4 }).map((_, i) => (

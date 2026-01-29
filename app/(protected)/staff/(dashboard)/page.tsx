@@ -1,6 +1,5 @@
 "use client";
-import React from "react";
-import { complaints, suggestions, chatSessions, users } from "@/lib/placeholder-data";
+import React, { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,38 +7,92 @@ import { AlertTriangle, Clock, Lightbulb, MessageSquare, TrendingUp } from "luci
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
+interface StaffStats {
+  complaints: {
+    total: number;
+    pending: number;
+    inProgress: number;
+    resolved: number;
+  };
+  suggestions: {
+    total: number;
+    pending: number;
+  };
+  activeChats: number;
+  recentPendingComplaints: Array<{
+    id: string;
+    category: string | null;
+    description: string;
+    createdAt: string;
+    user: { name: string | null } | null;
+  }>;
+  recentPendingSuggestions: Array<{
+    id: string;
+    title: string;
+    description: string;
+    upvotes: number;
+    createdAt: string;
+    user: { name: string | null } | null;
+  }>;
+  recentActiveChats: Array<{
+    id: string;
+    title: string;
+    lastActivity: string;
+  }>;
+}
+
 /**
  * Staff dashboard page providing overview of complaints, suggestions, and chat sessions.
  */
 export default function Page() {
   const { t } = useTranslation();
-  // Calculate staff-relevant stats
-  const totalComplaints = complaints.length;
-  const pendingComplaints = complaints.filter(c => c.status === 'PENDING').length;
-  const inProgressComplaints = complaints.filter(c => c.status === 'IN_PROGRESS').length;
-  const resolvedComplaints = complaints.filter(c => c.status === 'RESOLVED').length;
+  const [stats, setStats] = useState<StaffStats | null>(null);
+  const [, setLoading] = useState(true);
 
-  const totalSuggestions = suggestions.length;
-  const pendingSuggestions = suggestions.filter(s => !s.status || s.status === 'PENDING').length;
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch('/api/stats/staff');
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch staff stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const activeChats = chatSessions.filter(s => s.status === 'OPEN').length;
-  // const totalChats = chatSessions.length;
+    fetchStats();
+  }, []);
 
-  // Recent items requiring attention (last 3)
-  const recentPendingComplaints = complaints
-    .filter(c => c.status === 'PENDING')
-    .slice(-3)
-    .reverse();
+  if (!stats) {
+    return (
+      <div className="max-w-6xl mx-auto py-8 space-y-8">
+        <div className="space-y-6">
+          <div className="h-8 bg-muted rounded w-64" />
+          <div className="h-4 bg-muted rounded w-96" />
+        </div>
+        <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <div className="h-4 bg-muted rounded w-20" />
+                <div className="h-4 w-4 bg-muted rounded" />
+              </CardHeader>
+              <CardContent>
+                <div className="h-8 bg-muted rounded w-12 mb-2" />
+                <div className="h-3 bg-muted rounded w-32" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
-  const recentPendingSuggestions = suggestions
-    .filter(s => !s.status || s.status === 'PENDING')
-    .slice(-3)
-    .reverse();
-
-  const recentActiveChats = chatSessions
-    .filter(s => s.status === 'OPEN')
-    .slice(-3)
-    .reverse();
+  const { complaints, suggestions, activeChats, recentPendingComplaints, recentPendingSuggestions, recentActiveChats } = stats;
 
   return (
     <div className="max-w-6xl mx-auto py-8 space-y-8">
@@ -49,9 +102,6 @@ export default function Page() {
           <p className="text-sm text-muted-foreground">{t('staff.dashboard.description')}</p>
         </div>
         <div className="hidden sm:flex gap-2">
-          <Button variant="outline" asChild>
-            <Link href="/staff/complaint">{t('staff.dashboard.viewAllComplaints')}</Link>
-          </Button>
           <Button asChild>
             <Link href="/staff/suggestion">{t('staff.dashboard.viewAllSuggestions')}</Link>
           </Button>
@@ -66,9 +116,9 @@ export default function Page() {
             <AlertTriangle className="h-4 w-4 text-yellow-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{pendingComplaints}</div>
+            <div className="text-2xl font-bold">{complaints.pending}</div>
             <p className="text-xs text-muted-foreground">
-              +{Math.round((pendingComplaints / totalComplaints) * 100)}% of total
+              +{Math.round((complaints.pending / complaints.total) * 100)}% of total
             </p>
           </CardContent>
         </Card>
@@ -79,7 +129,7 @@ export default function Page() {
             <Clock className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{inProgressComplaints}</div>
+            <div className="text-2xl font-bold">{complaints.inProgress}</div>
             <p className="text-xs text-muted-foreground">
               Being actively worked on
             </p>
@@ -92,7 +142,7 @@ export default function Page() {
             <Lightbulb className="h-4 w-4 text-orange-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{pendingSuggestions}</div>
+            <div className="text-2xl font-bold">{suggestions.pending}</div>
             <p className="text-xs text-muted-foreground">
               Awaiting review
             </p>
@@ -124,10 +174,10 @@ export default function Page() {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-green-500">
-              {totalComplaints > 0 ? Math.round((resolvedComplaints / totalComplaints) * 100) : 0}%
+              {complaints.total > 0 ? Math.round((complaints.resolved / complaints.total) * 100) : 0}%
             </div>
             <p className="text-sm text-muted-foreground">
-              {resolvedComplaints} of {totalComplaints} complaints resolved
+              {complaints.resolved} of {complaints.total} complaints resolved
             </p>
           </CardContent>
         </Card>
@@ -137,7 +187,7 @@ export default function Page() {
             <CardTitle className="text-lg">{t('staff.dashboard.totalComplaints')}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{totalComplaints}</div>
+            <div className="text-3xl font-bold">{complaints.total}</div>
             <p className="text-sm text-muted-foreground">
               All time submissions
             </p>
@@ -149,7 +199,7 @@ export default function Page() {
             <CardTitle className="text-lg">{t('staff.dashboard.totalSuggestions')}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{totalSuggestions}</div>
+            <div className="text-3xl font-bold">{suggestions.total}</div>
             <p className="text-sm text-muted-foreground">
               Student feedback received
             </p>
@@ -168,21 +218,18 @@ export default function Page() {
           </CardHeader>
           <CardContent className="space-y-3">
             {recentPendingComplaints.length > 0 ? (
-              recentPendingComplaints.map((c) => {
-                const user = users.find(u => u.id === c.userId);
-                return (
-                  <div key={c.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex-1">
-                      <div className="text-sm font-medium">{c.category || t('staff.dashboard.general')}</div>
-                      <div className="text-xs text-muted-foreground line-clamp-2">{c.description}</div>
-                      <div className="text-xs text-muted-foreground mt-1">
-                        {t('staff.dashboard.by')} {user?.name || t('staff.complaints.anonymous')} • {new Date(c.createdAt).toLocaleDateString()}
-                      </div>
+              recentPendingComplaints.map((c) => (
+                <div key={c.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div className="flex-1">
+                    <div className="text-sm font-medium">{c.category || t('staff.dashboard.general')}</div>
+                    <div className="text-xs text-muted-foreground line-clamp-2">{c.description}</div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {t('staff.dashboard.by')} {c.user?.name || t('staff.complaints.anonymous')} • {new Date(c.createdAt).toLocaleDateString()}
                     </div>
-                    <Badge variant="secondary" className="ml-2">{t('staff.dashboard.pending')}</Badge>
                   </div>
-                );
-              })
+                  <Badge variant="secondary" className="ml-2">{t('staff.dashboard.pending')}</Badge>
+                </div>
+              ))
             ) : (
               <p className="text-sm text-muted-foreground">{t('staff.dashboard.noPendingComplaints')}</p>
             )}
@@ -198,21 +245,18 @@ export default function Page() {
           </CardHeader>
           <CardContent className="space-y-3">
             {recentPendingSuggestions.length > 0 ? (
-              recentPendingSuggestions.map((s) => {
-                const user = users.find(u => u.id === s.userId);
-                return (
-                  <div key={s.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex-1">
-                      <div className="text-sm font-medium">{s.title}</div>
-                      <div className="text-xs text-muted-foreground line-clamp-2">{s.description}</div>
-                      <div className="text-xs text-muted-foreground mt-1">
-                        {t('staff.dashboard.by')} {user?.name || t('staff.complaints.anonymous')} • {s.upvotes} {t('staff.dashboard.upvotes')}
-                      </div>
+              recentPendingSuggestions.map((s) => (
+                <div key={s.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div className="flex-1">
+                    <div className="text-sm font-medium">{s.title}</div>
+                    <div className="text-xs text-muted-foreground line-clamp-2">{s.description}</div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {t('staff.dashboard.by')} {s.user?.name || t('staff.complaints.anonymous')} • {s.upvotes} {t('staff.dashboard.upvotes')}
                     </div>
-                    <Badge variant="outline" className="ml-2">{t('staff.dashboard.pending')}</Badge>
                   </div>
-                );
-              })
+                  <Badge variant="outline" className="ml-2">{t('staff.dashboard.pending')}</Badge>
+                </div>
+              ))
             ) : (
               <p className="text-sm text-muted-foreground">{t('staff.dashboard.noPendingSuggestions')}</p>
             )}
@@ -245,39 +289,6 @@ export default function Page() {
           </CardContent>
         </Card>
       </div>
-
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('staff.dashboard.quickActions')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-4">
-            <Button asChild>
-              <Link href="/staff/complaint">
-                <AlertTriangle className="h-4 w-4 mr-2" />
-                {t('staff.dashboard.manageComplaints')}
-              </Link>
-            </Button>
-            <Button variant="outline" asChild>
-              <Link href="/staff/suggestion">
-                <Lightbulb className="h-4 w-4 mr-2" />
-                {t('staff.dashboard.reviewSuggestions')}
-              </Link>
-            </Button>
-            <Button variant="outline" asChild>
-              <Link href="/staff/chat">
-                <MessageSquare className="h-4 w-4 mr-2" />
-                {t('staff.dashboard.viewChatSessions')}
-              </Link>
-            </Button>
-            <Button variant="outline">
-              <TrendingUp className="h-4 w-4 mr-2" />
-              {t('staff.dashboard.viewReports')}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

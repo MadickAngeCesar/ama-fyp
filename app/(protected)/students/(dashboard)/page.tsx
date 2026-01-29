@@ -1,22 +1,91 @@
 "use client";
-import React from "react";
-import { complaints, suggestions, chatSessions } from "@/lib/placeholder-data";
+import React, { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "react-i18next";
 
-export default function Page() {
-  const { t } = useTranslation()
-  // Mock stats
-  const totalComplaints = complaints.length;
-  const totalSuggestions = suggestions.length;
-  const activeChats = chatSessions.filter(s => s.status === 'OPEN').length;
+interface StudentStats {
+  complaints: {
+    total: number;
+    pending: number;
+    inProgress: number;
+    resolved: number;
+  };
+  suggestions: {
+    total: number;
+  };
+  activeChats: number;
+  recentComplaints: Array<{
+    id: string;
+    category: string | null;
+    description: string;
+    status: string;
+    createdAt: string;
+  }>;
+  recentSuggestions: Array<{
+    id: string;
+    title: string;
+    description: string;
+    upvotes: number;
+    createdAt: string;
+  }>;
+  recentChats: Array<{
+    id: string;
+    title: string;
+    status: string;
+    lastActivity: string;
+  }>;
+}
 
-  // Recent items (last 3)
-  const recentComplaints = complaints.slice(-3).reverse();
-  const recentSuggestions = suggestions.slice(-3).reverse();
-  const recentChats = chatSessions.slice(-3).reverse();
+export default function Page() {
+  const { t } = useTranslation();
+  const [stats, setStats] = useState<StudentStats | null>(null);
+  const [, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch('/api/stats/student');
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch student stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  if (!stats) {
+    return (
+      <div className="max-w-6xl mx-auto py-8 space-y-8">
+        <div className="space-y-6">
+          <div className="h-8 bg-muted rounded w-64" />
+          <div className="h-4 bg-muted rounded w-96" />
+        </div>
+        <div className="grid gap-4 grid-cols-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Card key={i}>
+              <CardHeader>
+                <div className="h-4 bg-muted rounded w-20" />
+              </CardHeader>
+              <CardContent>
+                <div className="h-8 bg-muted rounded w-12 mb-2" />
+                <div className="h-3 bg-muted rounded w-32" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  const { complaints, suggestions, activeChats, recentComplaints, recentSuggestions, recentChats } = stats;
 
   return (
     <div className="max-w-6xl mx-auto py-8 space-y-8">
@@ -26,29 +95,27 @@ export default function Page() {
           <p className="text-sm text-muted-foreground">{t('dashboard.description')}</p>
         </div>
         <div className="hidden sm:flex gap-2">
-          <Button variant="outline">{t('dashboard.viewAll')}</Button>
           <Button>{t('dashboard.contactStaff')}</Button>
         </div>
       </header>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">{t('dashboard.complaints')}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{totalComplaints}</div>
+            <div className="text-3xl font-bold">{complaints.total}</div>
             <p className="text-sm text-muted-foreground">{t('dashboard.complaintsDesc')}</p>
           </CardContent>
         </Card>
-
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">{t('dashboard.suggestions')}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{totalSuggestions}</div>
+            <div className="text-3xl font-bold">{suggestions.total}</div>
             <p className="text-sm text-muted-foreground">{t('dashboard.suggestionsDesc')}</p>
           </CardContent>
         </Card>
@@ -129,20 +196,6 @@ export default function Page() {
           </CardContent>
         </Card>
       </div>
-
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('dashboard.quickActions')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-4">
-            <Button>{t('dashboard.createComplaint')}</Button>
-            <Button variant="outline">{t('dashboard.shareSuggestion')}</Button>
-            <Button variant="outline">{t('dashboard.startChat')}</Button>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
