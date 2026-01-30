@@ -10,6 +10,16 @@ import { Badge } from "@/components/ui/badge"
 import { Plus, X, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
+/**
+ * Snapshot of configuration used for change detection.
+ */
+type ConfigState = {
+  categories: string[]
+  retentionYears: number
+  maxFileSize: number
+  supportEmail: string
+}
+
 export default function AdminConfigurationPage() {
   const { t } = useTranslation()
   const [categories, setCategories] = useState<string[]>([])
@@ -20,7 +30,7 @@ export default function AdminConfigurationPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
-  const [originalData, setOriginalData] = useState<any>(null)
+  const [originalData, setOriginalData] = useState<ConfigState | null>(null)
 
   // Load configuration on mount
   useEffect(() => {
